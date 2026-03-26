@@ -1,0 +1,1543 @@
+/* ============================================================
+   MODERN REDMINE THEME — design tokens + layout + components
+   ============================================================ */
+
+/* ── 1. DESIGN TOKENS ───────────────────────────────────── */
+:root {
+  --c-primary:       #0891B2;  /* cyan-600 */
+  --c-primary-hover: #0E7490;  /* cyan-700 */
+  --c-primary-light: #ECFEFF;  /* cyan-50  */
+  --c-primary-ring:  rgba(8,145,178,.25);
+  --c-success:  #10B981;
+  --c-warning:  #F59E0B;
+  --c-danger:   #EF4444;
+  --c-info:     #3B82F6;
+
+  --c-bg:          #F0F4F8;
+  --c-surface:     #FFFFFF;
+  --c-surface-2:   #F7FAFC;
+  --c-border:      #DDE3EA;
+  --c-border-2:    #C4CDD6;
+  --c-text:        #0F1923;
+  --c-text-muted:  #5A6A7A;
+  --c-text-subtle: #8FA0B0;
+
+  --c-topbar-bg:   #083344;   /* deep cyan-900 */
+  --c-topbar-text: rgba(255,255,255,.88);
+  --c-topbar-hover:rgba(255,255,255,.13);
+  --c-header-bg:   #FFFFFF;
+  --c-sidebar-bg:  #FFFFFF;
+  --sidebar-w:     240px;
+
+  --topbar-h:  44px;
+  --header-h:  90px;   /* generous default: h1 row + tabs row */
+  --total-top: 134px;  /* JS measures and overrides */
+
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --text-xs:   .75rem;
+  --text-sm:   .875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+
+  --sp-1: .25rem;  --sp-2: .5rem;   --sp-3: .75rem;
+  --sp-4: 1rem;    --sp-5: 1.25rem; --sp-6: 1.5rem;  --sp-8: 2rem;
+
+  --shadow-xs: 0 1px 2px rgb(0 0 0/.06);
+  --shadow-sm: 0 1px 3px rgb(0 0 0/.1), 0 1px 2px -1px rgb(0 0 0/.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0/.1), 0 2px 4px -2px rgb(0 0 0/.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0/.1), 0 4px 6px -4px rgb(0 0 0/.1);
+
+  --r-sm: .25rem;  --r: .5rem;  --r-md: .75rem;  --r-lg: 1rem;
+  --t-fast: 150ms ease;  --t: 200ms ease;  --t-slow: 300ms ease;
+}
+
+/* ── 2. DARK MODE TOKENS ─────────────────────────────────── */
+html.dark-mode {
+  --c-primary:       #22D3EE;  /* cyan-400 — vibrant on dark */
+  --c-primary-hover: #38BDF8;  /* sky-400  */
+  --c-primary-ring:  rgba(34,211,238,.22);
+
+  --c-bg:          #161E2A;   /* lighter than before */
+  --c-surface:     #1E2C3A;   /* lighter card bg     */
+  --c-surface-2:   #243040;   /* slightly lighter    */
+  --c-border:      #2E3F52;   /* lighter border      */
+  --c-border-2:    #3A5068;
+  --c-text:        #E8F0F8;   /* softer white        */
+  --c-text-muted:  #8AAABF;
+  --c-text-subtle: #56748A;
+  --c-primary-light: rgba(34,211,238,.12);
+  --c-topbar-bg:   #0C1E2C;   /* dark navy-cyan      */
+  --c-header-bg:   #1E2C3A;
+  --c-sidebar-bg:  #1A2635;
+}
+
+/* ── 3. BASE ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans) !important;
+  font-size: var(--text-sm) !important;
+  background: var(--c-bg) !important;
+  color: var(--c-text) !important;
+  line-height: 1.6 !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── 4. TOPBAR (#top-menu) ──────────────────────────────── */
+#top-menu {
+  position: fixed !important;
+  top: 0 !important; left: 0 !important; right: 0 !important;
+  height: var(--topbar-h) !important;
+  background: var(--c-topbar-bg) !important;
+  color: var(--c-topbar-text) !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 var(--sp-4) !important;
+  z-index: 1000 !important;
+  box-shadow: 0 1px 3px rgb(0 0 0/.4) !important;
+  gap: 0 !important;
+  overflow: hidden !important;
+}
+
+/* DOM order: #account → #loggedas → ul(nav)
+   We want:   ul(nav) LEFT → loggedas RIGHT → #account FAR RIGHT
+   Use order + margin tricks                                      */
+#top-menu > ul {
+  order: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 2px !important;
+  flex: 1 !important; /* take available space, pushes account to far right */
+}
+
+#top-menu #account {
+  order: 3 !important;
+  display: flex !important;
+  align-items: center !important;
+  margin-left: var(--sp-2) !important;
+  padding-left: var(--sp-3) !important;
+  border-left: 1px solid rgba(255,255,255,.15) !important;
+  flex-shrink: 0 !important;
+}
+
+#top-menu #loggedas {
+  order: 2 !important;
+  color: var(--c-topbar-text) !important;
+  font-size: var(--text-xs) !important;
+  white-space: nowrap !important;
+  opacity: .65 !important;
+  padding: 0 var(--sp-3) !important;
+  flex-shrink: 0 !important;
+  border-left: 1px solid rgba(255,255,255,.12) !important;
+  margin-left: auto !important; /* push loggedas+account to far right */
+}
+
+#top-menu #loggedas a { color: white !important; font-weight: 500 !important; }
+
+#top-menu ul li a,
+#top-menu ul li span.disabled {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  color: var(--c-topbar-text) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  border-radius: var(--r-sm) !important;
+  text-decoration: none !important;
+  transition: background var(--t-fast) !important;
+  white-space: nowrap !important;
+}
+
+#top-menu ul li a:hover { background: var(--c-topbar-hover) !important; color: white !important; }
+#top-menu ul li.selected a,
+#top-menu ul li a.active { background: var(--c-topbar-hover) !important; color: white !important; }
+
+/* ── Hide mobile hamburger — not needed on desktop ───────── */
+.mobile-toggle-button { display: none !important; }
+
+/* ── 5. HEADER ──────────────────────────────────────────── */
+#header {
+  position: fixed !important;
+  top: var(--topbar-h) !important;
+  left: 0 !important; right: 0 !important;
+  background: var(--c-header-bg) !important;
+  z-index: 999 !important;
+  border-bottom: 1px solid var(--c-border) !important;
+  box-shadow: var(--shadow-xs) !important;
+  /* padding-bottom makes room for #main-menu (originally position:absolute;bottom:0) */
+  padding: var(--sp-2) var(--sp-6) 42px var(--sp-6) !important;
+  transition: background var(--t) !important;
+  /* position:fixed already creates a containing block for absolute children like #main-menu */
+}
+
+/* When there are no project tabs, remove the extra bottom padding */
+#header:not(:has(#main-menu ul li)) {
+  padding-bottom: var(--sp-2) !important;
+}
+
+#header h1 {
+  font-size: var(--text-lg) !important;
+  font-weight: 700 !important;
+  color: var(--c-text) !important;
+  margin: 0 !important;
+  padding: var(--sp-2) 0 !important;
+  line-height: 1.3 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  /* leave space for the floated quick-search */
+  margin-right: 340px !important;
+}
+
+#header h1 a { color: inherit !important; text-decoration: none !important; }
+
+#quick-search {
+  float: right !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  padding: var(--sp-2) 0 !important;
+  /* cap width so h1 has room */
+  max-width: 340px !important;
+}
+
+#quick-search form { float: none !important; display: flex !important; align-items: center !important; gap: var(--sp-1) !important; margin: 0 !important; }
+
+#quick-search #q,
+#quick-search input[type=text] {
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  padding: var(--sp-1) var(--sp-3) !important;
+  font-size: var(--text-sm) !important;
+  font-family: var(--font-sans) !important;
+  background: var(--c-surface-2) !important;
+  color: var(--c-text) !important;
+  outline: none !important;
+  width: 140px !important;
+  height: 28px !important;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast), width var(--t) !important;
+}
+
+#quick-search #q:focus,
+#quick-search input[type=text]:focus {
+  border-color: var(--c-primary) !important;
+  box-shadow: 0 0 0 3px var(--c-primary-ring) !important;
+  background: var(--c-surface) !important;
+  width: 180px !important;
+}
+
+#quick-search label { display: flex !important; align-items: center !important; margin: 0 !important; }
+#quick-search label a {
+  color: var(--c-text-muted) !important;
+  font-size: var(--text-sm) !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+}
+
+#quick-search label a:hover { color: var(--c-primary) !important; }
+
+/* project jump box */
+#project-jump { float: none !important; }
+#project-jump .drdn-trigger {
+  display: flex !important;
+  align-items: center !important;
+  padding: var(--sp-1) var(--sp-3) !important;
+  height: 28px !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  font-size: var(--text-sm) !important;
+  background: var(--c-surface-2) !important;
+  color: var(--c-text-muted) !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  max-width: 160px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* ── PROJECT TABS ────────────────────────────────────────── */
+/* Override Redmine's absolute bottom positioning with normal flow */
+#main-menu {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  margin: 0 !important;
+  border-top: 1px solid var(--c-border) !important;
+  background: var(--c-header-bg) !important;
+  padding: 0 var(--sp-6) !important;
+  width: auto !important;
+}
+
+/* top-level list only — NOT the .menu-children sub-list */
+#main-menu > ul {
+  display: flex !important;
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+/* Restore Redmine's hide-by-default on sub-menus */
+#main-menu .menu-children {
+  display: none !important;
+  position: absolute !important;
+  z-index: 200 !important;
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  box-shadow: var(--shadow-md) !important;
+  min-width: 160px !important;
+  padding: var(--sp-1) 0 !important;
+}
+
+#main-menu li:hover .menu-children,
+#main-menu li .menu-children.visible {
+  display: block !important;
+}
+
+#main-menu .menu-children li a {
+  display: block !important;
+  padding: var(--sp-2) var(--sp-4) !important;
+  font-size: var(--text-sm) !important;
+  color: var(--c-text) !important;
+  background: var(--c-surface) !important; /* override hardcoded #fff per-item */
+  white-space: nowrap !important;
+  border-bottom: none !important;
+  border-radius: 0 !important;
+  font-weight: 400 !important;
+}
+
+#main-menu .menu-children li a:hover {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+  border-bottom: none !important;
+}
+
+#main-menu ul li a,
+#main-menu ul li span.selected {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  color: var(--c-text-muted) !important;
+  text-decoration: none !important;
+  border-bottom: 2px solid transparent !important;
+  margin-bottom: -1px !important;
+  transition: color var(--t-fast), border-color var(--t-fast) !important;
+  white-space: nowrap !important;
+}
+
+#main-menu ul li a:hover {
+  color: var(--c-primary) !important;
+  border-bottom-color: var(--c-primary) !important;
+  background: transparent !important;
+}
+
+#main-menu ul li a.selected,
+#main-menu ul li span.selected {
+  color: var(--c-primary) !important;
+  border-bottom-color: var(--c-primary) !important;
+  font-weight: 600 !important;
+}
+
+.tabs-buttons { display: none !important; }
+
+/* ── 6. LAYOUT ───────────────────────────────────────────── */
+#wrapper { background: var(--c-bg) !important; min-height: 100vh !important; }
+
+#main {
+  display: flex !important;
+  flex-direction: row !important;   /* sidebar LEFT, content RIGHT — override Redmine's row-reverse */
+  align-items: flex-start !important;
+  min-height: calc(100vh - var(--total-top)) !important;
+  margin-top: var(--total-top) !important; /* JS updates this accurately */
+}
+
+/* ── 7. SIDEBAR ──────────────────────────────────────────── */
+#sidebar {
+  width: var(--sidebar-w) !important;
+  min-width: var(--sidebar-w) !important;
+  background: var(--c-sidebar-bg) !important;
+  border-right: 1px solid var(--c-border) !important;
+  position: sticky !important;
+  top: var(--total-top) !important;
+  height: calc(100vh - var(--total-top)) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  flex-shrink: 0 !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: var(--c-border) transparent !important;
+  transition: width var(--t), min-width var(--t), opacity var(--t) !important;
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
+
+#sidebar-wrapper { padding: var(--sp-5) var(--sp-4) !important; }
+
+/* collapsed — do NOT use opacity:0, it also hides position:fixed children */
+#main.collapsiblesidebar.sidebar-collapsed #sidebar {
+  width: 0 !important;
+  min-width: 0 !important;
+  border-right: none !important;
+  overflow: hidden !important;
+}
+
+/* hide Redmine's own sidebar toggle — replaced by our button */
+#sidebar-switch-panel { display: none !important; }
+
+/* sidebar content */
+#sidebar h3 {
+  font-size: var(--text-xs) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+  color: var(--c-text-subtle) !important;
+  margin: var(--sp-5) 0 var(--sp-2) !important;
+  padding-bottom: var(--sp-1) !important;
+}
+
+#sidebar h3:first-child { margin-top: 0 !important; }
+
+#sidebar ul { list-style: none !important; margin: 0 0 var(--sp-3) !important; padding: 0 !important; }
+
+#sidebar ul li a {
+  display: flex !important;
+  align-items: center !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  font-size: var(--text-sm) !important;
+  color: var(--c-text-muted) !important;
+  border-radius: var(--r-sm) !important;
+  text-decoration: none !important;
+  transition: background var(--t-fast), color var(--t-fast) !important;
+}
+
+#sidebar ul li a:hover,
+#sidebar ul li.selected a {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+}
+
+/* sidebar toggle — fixed tab on the right edge of the sidebar */
+#rm-sidebar-toggle {
+  position: fixed !important;
+  /* top is set by JS after measuring the header */
+  top: calc(var(--total-top) + 20px) !important;
+  left: calc(var(--sidebar-w) - 1px) !important;
+  width: 16px !important;
+  height: 40px !important;
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-left: none !important;
+  border-radius: 0 var(--r) var(--r) 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 1002 !important;
+  font-size: 10px !important;
+  color: var(--c-text-subtle) !important;
+  padding: 0 !important;
+  box-shadow: 2px 0 6px rgb(0 0 0/.08) !important;
+  transition: left var(--t), background var(--t-fast), color var(--t-fast) !important;
+}
+
+#rm-sidebar-toggle:hover {
+  background: var(--c-primary) !important;
+  color: white !important;
+  border-color: var(--c-primary) !important;
+}
+
+body.sidebar-collapsed #rm-sidebar-toggle {
+  left: 0 !important;
+  border-left: 1px solid var(--c-border) !important;
+  border-radius: 0 var(--r) var(--r) 0 !important;
+}
+
+/* ── 8. CONTENT ──────────────────────────────────────────── */
+#content {
+  flex: 1 !important;
+  padding: var(--sp-6) !important;
+  min-width: 0 !important;
+}
+
+#main.nosidebar #content { padding-left: var(--sp-6) !important; }
+
+/* ── 9. CONTEXTUAL ACTIONS ───────────────────────────────── */
+.contextual {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  flex-wrap: wrap !important;
+  margin-bottom: var(--sp-3) !important;
+}
+
+/* ── 10. ISSUE LIST TABLE ────────────────────────────────── */
+.autoscroll {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  overflow: hidden !important;
+  overflow-x: auto !important;
+  margin-bottom: var(--sp-4) !important;
+}
+
+table.list {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: var(--text-sm) !important;
+}
+
+table.list thead {
+  background: var(--c-surface-2) !important;
+  border-bottom: 2px solid var(--c-border) !important;
+}
+
+table.list thead th {
+  padding: var(--sp-3) var(--sp-4) !important;
+  font-weight: 600 !important;
+  font-size: var(--text-xs) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .05em !important;
+  color: var(--c-text-muted) !important;
+  white-space: nowrap !important;
+  border: none !important;
+  text-align: left !important;
+}
+
+table.list thead th a { color: inherit !important; text-decoration: none !important; }
+table.list thead th a:hover { color: var(--c-primary) !important; }
+
+table.list tbody tr {
+  border-bottom: 1px solid var(--c-border) !important;
+  transition: background var(--t-fast) !important;
+}
+
+table.list tbody tr:last-child { border-bottom: none !important; }
+table.list tbody tr.odd  { background: var(--c-surface) !important; }
+table.list tbody tr.even { background: var(--c-surface-2) !important; }
+table.list tbody tr:hover { background: var(--c-primary-light) !important; }
+
+table.list tbody td {
+  padding: var(--sp-3) var(--sp-4) !important;
+  color: var(--c-text) !important;
+  vertical-align: middle !important;
+  border: none !important;
+}
+
+table.list tbody td a {
+  color: var(--c-primary) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  transition: color var(--t-fast) !important;
+}
+
+table.list tbody td a:hover {
+  color: var(--c-primary-hover) !important;
+  text-decoration: underline !important;
+}
+
+table.list tr.group td {
+  background: var(--c-surface-2) !important;
+  padding: var(--sp-2) var(--sp-4) !important;
+  font-weight: 700 !important;
+  font-size: var(--text-xs) !important;
+  text-transform: uppercase !important;
+  letter-spacing: .05em !important;
+  color: var(--c-text-muted) !important;
+  border-top: 2px solid var(--c-border) !important;
+}
+
+/* ── 11. ISSUE SHOW: DETAILS CARD ───────────────────────── */
+.issue.details {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  padding: var(--sp-6) !important;
+  margin-bottom: var(--sp-4) !important;
+  transition: box-shadow var(--t) !important;
+}
+
+.issue.details:hover { box-shadow: var(--shadow-sm) !important; }
+
+.issue.details .subject {
+  font-size: var(--text-xl) !important;
+  font-weight: 700 !important;
+  color: var(--c-text) !important;
+  margin-bottom: var(--sp-3) !important;
+  line-height: 1.4 !important;
+}
+
+.issue.details .author {
+  font-size: var(--text-xs) !important;
+  color: var(--c-text-subtle) !important;
+  margin-bottom: var(--sp-4) !important;
+}
+
+.issue.details .author a { color: var(--c-text-muted) !important; font-weight: 500 !important; }
+
+/* Attributes grid */
+.attributes table { width: 100% !important; border-collapse: collapse !important; }
+
+.attributes td.label {
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .05em !important;
+  color: var(--c-text-subtle) !important;
+  padding: var(--sp-2) var(--sp-4) var(--sp-2) 0 !important;
+  white-space: nowrap !important;
+  border: none !important;
+  width: 38% !important;
+}
+
+.attributes td.value {
+  font-size: var(--text-sm) !important;
+  color: var(--c-text) !important;
+  padding: var(--sp-2) 0 !important;
+  border: none !important;
+}
+
+/* Description section */
+.issue.details .description {
+  margin-top: var(--sp-4) !important;
+  padding-top: var(--sp-4) !important;
+  border-top: 1px solid var(--c-border) !important;
+}
+
+.issue.details .description > p > strong,
+.issue.details hr + p strong {
+  font-size: var(--text-xs) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .05em !important;
+  color: var(--c-text-subtle) !important;
+  display: block !important;
+  margin-bottom: var(--sp-2) !important;
+}
+
+/* ── 12. HISTORY / JOURNALS CARD ─────────────────────────── */
+#history {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  padding: var(--sp-6) !important;
+  margin-bottom: var(--sp-4) !important;
+}
+
+#history .tabs { border-bottom: 1px solid var(--c-border) !important; margin-bottom: var(--sp-4) !important; }
+
+#history .tabs ul { display: flex !important; list-style: none !important; margin: 0 !important; padding: 0 !important; }
+
+#history .tabs ul li a {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: var(--sp-3) var(--sp-4) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  color: var(--c-text-muted) !important;
+  text-decoration: none !important;
+  border-bottom: 2px solid transparent !important;
+  margin-bottom: -1px !important;
+  transition: color var(--t-fast), border-color var(--t-fast) !important;
+}
+
+#history .tabs ul li a:hover,
+#history .tabs ul li.selected a {
+  color: var(--c-primary) !important;
+  border-bottom-color: var(--c-primary) !important;
+}
+
+.journal {
+  border-bottom: 1px solid var(--c-border) !important;
+  padding: var(--sp-4) var(--sp-2) !important;
+  border-radius: var(--r) !important;
+  transition: background var(--t-fast), padding var(--t-fast) !important;
+}
+
+.journal:last-child { border-bottom: none !important; }
+
+.journal:hover {
+  background: var(--c-surface-2) !important;
+  padding-left: var(--sp-4) !important;
+  padding-right: var(--sp-4) !important;
+}
+
+/* ── 13. SUBTASKS & RELATIONS CARDS ─────────────────────── */
+#issue_tree, #relations {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  padding: var(--sp-4) var(--sp-5) !important;
+  margin: var(--sp-4) 0 !important;
+  box-shadow: var(--shadow-xs) !important;
+}
+
+/* ── 14. BADGES ──────────────────────────────────────────── */
+.badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: .125rem var(--sp-2) !important;
+  border-radius: var(--r-sm) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  line-height: 1.5 !important;
+  white-space: nowrap !important;
+}
+
+.badge-private { background: rgba(239,68,68,.1) !important; color: #991B1B !important; }
+
+.priority-low    { color: var(--c-text-muted) !important; }
+.priority-normal { color: var(--c-info)    !important; }
+.priority-high   { color: var(--c-warning) !important; font-weight: 600 !important; }
+.priority-urgent,
+.priority-immediate { color: var(--c-danger) !important; font-weight: 700 !important; }
+
+/* ── 15. BUTTONS ─────────────────────────────────────────── */
+a.icon.new-issue,
+a.icon.icon-add,
+.contextual a.icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  border-radius: var(--r) !important;
+  text-decoration: none !important;
+  border: 1px solid var(--c-border) !important;
+  background: var(--c-surface) !important;
+  color: var(--c-text) !important;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast), box-shadow var(--t-fast) !important;
+  white-space: nowrap !important;
+}
+
+a.icon.new-issue,
+a.icon.icon-add {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+  border-color: rgba(8,145,178,.25) !important;
+  font-weight: 600 !important;
+}
+/* Default state: icon stroke matches text (indigo) */
+a.icon.new-issue .icon-svg,
+a.icon.icon-add .icon-svg { stroke: var(--c-primary) !important; }
+
+a.icon.new-issue:hover,
+a.icon.icon-add:hover {
+  background: var(--c-primary) !important;
+  color: white !important;
+  border-color: var(--c-primary) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+/* Hover state: icon stroke white (override Redmine's red) */
+a.icon.new-issue:hover .icon-svg,
+a.icon.icon-add:hover .icon-svg { stroke: white !important; }
+
+/* All other icon links: use theme color instead of Redmine's red on hover */
+.contextual a.icon:hover { background: var(--c-surface-2) !important; border-color: var(--c-border-2) !important; }
+.contextual a.icon:hover .icon-svg { stroke: var(--c-primary) !important; }
+a.icon:hover .icon-svg { stroke: var(--c-primary) !important; }
+
+input[type=submit], input[type=button], button.button {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  padding: var(--sp-2) var(--sp-4) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  font-family: var(--font-sans) !important;
+  border-radius: var(--r) !important;
+  cursor: pointer !important;
+  border: 1px solid var(--c-border) !important;
+  background: var(--c-surface-2) !important;
+  color: var(--c-text) !important;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast) !important;
+  line-height: 1.5 !important;
+}
+
+input[type=submit] {
+  background: var(--c-primary) !important;
+  color: white !important;
+  border-color: var(--c-primary) !important;
+}
+
+input[type=submit]:hover {
+  background: var(--c-primary-hover) !important;
+  border-color: var(--c-primary-hover) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+input[type=button]:hover, button.button:hover {
+  background: var(--c-border) !important;
+}
+
+/* ── 16. FORM INPUTS ─────────────────────────────────────── */
+/* Shared border/color — keep height/padding compatible with Redmine's 24px default */
+input[type=text], input[type=email], input[type=password],
+input[type=number], input[type=search], input[type=url], textarea {
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  padding: 4px var(--sp-3) !important;
+  font-size: var(--text-sm) !important;
+  font-family: var(--font-sans) !important;
+  background: var(--c-surface) !important;
+  color: var(--c-text) !important;
+  outline: none !important;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast) !important;
+}
+
+/* Select: keep Redmine's original height:24px, just restyle border/colors */
+select {
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  padding: 2px var(--sp-2) !important;
+  font-size: var(--text-sm) !important;
+  font-family: var(--font-sans) !important;
+  background: var(--c-surface) !important;
+  color: var(--c-text) !important;
+  outline: none !important;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast) !important;
+  /* Do NOT set width:100% globally — breaks narrow operator selects */
+}
+
+textarea {
+  height: auto !important;
+  min-height: 80px !important;
+  resize: vertical !important;
+}
+
+input[type=text]:focus, input[type=email]:focus, input[type=password]:focus,
+input[type=number]:focus, input[type=search]:focus, input[type=url]:focus,
+textarea:focus {
+  border-color: var(--c-primary) !important;
+  box-shadow: 0 0 0 3px var(--c-primary-ring) !important;
+}
+
+select:focus { border-color: var(--c-primary) !important; }
+
+input[type=text]:hover:not(:focus),
+input[type=email]:hover:not(:focus),
+select:hover:not(:focus) { border-color: var(--c-border-2) !important; }
+
+label { font-size: var(--text-sm) !important; font-weight: 500 !important; color: var(--c-text) !important; }
+
+/* ── 17. FLASH MESSAGES ──────────────────────────────────── */
+#flash_notice, #flash_error, #flash_warning, div.flash {
+  padding: var(--sp-3) var(--sp-4) !important;
+  border-radius: var(--r) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  margin-bottom: var(--sp-4) !important;
+  border: 1px solid transparent !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+}
+
+#flash_notice, div.flash.notice {
+  background: rgba(16,185,129,.1) !important;
+  border-color: rgba(16,185,129,.3) !important;
+  color: #065F46 !important;
+}
+
+#flash_error, div.flash.error {
+  background: rgba(239,68,68,.1) !important;
+  border-color: rgba(239,68,68,.3) !important;
+  color: #991B1B !important;
+}
+
+#flash_warning, div.flash.warning {
+  background: rgba(245,158,11,.1) !important;
+  border-color: rgba(245,158,11,.3) !important;
+  color: #92400E !important;
+}
+
+/* ── 18. PAGINATION ──────────────────────────────────────── */
+.pagination {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--sp-1) !important;
+  padding: var(--sp-4) 0 !important;
+  flex-wrap: wrap !important;
+}
+
+.pagination a, .pagination span.current, .pagination em.current {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 32px !important;
+  height: 32px !important;
+  padding: 0 var(--sp-2) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  color: var(--c-text-muted) !important;
+  text-decoration: none !important;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast) !important;
+  background: var(--c-surface) !important;
+}
+
+.pagination a:hover {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+  border-color: var(--c-primary) !important;
+}
+
+.pagination span.current, .pagination em.current {
+  background: var(--c-primary) !important;
+  color: white !important;
+  border-color: var(--c-primary) !important;
+}
+
+/* ── 19. GLOBAL LINKS ────────────────────────────────────── */
+a { color: var(--c-primary) !important; text-decoration: none !important; transition: color var(--t-fast) !important; }
+a:hover { color: var(--c-primary-hover) !important; }
+
+/* ── 20. WIKI CONTENT ────────────────────────────────────── */
+.wiki { font-size: var(--text-sm) !important; line-height: 1.75 !important; color: var(--c-text) !important; }
+.wiki p { margin: 0 0 var(--sp-3) !important; }
+
+.wiki code, code {
+  font-size: .8125rem !important;
+  background: var(--c-surface-2) !important;
+  padding: .1em .35em !important;
+  border-radius: var(--r-sm) !important;
+  border: 1px solid var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+
+.wiki pre {
+  background: var(--c-surface-2) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  padding: var(--sp-4) !important;
+  overflow-x: auto !important;
+  margin: var(--sp-3) 0 !important;
+}
+
+.wiki pre code { background: none !important; border: none !important; padding: 0 !important; }
+
+/* ── 21. PROGRESS BAR ────────────────────────────────────── */
+/* Preserve Redmine's original 80px float — .attributes table { width:100% } would override */
+table.progress {
+  width: 80px !important;
+  float: left !important;
+  height: 1em !important;
+  border-collapse: collapse !important;
+  margin: 1px 6px 1px 0 !important;
+}
+table.progress td { padding: 0 !important; height: 1em !important; }
+table.progress td.todo  { background: var(--c-border) !important; }
+table.progress td.done  { background: var(--c-success) !important; opacity: .5 !important; }
+table.progress td.closed { background: var(--c-success) !important; }
+p.percent { font-size: 86% !important; margin: 0 !important; }
+.progress-bar { height: 8px !important; border-radius: 4px !important; overflow: hidden !important; }
+.progress-bar-done { background: var(--c-primary) !important; border-radius: 4px !important; transition: width var(--t-slow) !important; }
+.progress-bar-todo { background: var(--c-border) !important; }
+
+/* ── 22. DARK MODE TOGGLE (injected) ─────────────────────── */
+#rm-darkmode-toggle {
+  position: fixed !important;
+  bottom: var(--sp-6) !important;
+  right: var(--sp-6) !important;
+  width: 44px !important;
+  height: 44px !important;
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  z-index: 9999 !important;
+  box-shadow: var(--shadow-md) !important;
+  font-size: 18px !important;
+  transition: transform var(--t-fast), box-shadow var(--t-fast), background var(--t-fast) !important;
+  padding: 0 !important;
+  line-height: 1 !important;
+  color: var(--c-text) !important;
+}
+
+#rm-darkmode-toggle:hover {
+  transform: scale(1.1) !important;
+  box-shadow: var(--shadow-lg) !important;
+  background: var(--c-primary) !important;
+  color: white !important;
+  border-color: var(--c-primary) !important;
+}
+
+/* ── 23. TOAST NOTIFICATIONS ─────────────────────────────── */
+#rm-toast-container {
+  position: fixed !important;
+  bottom: var(--sp-8) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  display: flex !important;
+  flex-direction: column-reverse !important;
+  gap: var(--sp-2) !important;
+  z-index: 9998 !important;
+  pointer-events: none !important;
+  min-width: 280px !important;
+  max-width: 420px !important;
+}
+
+.rm-toast {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  padding: var(--sp-3) var(--sp-4) !important;
+  box-shadow: var(--shadow-lg) !important;
+  font-size: var(--text-sm) !important;
+  color: var(--c-text) !important;
+  pointer-events: auto !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: var(--sp-3) !important;
+  animation: rm-slide-in var(--t) forwards !important;
+  line-height: 1.5 !important;
+}
+
+.rm-toast.rm-toast-out { animation: rm-slide-out var(--t) forwards !important; }
+.rm-toast-icon { font-size: 15px !important; flex-shrink: 0 !important; margin-top: .1rem !important; }
+.rm-toast-success .rm-toast-icon { color: var(--c-success) !important; }
+.rm-toast-error   .rm-toast-icon { color: var(--c-danger)  !important; }
+.rm-toast-warning .rm-toast-icon { color: var(--c-warning) !important; }
+.rm-toast-info    .rm-toast-icon { color: var(--c-info)    !important; }
+
+@keyframes rm-slide-in {
+  from { opacity: 0; transform: translateY(10px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
+@keyframes rm-slide-out {
+  from { opacity: 1; transform: translateY(0)    scale(1);   }
+  to   { opacity: 0; transform: translateY(10px) scale(.96); }
+}
+
+/* ── 24. COLLAPSIBLE SECTIONS ────────────────────────────── */
+.rm-collapsible-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  padding: var(--sp-3) 0 !important;
+  border-bottom: 1px solid var(--c-border) !important;
+  margin-bottom: var(--sp-3) !important;
+  transition: color var(--t-fast) !important;
+}
+
+.rm-collapsible-header:hover { color: var(--c-primary) !important; }
+
+.rm-collapsible-toggle {
+  font-size: 11px !important;
+  color: var(--c-text-subtle) !important;
+  transition: transform var(--t) !important;
+  display: inline-block !important;
+}
+
+.rm-collapsible-header.is-collapsed .rm-collapsible-toggle { transform: rotate(-90deg) !important; }
+
+.rm-collapsible-body {
+  overflow: hidden !important;
+  transition: max-height var(--t-slow) ease, opacity var(--t) !important;
+  max-height: 5000px !important;
+  opacity: 1 !important;
+}
+
+.rm-collapsible-body.is-collapsed { max-height: 0 !important; opacity: 0 !important; }
+
+/* ── 25. MISC ────────────────────────────────────────────── */
+hr { border: none !important; border-top: 1px solid var(--c-border) !important; margin: var(--sp-4) 0 !important; }
+
+.flyout-menu { display: none !important; }
+
+#footer {
+  text-align: center !important;
+  padding: var(--sp-4) var(--sp-6) !important;
+  font-size: var(--text-xs) !important;
+  color: var(--c-text-subtle) !important;
+  border-top: 1px solid var(--c-border) !important;
+  background: var(--c-surface) !important;
+  margin-top: var(--sp-8) !important;
+}
+
+#footer a { color: var(--c-text-muted) !important; }
+
+#ajax-indicator {
+  position: fixed !important;
+  top: var(--topbar-h) !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  background: var(--c-primary) !important;
+  color: white !important;
+  padding: var(--sp-2) var(--sp-4) !important;
+  border-radius: 0 0 var(--r) var(--r) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  z-index: 9999 !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+.next-prev-links { font-size: var(--text-xs) !important; color: var(--c-text-subtle) !important; }
+h2 { font-size: var(--text-xl) !important; font-weight: 700 !important; color: var(--c-text) !important; margin: 0 0 var(--sp-4) !important; }
+h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color: var(--c-text) !important; }
+
+/* ── 26. RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  #sidebar {
+    position: fixed !important;
+    top: var(--total-top) !important;
+    left: 0 !important;
+    height: calc(100vh - var(--total-top)) !important;
+    z-index: 997 !important;
+    transform: translateX(-100%) !important;
+    transition: transform var(--t) !important;
+    box-shadow: var(--shadow-lg) !important;
+    width: var(--sidebar-w) !important;
+    min-width: var(--sidebar-w) !important;
+    opacity: 1 !important;
+  }
+
+  #main.sidebar-open #sidebar { transform: translateX(0) !important; }
+  #main.sidebar-collapsed #sidebar { transform: translateX(-100%) !important; }
+
+  #content { padding: var(--sp-4) !important; }
+  #header h1 { font-size: var(--text-lg) !important; }
+  #quick-search { display: none !important; }
+}
+
+/* ── DARK MODE: override Redmine's hardcoded white backgrounds ── */
+
+/* Body & wrapper */
+html.dark-mode body,
+html.dark-mode #wrapper { background: var(--c-bg) !important; color: var(--c-text) !important; }
+
+/* Header & topbar */
+html.dark-mode #header { background: var(--c-header-bg) !important; }
+html.dark-mode #header h1,
+html.dark-mode #header h1 a { color: var(--c-text) !important; }
+html.dark-mode #main-menu { background: var(--c-header-bg) !important; border-top-color: var(--c-border) !important; }
+
+/* Content area */
+html.dark-mode #content { background: transparent !important; }
+html.dark-mode #sidebar  { background: var(--c-sidebar-bg) !important; border-right-color: var(--c-border) !important; }
+
+/* Generic white boxes — Redmine uses .box, .splitcontentleft/right, fieldset etc. */
+html.dark-mode .box,
+html.dark-mode fieldset,
+html.dark-mode .splitcontentleft,
+html.dark-mode .splitcontentright,
+html.dark-mode .tabular,
+html.dark-mode #query_form_with_buttons,
+html.dark-mode .query-totals { background: var(--c-surface) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+
+/* Project list cards */
+html.dark-mode ul.projects li div.root,
+html.dark-mode ul.projects li div.child,
+html.dark-mode ul.projects li div.leaf { background: var(--c-surface) !important; border-color: var(--c-border) !important; color: var(--c-text) !important; }
+
+/* Tables */
+html.dark-mode table,
+html.dark-mode table.list,
+html.dark-mode table.list thead,
+html.dark-mode table.list tbody tr.odd,
+html.dark-mode table.list tbody tr.even { background: var(--c-surface) !important; color: var(--c-text) !important; }
+html.dark-mode table.list tbody tr.even { background: var(--c-surface-2) !important; }
+html.dark-mode table.list thead { background: var(--c-surface-2) !important; }
+html.dark-mode table td,
+html.dark-mode table th { border-color: var(--c-border) !important; color: var(--c-text) !important; }
+
+/* Autoscroll wrapper */
+html.dark-mode .autoscroll { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+
+/* Issue details card */
+html.dark-mode .issue.details { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+
+/* History / journals */
+html.dark-mode #history { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+html.dark-mode .journal:hover { background: var(--c-surface-2) !important; }
+
+/* Subtasks / relations */
+html.dark-mode #issue_tree,
+html.dark-mode #relations { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+
+/* Form inputs */
+html.dark-mode input[type=text],
+html.dark-mode input[type=email],
+html.dark-mode input[type=password],
+html.dark-mode input[type=number],
+html.dark-mode input[type=search],
+html.dark-mode input[type=url],
+html.dark-mode select,
+html.dark-mode textarea { background: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+
+/* Query form */
+html.dark-mode #query_form { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+html.dark-mode #filters-table { background: transparent !important; color: var(--c-text) !important; }
+
+/* Dropdowns / context menu */
+html.dark-mode .drdn-content {
+  background: var(--c-surface) !important;
+  background-color: var(--c-surface) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+html.dark-mode .drdn-items > * {
+  color: var(--c-text) !important;
+  border-color: var(--c-surface) !important; /* override hardcoded white item-borders */
+}
+html.dark-mode .drdn-items > a { color: var(--c-text) !important; }
+html.dark-mode .drdn-items > a:hover {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+}
+html.dark-mode .drdn-items > span { color: var(--c-text-muted) !important; }
+html.dark-mode div + .drdn-items { border-top-color: var(--c-border) !important; }
+html.dark-mode #context-menu { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+
+/* Sidebar toggle button */
+html.dark-mode #rm-sidebar-toggle { background: var(--c-surface) !important; border-color: var(--c-border) !important; color: var(--c-text-subtle) !important; }
+
+/* Wiki / descriptions */
+html.dark-mode .wiki { color: var(--c-text) !important; }
+html.dark-mode .wiki code, html.dark-mode code { background: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+html.dark-mode .wiki pre { background: var(--c-surface-2) !important; border-color: var(--c-border) !important; }
+
+/* Pagination */
+html.dark-mode .pagination a,
+html.dark-mode .pagination span.current { background: var(--c-surface) !important; border-color: var(--c-border) !important; color: var(--c-text-muted) !important; }
+html.dark-mode .pagination span.current { background: var(--c-primary) !important; color: white !important; }
+
+/* Flash messages already use rgba — just ensure text is readable */
+html.dark-mode #flash_notice { color: #6EE7B7 !important; }
+html.dark-mode #flash_error   { color: #FCA5A5 !important; }
+
+/* Footer */
+html.dark-mode #footer { background: var(--c-surface) !important; border-top-color: var(--c-border) !important; }
+
+/* Misc links & text */
+html.dark-mode a { color: #38BDF8 !important; }
+html.dark-mode a:hover { color: #7DD3FC !important; }
+html.dark-mode h2, html.dark-mode h3 { color: var(--c-text) !important; }
+
+/* Sidebar selected query link — overrides hardcoded #9DB9D5 */
+html.dark-mode #sidebar a.selected {
+  background-color: var(--c-primary) !important;
+  color: white !important;
+}
+
+/* Wiki toolbar buttons — overrides jstoolbar.css hardcoded #f7f7f7 */
+html.dark-mode .jstElements button {
+  background-color: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+html.dark-mode .jstElements button:hover {
+  background-color: var(--c-border) !important;
+  border-color: var(--c-border-2) !important;
+}
+/* "pre" text label on the pre button */
+html.dark-mode .jstb_pre::before { color: var(--c-text-muted) !important; }
+
+/* Wiki preview area — overrides hardcoded #ffffff */
+html.dark-mode .wiki-preview {
+  background-color: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+
+/* Edit / Preview tab links in the wiki toolbar */
+html.dark-mode #content .tabs ul li a,
+html.dark-mode #content .jstTabs.tabs li a {
+  background: var(--c-surface) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text-muted) !important;
+}
+html.dark-mode #content .tabs ul li a.selected,
+html.dark-mode #content .jstTabs.tabs li a.selected {
+  background: var(--c-surface-2) !important;
+  color: var(--c-text) !important;
+  border-bottom-color: var(--c-surface-2) !important;
+}
+
+/* .box.tabular form container */
+html.dark-mode .box.tabular {
+  background: var(--c-surface) !important;
+  border-color: var(--c-border) !important;
+}
+html.dark-mode .tabular label { color: var(--c-text-muted) !important; }
+
+/* ── 27. JQUERY UI DIALOG (modal) ────────────────────────── */
+/* Redmine calls showModal() which wraps content in ui-dialog with dialogClass:'modal' */
+.ui-dialog.modal {
+  padding: 0 !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+  background: var(--c-surface) !important;
+  font-family: var(--font-sans) !important;
+  overflow: hidden !important;
+}
+
+.ui-dialog.modal .ui-dialog-titlebar {
+  background: var(--c-surface) !important;
+  border: none !important;
+  border-bottom: 1px solid var(--c-border) !important;
+  border-radius: 0 !important;
+  padding: var(--sp-4) var(--sp-5) !important;
+  display: flex !important;
+  align-items: center !important;
+  position: relative !important;
+}
+
+.ui-dialog.modal .ui-dialog-title {
+  font-size: var(--text-base) !important;
+  font-weight: 600 !important;
+  color: var(--c-text) !important;
+  float: none !important;
+  margin: 0 !important;
+}
+
+.ui-dialog.modal .ui-dialog-titlebar-close {
+  position: absolute !important;
+  right: var(--sp-4) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: transparent !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  width: 28px !important;
+  height: 28px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  color: var(--c-text-muted) !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 14px !important;
+  line-height: 1 !important;
+  transition: background var(--t-fast), border-color var(--t-fast) !important;
+}
+
+.ui-dialog.modal .ui-dialog-titlebar-close:hover {
+  background: var(--c-surface-2) !important;
+  border-color: var(--c-border-2) !important;
+  color: var(--c-text) !important;
+}
+
+/* Hide jQuery UI's sprite icon, show × via text */
+.ui-dialog.modal .ui-dialog-titlebar-close .ui-icon { display: none !important; }
+.ui-dialog.modal .ui-dialog-titlebar-close::after  { content: '×' !important; font-size: 18px !important; }
+
+.ui-dialog.modal .ui-dialog-content {
+  background: var(--c-surface) !important;
+  color: var(--c-text) !important;
+  padding: var(--sp-5) !important;
+  border: none !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--text-sm) !important;
+}
+
+/* Overlay backdrop */
+.ui-widget-overlay {
+  background: rgb(0 0 0 / .45) !important;
+  opacity: 1 !important;
+}
+
+/* Watcher user list */
+#users_for_watcher {
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+  padding: var(--sp-1) var(--sp-2) !important;
+  margin: var(--sp-2) 0 var(--sp-3) !important;
+  background: var(--c-surface) !important;
+  scrollbar-width: thin !important;
+}
+
+#users_for_watcher label {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  padding: var(--sp-1) var(--sp-2) !important;
+  border-radius: var(--r-sm) !important;
+  cursor: pointer !important;
+  color: var(--c-text) !important;
+}
+
+#users_for_watcher label:hover { background: var(--c-surface-2) !important; }
+
+/* Modal footer buttons */
+.ui-dialog.modal p.buttons {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-3) !important;
+  margin: var(--sp-4) 0 0 !important;
+}
+
+.ui-dialog.modal p.buttons a {
+  font-size: var(--text-sm) !important;
+  color: var(--c-text-muted) !important;
+  text-decoration: none !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  border-radius: var(--r) !important;
+  border: 1px solid var(--c-border) !important;
+  transition: background var(--t-fast) !important;
+}
+
+.ui-dialog.modal p.buttons a:hover {
+  background: var(--c-surface-2) !important;
+  color: var(--c-text) !important;
+}
+
+/* Dark mode for modal */
+html.dark-mode .ui-dialog.modal,
+html.dark-mode .ui-dialog.modal .ui-dialog-titlebar,
+html.dark-mode .ui-dialog.modal .ui-dialog-content { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+html.dark-mode .ui-dialog.modal .ui-dialog-title { color: var(--c-text) !important; }
+html.dark-mode #users_for_watcher { background: var(--c-surface-2) !important; border-color: var(--c-border) !important; }
+
+/* ══════════════════════════════════════════════════════════
+   COMPREHENSIVE DARK MODE — systematic hardcoded-color fixes
+   ══════════════════════════════════════════════════════════ */
+
+/* ── Table th cells (e.g. Issue tracking on overview) ── */
+html.dark-mode table th,
+html.dark-mode table.list th { background: var(--c-surface-2) !important; color: var(--c-text-muted) !important; border-color: var(--c-border) !important; }
+html.dark-mode table.list td { border-color: var(--c-border) !important; }
+html.dark-mode table.issue-report tr.total,
+html.dark-mode table.issue-report-detailed tr.total { border-top-color: var(--c-border) !important; }
+
+/* Group header rows (tr.group) */
+html.dark-mode tr.group td,
+html.dark-mode tr.group { background: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+
+/* Total/summary rows */
+html.dark-mode table#time-report tbody tr.total { background: var(--c-surface-2) !important; }
+/* Class-based odd/even (issue list with odd-even class) */
+html.dark-mode table.list tbody tr.odd  { background: var(--c-surface) !important; }
+html.dark-mode table.list tbody tr.even { background: var(--c-surface-2) !important; }
+/* nth-child alternating rows (overview, most non-issue-list tables) */
+html.dark-mode table.list:not(.odd-even) tbody tr:nth-child(odd),
+html.dark-mode .odd { background-color: var(--c-surface) !important; }
+html.dark-mode table.list:not(.odd-even) tbody tr:nth-child(even),
+html.dark-mode .even { background-color: var(--c-surface-2) !important; }
+html.dark-mode table.list:not(.odd-even) tbody tr:nth-child(odd):hover,
+html.dark-mode table.list:not(.odd-even) tbody tr:nth-child(even):hover,
+html.dark-mode .odd:hover,
+html.dark-mode .even:hover { background-color: var(--c-primary-light) !important; }
+/* #issue-changesets alternating (same pattern) */
+html.dark-mode #issue-changesets div.changeset:nth-child(odd)  { background: var(--c-surface) !important; }
+html.dark-mode #issue-changesets div.changeset:nth-child(even) { background: var(--c-surface-2) !important; }
+
+/* ── Flash messages (backgrounds) ── */
+html.dark-mode div.flash.error,
+html.dark-mode #errorExplanation { background-color: rgba(239,68,68,.15) !important; border-color: rgba(239,68,68,.4) !important; color: #FCA5A5 !important; }
+html.dark-mode div.flash.notice  { background-color: rgba(16,185,129,.12) !important; border-color: rgba(16,185,129,.35) !important; color: #6EE7B7 !important; }
+html.dark-mode div.flash.warning,
+html.dark-mode .conflict          { background-color: rgba(245,158,11,.12) !important; border-color: rgba(245,158,11,.35) !important; color: #FCD34D !important; }
+
+/* ── Context menu (context_menu.css) ── */
+html.dark-mode #context-menu ul  { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+html.dark-mode #context-menu li  { border-color: var(--c-surface) !important; color: var(--c-text) !important; }
+html.dark-mode #context-menu li a { color: var(--c-text) !important; }
+html.dark-mode #context-menu li:hover { background: var(--c-primary-light) !important; border-color: var(--c-primary) !important; }
+html.dark-mode #context-menu li:hover a { color: var(--c-primary) !important; }
+html.dark-mode #context-menu li a.disabled { color: var(--c-text-subtle) !important; }
+
+/* ── Calendar ── */
+html.dark-mode .cal table { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+html.dark-mode .cal .calhead,
+html.dark-mode .cal .week-number { background: var(--c-surface-2) !important; color: var(--c-text-muted) !important; border-color: var(--c-border) !important; }
+html.dark-mode .cal td,
+html.dark-mode .cal .calbody { background: var(--c-surface) !important; border-color: var(--c-border) !important; color: var(--c-text) !important; }
+html.dark-mode .cal .calbody.other-month { background: var(--c-surface-2) !important; }
+html.dark-mode .cal .calbody.nwday:not(.other-month) { background: rgba(8,145,178,.06) !important; }
+html.dark-mode .cal .calbody.today { background: rgba(34,211,238,.12) !important; }
+html.dark-mode .cal .calbody.other-month p.day-num { color: var(--c-text-subtle) !important; }
+
+/* ── Diff highlighting ── */
+html.dark-mode .diff_out { background: rgba(239,68,68,.15) !important; }
+html.dark-mode .diff_out span { background: rgba(239,68,68,.3) !important; }
+html.dark-mode .diff_in  { background: rgba(16,185,129,.12) !important; }
+html.dark-mode .diff_in span  { background: rgba(16,185,129,.25) !important; }
+
+/* ── Syntax / code highlighting ── */
+html.dark-mode .syntaxhl { background: var(--c-surface-2) !important; color: var(--c-text) !important; }
+html.dark-mode .syntaxhl .hll { background: rgba(245,158,11,.2) !important; }
+html.dark-mode .syntaxhl .k,
+html.dark-mode .syntaxhl .kd,
+html.dark-mode .syntaxhl .kn { color: #93C5FD !important; }
+html.dark-mode .syntaxhl .s,
+html.dark-mode .syntaxhl .s1,
+html.dark-mode .syntaxhl .s2 { color: #86EFAC !important; background: transparent !important; }
+html.dark-mode .syntaxhl .c,
+html.dark-mode .syntaxhl .cm,
+html.dark-mode .syntaxhl .c1 { color: var(--c-text-subtle) !important; }
+html.dark-mode .syntaxhl .n,
+html.dark-mode .syntaxhl .na { color: var(--c-text) !important; }
+
+/* ── Search/text highlight ── */
+html.dark-mode .highlight { background: rgba(245,158,11,.3) !important; color: var(--c-text) !important; }
+html.dark-mode .highlight.token-1 { background: rgba(239,68,68,.25) !important; }
+html.dark-mode .highlight.token-2 { background: rgba(8,145,178,.25) !important; }
+
+/* ── User mentions ── */
+html.dark-mode a.user.user-mention { background: var(--c-primary-light) !important; color: var(--c-primary) !important; }
+
+/* ── Progress bar cells (issue tracker) ── */
+html.dark-mode table.progress td.todo   { background: var(--c-border) !important; }
+html.dark-mode table.progress td.done   { background: rgba(16,185,129,.35) !important; }
+html.dark-mode table.progress td.closed { background: rgba(16,185,129,.6) !important; }
+
+/* ── Attachments / thumbnails ── */
+html.dark-mode div.thumbnail { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+
+/* ── Permissions table ── */
+html.dark-mode table.fields_permissions td.readonly { background: var(--c-surface-2) !important; }
+html.dark-mode table.fields_permissions td.required { background: rgba(239,68,68,.2) !important; }
+
+/* ── Roadmap version summary ── */
+html.dark-mode div#version-summary,
+html.dark-mode div#issue-changesets { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+
+/* ── Nodata / warning inline ── */
+html.dark-mode p.nodata,
+html.dark-mode .nodata { color: var(--c-text-muted) !important; }
+
+/* ── Login form ── */
+html.dark-mode #login-form { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+
+/* ── Sidebar hr ── */
+html.dark-mode #sidebar hr { background: var(--c-border) !important; border-color: var(--c-border) !important; }
+
+/* ── Wiki target highlight ── */
+html.dark-mode div.wiki a:target + h1,
+html.dark-mode div.wiki a:target + h2,
+html.dark-mode div.wiki a:target + h3 { background: var(--c-primary-light) !important; }
+
+/* ── Gantt & SCM areas ── */
+html.dark-mode div#gantt_area { background: var(--c-surface) !important; }
+html.dark-mode .gantt_hdr { background: var(--c-surface-2) !important; border-color: var(--c-border) !important; color: var(--c-text-muted) !important; }
+
+/* ── Generic missing borders ── */
+html.dark-mode .box,
+html.dark-mode .box h3 { border-color: var(--c-border) !important; }
+html.dark-mode hr { border-color: var(--c-border) !important; background: var(--c-border) !important; }
