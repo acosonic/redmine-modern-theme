@@ -1444,6 +1444,7 @@ html.dark-mode .tabular label { color: var(--c-text-muted) !important; }
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  margin: 0px !important;
 }
 .ui-dialog.modal .ui-dialog-titlebar-close .ui-icon-closethick::before {
   content: '×' !important;
