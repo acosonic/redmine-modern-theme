@@ -365,8 +365,8 @@ body {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 36px !important;
-  height: 36px !important;
+  width: 41px !important;
+  height: 41px !important;
   padding: 0 !important;
   margin: auto var(--sp-3) auto 0 !important;
   background: var(--c-primary) !important;
