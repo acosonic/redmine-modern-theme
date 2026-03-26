@@ -803,7 +803,7 @@ a.icon.icon-add:hover .icon-svg { stroke: white !important; }
 .contextual a.icon:hover .icon-svg { stroke: var(--c-primary) !important; }
 a.icon:hover .icon-svg { stroke: var(--c-primary) !important; }
 
-input[type=submit], input[type=button], button.button {
+input[type=submit], button.button {
   display: inline-flex !important;
   align-items: center !important;
   gap: var(--sp-2) !important;
@@ -818,6 +818,23 @@ input[type=submit], input[type=button], button.button {
   color: var(--c-text) !important;
   transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast) !important;
   line-height: 1.5 !important;
+}
+
+/* input[type=button] kept as inline-block so value arrows (→ ← ⇈ ↑ ↓ ⇊) render correctly */
+input[type=button] {
+  display: inline-block !important;
+  padding: var(--sp-1) var(--sp-2) !important;
+  font-size: var(--text-base) !important;
+  font-family: inherit !important;
+  border-radius: var(--r) !important;
+  cursor: pointer !important;
+  border: 1px solid var(--c-border) !important;
+  background: var(--c-surface-2) !important;
+  color: var(--c-text) !important;
+  transition: background var(--t-fast), border-color var(--t-fast) !important;
+  line-height: 1 !important;
+  text-align: center !important;
+  vertical-align: middle !important;
 }
 
 input[type=submit] {
