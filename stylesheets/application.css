@@ -373,7 +373,7 @@ body {
   color: white !important;
   border: none !important;
   border-bottom: none !important;
-  border-radius: 50% !important;
+  border-radius: var(--r-md) !important;
   font-size: 22px !important;
   font-weight: 400 !important;
   line-height: 1 !important;
