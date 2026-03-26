@@ -1463,10 +1463,14 @@ html.dark-mode .tabular label { color: var(--c-text-muted) !important; }
   font-size: var(--text-sm) !important;
 }
 
-/* Overlay backdrop */
+/* Overlay backdrop — must be above fixed header (z-index:1000) and nav (z-index:999) */
 .ui-widget-overlay {
   background: rgb(0 0 0 / .45) !important;
   opacity: 1 !important;
+  z-index: 1050 !important;
+}
+.ui-dialog {
+  z-index: 1051 !important;
 }
 
 /* Watcher user list */
