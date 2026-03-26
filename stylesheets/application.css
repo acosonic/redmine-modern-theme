@@ -360,34 +360,33 @@ body {
   background: transparent !important;
 }
 
-/* ── "+ New object" button — distinct from nav tabs ─────── */
+/* ── "+ New object" button — circle icon in nav bar ─────── */
 #main-menu a#new-object {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 0 var(--sp-4) !important;
-  height: 40px !important;
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
   margin: auto var(--sp-3) auto 0 !important;
   background: var(--c-primary) !important;
   color: white !important;
   border: none !important;
   border-bottom: none !important;
-  border-radius: 20px !important;
-  font-size: var(--text-base) !important;
-  font-weight: 700 !important;
+  border-radius: 50% !important;
+  font-size: 22px !important;
+  font-weight: 400 !important;
   line-height: 1 !important;
-  letter-spacing: .02em !important;
   cursor: pointer !important;
-  transition: background var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast) !important;
-  box-shadow: 0 2px 8px rgba(8,145,178,.35) !important;
+  flex-shrink: 0 !important;
+  transition: background var(--t-fast), transform var(--t-fast) !important;
 }
 
 #main-menu a#new-object:hover {
   background: var(--c-primary-hover) !important;
   color: white !important;
   border-bottom: none !important;
-  box-shadow: 0 4px 14px rgba(8,145,178,.45) !important;
-  transform: translateY(-1px) !important;
+  transform: scale(1.08) !important;
 }
 
 #main-menu ul li a.selected,
