@@ -540,6 +540,10 @@ body.sidebar-collapsed #rm-sidebar-toggle {
   margin-bottom: var(--sp-4) !important;
 }
 
+/* The table inside .autoscroll must not add its own outer border —
+   the wrapper already provides one, and a second border-top creates a double line */
+.autoscroll table { border-top: none !important; border-bottom: none !important; }
+
 table.list {
   width: 100% !important;
   border-collapse: collapse !important;
