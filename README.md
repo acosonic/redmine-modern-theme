@@ -2,18 +2,6 @@
 
 A clean, modern UI theme for Redmine 6 with dark mode, collapsible sidebar, and design tokens.
 
-## Screenshots
-
-### Light Mode
-![Projects — light mode](screenshots/light-projects.png)
-![Issues list — light mode](screenshots/light-issues.png)
-![Issue detail — light mode](screenshots/light-issue-detail.png)
-
-### Dark Mode
-![Projects — dark mode](screenshots/dark-projects.png)
-![Issues list — dark mode](screenshots/dark-issues.png)
-![Issue detail — dark mode](screenshots/dark-issue-detail.png)
-
 ## Features
 
 - Dark / light mode toggle (persisted per browser, no flash on load)
@@ -114,3 +102,49 @@ Contributions are welcome. Please follow these guidelines:
 ## License
 
 MIT
+
+---
+
+## Screenshots
+
+### Projects & Dashboard
+
+| Light | Dark |
+|-------|------|
+| ![My page — light](screenshots/light-my-page.png) | ![My page — dark](screenshots/dark-my-page.png) |
+| ![Projects list — light](screenshots/light-projects.png) | ![Projects list — dark](screenshots/dark-projects.png) |
+
+### Issues & Filters
+
+| Light | Dark |
+|-------|------|
+| ![Issues list — light](screenshots/light-issues.png) | ![Issues list — dark](screenshots/dark-issues.png) |
+| ![Issues with filters — light](screenshots/light-filters.png) | |
+
+### Issue Detail & Edit
+
+| Light | Dark |
+|-------|------|
+| ![Issue detail — light](screenshots/light-issue-detail.png) | ![Issue detail — dark](screenshots/dark-issue-detail.png) |
+| ![Issue edit — light](screenshots/light-issue-edit.png) | ![Issue edit — dark](screenshots/dark-issue-edit.png) |
+
+### Watchers Modal
+
+| Light | Dark |
+|-------|------|
+| ![Add watchers — light](screenshots/light-watchers-modal.png) | ![Add watchers — dark](screenshots/dark-watchers-modal.png) |
+
+### Activity & News
+
+| Light | Dark |
+|-------|------|
+| ![Activity — light](screenshots/light-activity.png) | ![Activity — dark](screenshots/dark-activity.png) |
+| ![News — light](screenshots/light-news.png) | |
+
+### Project Settings & Administration
+
+| Light | Dark |
+|-------|------|
+| ![Project settings — light](screenshots/light-project-settings.png) | ![Project settings — dark](screenshots/dark-project-settings.png) |
+| ![Administration — light](screenshots/light-admin.png) | ![Administration — dark](screenshots/dark-admin.png) |
+| ![Admin users — light](screenshots/light-admin-users.png) | |
