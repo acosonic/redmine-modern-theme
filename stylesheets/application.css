@@ -807,7 +807,8 @@ input[type=submit], button.button {
   display: inline-flex !important;
   align-items: center !important;
   gap: var(--sp-2) !important;
-  padding: var(--sp-2) var(--sp-4) !important;
+  padding: 0 var(--sp-4) !important;
+  height: 36px !important;
   font-size: var(--text-sm) !important;
   font-weight: 500 !important;
   font-family: var(--font-sans) !important;
@@ -817,7 +818,28 @@ input[type=submit], button.button {
   background: var(--c-surface-2) !important;
   color: var(--c-text) !important;
   transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast) !important;
-  line-height: 1.5 !important;
+  line-height: 1 !important;
+}
+
+/* Cancel / secondary action links adjacent to submit buttons */
+input[type=submit] + a, button.button + a, .submit + a {
+  display: inline-flex !important;
+  align-items: center !important;
+  height: 36px !important;
+  padding: 0 var(--sp-4) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  border-radius: var(--r) !important;
+  border: 1px solid var(--c-border) !important;
+  color: var(--c-text-muted) !important;
+  text-decoration: none !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  transition: background var(--t-fast), color var(--t-fast) !important;
+}
+input[type=submit] + a:hover, button.button + a:hover {
+  background: var(--c-surface-2) !important;
+  color: var(--c-text) !important;
 }
 
 /* input[type=button] kept as inline-block so value arrows (→ ← ⇈ ↑ ↓ ⇊) render correctly */
@@ -1399,7 +1421,6 @@ html.dark-mode .tabular label { color: var(--c-text-muted) !important; }
   color: var(--c-text-muted) !important;
   padding: 0 !important;
   margin: 0 !important;
-  font-size: 14px !important;
   line-height: 1 !important;
   transition: background var(--t-fast), border-color var(--t-fast) !important;
 }
@@ -1410,9 +1431,27 @@ html.dark-mode .tabular label { color: var(--c-text-muted) !important; }
   color: var(--c-text) !important;
 }
 
-/* Hide jQuery UI's sprite icon, show × via text */
-.ui-dialog.modal .ui-dialog-titlebar-close .ui-icon { display: none !important; }
-.ui-dialog.modal .ui-dialog-titlebar-close::after  { content: '×' !important; font-size: 18px !important; }
+/* Show × close button: hide space+text, replace icon via ::before */
+.ui-dialog.modal .ui-dialog-titlebar-close { font-size: 0 !important; }
+.ui-dialog.modal .ui-dialog-titlebar-close .ui-button-icon-space { display: none !important; }
+.ui-dialog.modal .ui-dialog-titlebar-close .ui-icon-closethick {
+  background-image: none !important;
+  width: auto !important;
+  height: auto !important;
+  text-indent: 0 !important;
+  visibility: visible !important;
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.ui-dialog.modal .ui-dialog-titlebar-close .ui-icon-closethick::before {
+  content: '×' !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+  color: var(--c-text-muted) !important;
+  font-family: var(--font-sans) !important;
+}
 
 .ui-dialog.modal .ui-dialog-content {
   background: var(--c-surface) !important;
@@ -1474,6 +1513,13 @@ html.dark-mode .tabular label { color: var(--c-text-muted) !important; }
 .ui-dialog.modal p.buttons a:hover {
   background: var(--c-surface-2) !important;
   color: var(--c-text) !important;
+}
+
+.ui-dialog.modal p.buttons input[type=submit] {
+  height: 36px !important;
+  padding: 0 var(--sp-5) !important;
+  font-size: var(--text-sm) !important;
+  min-width: 80px !important;
 }
 
 /* Dark mode for modal */
@@ -1587,9 +1633,12 @@ html.dark-mode table.fields_permissions td.required { background: rgba(239,68,68
 html.dark-mode div#version-summary,
 html.dark-mode div#issue-changesets { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
 
-/* ── Nodata / warning inline ── */
-html.dark-mode p.nodata,
-html.dark-mode .nodata { color: var(--c-text-muted) !important; }
+/* ── Nodata / warning inline — remove yellow in all modes ── */
+p.nodata, .nodata {
+  background: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text-muted) !important;
+}
 
 /* ── Login form ── */
 html.dark-mode #login-form { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
@@ -1621,3 +1670,30 @@ html.dark-mode #projects-index ul.projects div.description { color: var(--c-text
 /* ── Nav tabs active state — override Redmine's hardcoded #fff background ── */
 html.dark-mode #main-menu li a.selected,
 html.dark-mode #main-menu li a.selected:hover { background: transparent !important; color: var(--c-primary) !important; }
+
+/* ── Activity page day headers ── */
+html.dark-mode #activity h3 {
+  background: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+
+/* ── Sidebar clear-query icon — ensure SVG renders ── */
+a.icon-clear-query .icon-svg { display: block !important; }
+a.icon-clear-query .icon-label { display: none !important; }
+a.icon-clear-query {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 20px !important;
+  height: 20px !important;
+  flex-shrink: 0 !important;
+}
+
+/* ── My page block drag areas ── */
+html.dark-mode .mypage-box { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+html.dark-mode .block-receiver { border-color: var(--c-border) !important; }
+
+/* ── Activity page user/filter inputs in sidebar ── */
+html.dark-mode #sidebar input[type=text],
+html.dark-mode #sidebar select { background: var(--c-surface-2) !important; border-color: var(--c-border) !important; color: var(--c-text) !important; }
