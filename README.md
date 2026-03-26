@@ -83,6 +83,7 @@ The CSS starts with `@import url('../../application.css')` which pulls in Redmin
 | [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
 | [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Design token system |
 | [Puppeteer](https://pptr.dev/) | Screenshot automation for README images |
+| [Tailwind CSS](https://tailwindcss.com/) | Design token methodology and spacing/colour scale inspiration |
 
 Design inspired by modern SaaS dashboards (Linear, GitHub, Notion).
 
