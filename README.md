@@ -2,6 +2,18 @@
 
 A clean, modern UI theme for Redmine 6 with dark mode, collapsible sidebar, and design tokens.
 
+## Screenshots
+
+### Light Mode
+![Projects — light mode](screenshots/light-projects.png)
+![Issues list — light mode](screenshots/light-issues.png)
+![Issue detail — light mode](screenshots/light-issue-detail.png)
+
+### Dark Mode
+![Projects — dark mode](screenshots/dark-projects.png)
+![Issues list — dark mode](screenshots/dark-issues.png)
+![Issue detail — dark mode](screenshots/dark-issue-detail.png)
+
 ## Features
 
 - Dark / light mode toggle (persisted per browser, no flash on load)

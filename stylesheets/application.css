@@ -365,6 +365,7 @@ body {
   color: var(--c-primary) !important;
   border-bottom-color: var(--c-primary) !important;
   font-weight: 600 !important;
+  background: transparent !important; /* override Redmine's hardcoded #fff */
 }
 
 .tabs-buttons { display: none !important; }
@@ -1559,3 +1560,14 @@ html.dark-mode .gantt_hdr { background: var(--c-surface-2) !important; border-co
 html.dark-mode .box,
 html.dark-mode .box h3 { border-color: var(--c-border) !important; }
 html.dark-mode hr { border-color: var(--c-border) !important; background: var(--c-border) !important; }
+
+/* ── Project cards (#projects-index) ── */
+html.dark-mode #projects-index ul.projects li.root,
+html.dark-mode #projects-index ul.projects li.child { border-color: var(--c-border) !important; background: var(--c-surface) !important; }
+html.dark-mode #projects-index li.root ul.projects { border-left-color: var(--c-border) !important; }
+html.dark-mode #projects-index ul.projects div.root a.project { color: var(--c-primary) !important; }
+html.dark-mode #projects-index ul.projects div.description { color: var(--c-text-muted) !important; }
+
+/* ── Nav tabs active state — override Redmine's hardcoded #fff background ── */
+html.dark-mode #main-menu li a.selected,
+html.dark-mode #main-menu li a.selected:hover { background: transparent !important; color: var(--c-primary) !important; }
