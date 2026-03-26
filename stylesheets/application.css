@@ -1,4 +1,22 @@
 /* ============================================================
+   MODERN REDMINE THEME — application.css
+   Drop-in Redmine 6 theme: dark mode, collapsible sidebar,
+   Inter font, modern card layout, design tokens.
+
+   This file is served INSTEAD of Redmine's default application.css
+   when this theme is active. It first imports the Redmine defaults,
+   then applies overrides.
+   ============================================================ */
+
+/* Load Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* Load Redmine's default application.css first.
+   Relative path: theme lives at themes/modern-redmine-theme/stylesheets/
+   so ../../application.css resolves to /assets/application.css          */
+@import url('../../application.css');
+
+/* ============================================================
    MODERN REDMINE THEME — design tokens + layout + components
    ============================================================ */
 

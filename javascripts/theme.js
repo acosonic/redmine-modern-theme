@@ -1,7 +1,17 @@
 /* ============================================================
-   MODERN REDMINE THEME — vanilla JS
-   Sidebar toggle | Dark mode | Toasts | Collapsible sections
+   MODERN REDMINE THEME — theme.js
+   Auto-loaded by Redmine's heads_for_theme in <head>.
+
+   IMPORTANT: The early dark-mode block runs SYNCHRONOUSLY so the
+   html.dark-mode class is set before the body renders — no flash.
    ============================================================ */
+
+/* ── EARLY DARK MODE (synchronous — must stay at top level) ── */
+if (localStorage.getItem('rm-dark') === '1') {
+  document.documentElement.classList.add('dark-mode');
+}
+
+/* ── REST runs after DOM is ready ──────────────────────────── */
 (function () {
   'use strict';
 
@@ -43,7 +53,6 @@
   function initSidebar() {
     var main    = qs('#main');
     var sidebar = qs('#sidebar');
-    var wrapper = qs('#sidebar-wrapper');
     if (!main || !sidebar || !main.classList.contains('collapsiblesidebar')) return;
 
     // Inject button at the top of sidebar-wrapper

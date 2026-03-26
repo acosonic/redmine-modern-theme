@@ -4,39 +4,41 @@ A clean, modern UI theme for Redmine 6 with dark mode, collapsible sidebar, and 
 
 ## Features
 
-- Dark / light mode toggle (persisted per browser)
+- Dark / light mode toggle (persisted per browser, no flash on load)
 - Collapsible left sidebar (persisted per browser)
 - Design tokens — change the entire palette by editing 3 lines
 - Inter font, modern card layout, smooth transitions
 - Toast notifications, collapsible issue sections
-- No backend changes required
+- **Zero layout changes required** — drop in and select in Admin settings
 
 ## Install
 
+Copy (or symlink) this directory into your Redmine's `themes/` folder:
+
 ```bash
+cp -r modern-redmine-theme /path/to/redmine/themes/
+```
+
+Or clone directly:
+
+```bash
+cd /path/to/redmine/themes
 git clone <repo-url> modern-redmine-theme
-cd modern-redmine-theme
-bash install.sh /path/to/your/redmine
 ```
 
-Then restart Redmine:
-
-```bash
-cd /path/to/your/redmine
-bundle exec rails server
-```
+Then restart Redmine and go to **Administration → Settings → Display → Theme**, select **Modern redmine theme**, and save.
 
 ## Uninstall
 
-```bash
-bash uninstall.sh /path/to/your/redmine
-```
+Select a different theme (or "Default") in Admin settings, then delete the folder:
 
-Restores the original `base.html.erb` from the backup created during install.
+```bash
+rm -rf /path/to/redmine/themes/modern-redmine-theme
+```
 
 ## Customise colours
 
-Open `stylesheets/modern_theme.css` and edit the tokens at the top of `:root`:
+Open `stylesheets/application.css` and edit the tokens near the top of `:root`:
 
 ```css
 --c-primary:       #0891B2;  /* accent colour (light mode) */
@@ -46,14 +48,17 @@ Open `stylesheets/modern_theme.css` and edit the tokens at the top of `:root`:
 
 Dark-mode overrides live in the `html.dark-mode { … }` block directly below.
 
-## Files changed in Redmine
-
-| File | Change |
-|------|--------|
-| `app/assets/stylesheets/modern_theme.css` | Added (theme stylesheet) |
-| `public/javascripts/modern_theme.js` | Added (sidebar, dark mode, toasts) |
-| `app/views/layouts/base.html.erb` | Modified (loads Inter font, Tailwind CDN, theme files) |
-
 ## Compatibility
 
 Tested on Redmine 6.x with Propshaft asset pipeline.
+
+## How it works
+
+Redmine's theme system auto-loads:
+
+| File | How it loads |
+|------|-------------|
+| `stylesheets/application.css` | Replaces default `application.css` via `stylesheet_link_tag` override |
+| `javascripts/theme.js` | Auto-included in `<head>` via `heads_for_theme` helper |
+
+The CSS starts with `@import url('../../application.css')` which pulls in Redmine's default styles before applying overrides, so no Redmine source files are modified.
