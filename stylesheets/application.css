@@ -1436,8 +1436,8 @@ html.dark-mode .tabular label { color: var(--c-text-muted) !important; }
 .ui-dialog.modal .ui-dialog-titlebar-close .ui-button-icon-space { display: none !important; }
 .ui-dialog.modal .ui-dialog-titlebar-close .ui-icon-closethick {
   background-image: none !important;
-  width: auto !important;
-  height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
   text-indent: 0 !important;
   visibility: visible !important;
   position: static !important;
