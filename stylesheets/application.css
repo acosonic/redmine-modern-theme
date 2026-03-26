@@ -469,6 +469,13 @@ body {
   transition: background var(--t-fast), color var(--t-fast) !important;
 }
 
+/* Don't flex links inside labels (e.g. activity filter links) */
+#sidebar ul li label a {
+  display: inline !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
 #sidebar ul li a:hover,
 #sidebar ul li.selected a {
   background: var(--c-primary-light) !important;
