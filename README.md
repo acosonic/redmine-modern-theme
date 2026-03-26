@@ -19,8 +19,9 @@ A clean, modern UI theme for Redmine 6 with dark mode, collapsible sidebar, and 
 - Dark / light mode toggle (persisted per browser, no flash on load)
 - Collapsible left sidebar (persisted per browser)
 - Design tokens — change the entire palette by editing 3 lines
-- Inter font, modern card layout, smooth transitions
+- Inter font (via Google Fonts), modern card layout, smooth transitions
 - Toast notifications, collapsible issue sections
+- Properly styled jQuery UI modals (watchers, etc.) with full-page overlay
 - **Zero layout changes required** — drop in and select in Admin settings
 
 ## Install
@@ -35,7 +36,7 @@ Or clone directly:
 
 ```bash
 cd /path/to/redmine/themes
-git clone <repo-url> modern-redmine-theme
+git clone https://github.com/acosonic/redmine-modern-theme modern-redmine-theme
 ```
 
 Then restart Redmine and go to **Administration → Settings → Display → Theme**, select **Modern redmine theme**, and save.
@@ -74,3 +75,42 @@ Redmine's theme system auto-loads:
 | `javascripts/theme.js` | Auto-included in `<head>` via `heads_for_theme` helper |
 
 The CSS starts with `@import url('../../application.css')` which pulls in Redmine's default styles before applying overrides, so no Redmine source files are modified.
+
+## Built with / References
+
+| Technology | Purpose |
+|-----------|---------|
+| [Inter](https://rsms.me/inter/) | UI typeface (loaded via Google Fonts) |
+| [jQuery UI](https://jqueryui.com/) | Dialog/modal system (bundled with Redmine) |
+| [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
+| [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Design token system |
+| [Puppeteer](https://pptr.dev/) | Screenshot automation for README images |
+
+Design inspired by modern SaaS dashboards (Linear, GitHub, Notion).
+
+## Contributing
+
+Contributions are welcome. Please follow these guidelines:
+
+**Bug reports**
+- Open an issue and include your Redmine version, browser, and a screenshot.
+
+**Pull requests**
+1. Fork the repo and create a branch: `git checkout -b fix/my-fix`
+2. Edit only `stylesheets/application.css` and/or `javascripts/theme.js` — do not modify Redmine core files.
+3. Test in both light and dark mode.
+4. Test at 1280px and 1440px viewport widths.
+5. Keep CSS changes scoped — prefer specific selectors over broad resets.
+6. Open a PR with a short description and before/after screenshots if visual.
+
+**Token / colour changes**
+- New colour variables belong in the `:root { }` block at the top of `application.css`.
+- Dark-mode overrides go in the `html.dark-mode { }` block.
+- Do not use hardcoded hex values outside of those two blocks.
+
+**JS changes**
+- `theme.js` must keep the synchronous dark-mode early-init block at the very top (before `DOMContentLoaded`) to prevent flash of light mode.
+
+## License
+
+MIT
