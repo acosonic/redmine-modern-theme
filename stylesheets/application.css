@@ -476,6 +476,25 @@ body {
   border-radius: 0 !important;
 }
 
+/* Activity filter form: Redmine sets form{display:inline} globally — override */
+#activity_scope_form {
+  display: block !important;
+}
+
+/* Activity filter list items: inline checkbox + label */
+#activity_scope_form ul li {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  padding: var(--sp-1) 0 !important;
+}
+
+/* Center the Apply button */
+#activity_scope_form p:last-child {
+  text-align: center !important;
+  margin-top: var(--sp-3) !important;
+}
+
 #sidebar ul li a:hover,
 #sidebar ul li.selected a {
   background: var(--c-primary-light) !important;
