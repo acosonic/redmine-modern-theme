@@ -365,27 +365,29 @@ body {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 0 var(--sp-3) !important;
-  height: 26px !important;
+  padding: 0 var(--sp-4) !important;
+  height: 40px !important;
   margin: auto var(--sp-3) auto 0 !important;
   background: var(--c-primary) !important;
   color: white !important;
   border: none !important;
   border-bottom: none !important;
-  border-radius: var(--r) !important;
-  font-size: var(--text-sm) !important;
+  border-radius: 20px !important;
+  font-size: var(--text-base) !important;
   font-weight: 700 !important;
-  letter-spacing: .05em !important;
+  line-height: 1 !important;
+  letter-spacing: .02em !important;
   cursor: pointer !important;
-  transition: background var(--t-fast), box-shadow var(--t-fast) !important;
-  box-shadow: var(--shadow-xs) !important;
+  transition: background var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast) !important;
+  box-shadow: 0 2px 8px rgba(8,145,178,.35) !important;
 }
 
 #main-menu a#new-object:hover {
   background: var(--c-primary-hover) !important;
   color: white !important;
   border-bottom: none !important;
-  box-shadow: var(--shadow-sm) !important;
+  box-shadow: 0 4px 14px rgba(8,145,178,.45) !important;
+  transform: translateY(-1px) !important;
 }
 
 #main-menu ul li a.selected,
