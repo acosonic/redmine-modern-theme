@@ -7,9 +7,13 @@
    ============================================================ */
 
 /* ── EARLY DARK MODE (synchronous — must stay at top level) ── */
-if (localStorage.getItem('rm-dark') === '1') {
-  document.documentElement.classList.add('dark-mode');
-}
+(function () {
+  var stored = localStorage.getItem('rm-dark');
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  if (stored === '1' || (stored === null && prefersDark)) {
+    document.documentElement.classList.add('dark-mode');
+  }
+}());
 
 /* ── REST runs after DOM is ready ──────────────────────────── */
 (function () {
