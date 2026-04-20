@@ -546,6 +546,16 @@ body.sidebar-collapsed #rm-sidebar-toggle {
 
 #main.nosidebar #content { padding-left: var(--sp-6) !important; }
 
+/* ── Overview two-column layout ─────────────────────────── */
+.splitcontent { align-items: flex-start !important; gap: var(--sp-4) !important; }
+.splitcontentleft,
+.splitcontentright {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  padding: var(--sp-4) !important;
+}
+
 /* ── 9. CONTEXTUAL ACTIONS ───────────────────────────────── */
 .contextual {
   display: flex !important;
@@ -1215,13 +1225,14 @@ h2 { font-size: var(--text-xl) !important; font-weight: 700 !important; color: v
 h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color: var(--c-text) !important; }
 
 /* ── 26. RESPONSIVE ──────────────────────────────────────── */
-@media (max-width: 768px) {
+@media (max-width: 899px) {
+  /* Sidebar — slides in from left as overlay */
   #sidebar {
     position: fixed !important;
     top: var(--total-top) !important;
     left: 0 !important;
     height: calc(100vh - var(--total-top)) !important;
-    z-index: 997 !important;
+    z-index: 1049 !important;
     transform: translateX(-100%) !important;
     transition: transform var(--t) !important;
     box-shadow: var(--shadow-lg) !important;
@@ -1229,13 +1240,78 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
     min-width: var(--sidebar-w) !important;
     opacity: 1 !important;
   }
-
   #main.sidebar-open #sidebar { transform: translateX(0) !important; }
   #main.sidebar-collapsed #sidebar { transform: translateX(-100%) !important; }
 
-  #content { padding: var(--sp-4) !important; }
-  #header h1 { font-size: var(--text-lg) !important; }
-  #quick-search { display: none !important; }
+  /* Main content fills full width when sidebar is off-screen */
+  #main { flex-direction: column !important; }
+  #content {
+    padding: var(--sp-3) !important;
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  /* Topbar + header — not fixed on mobile, scroll with page */
+  #top-menu {
+    position: static !important;
+    flex-wrap: wrap !important;
+    padding: 0 var(--sp-2) !important;
+    height: auto !important;
+    min-height: 44px !important;
+  }
+  #top-menu ul { flex-wrap: wrap !important; gap: 0 !important; }
+  #top-menu li a { padding: var(--sp-1) var(--sp-2) !important; font-size: 12px !important; }
+
+  #header { display: none !important; }
+
+  /* Remove JS-calculated top margin/padding — not needed when header scrolls */
+  #main { margin-top: 0 !important; padding-top: 0 !important; }
+  #rm-sidebar-toggle { top: var(--sp-3) !important; position: fixed !important; }
+
+  /* Nav tabs — static on mobile, scroll horizontally */
+  #main-menu {
+    position: static !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+  }
+  #main-menu::-webkit-scrollbar { display: none !important; }
+  #main-menu ul {
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
+    width: max-content !important;
+  }
+  #main-menu li a { padding: var(--sp-2) var(--sp-3) !important; font-size: var(--text-sm) !important; }
+
+  /* New-object + button */
+  #main-menu a#new-object {
+    width: 34px !important;
+    height: 34px !important;
+    font-size: 18px !important;
+    flex-shrink: 0 !important;
+  }
+
+  /* Sidebar toggle — keep it visible and accessible */
+  #rm-sidebar-toggle {
+    left: 0 !important;
+    border-radius: 0 var(--r) var(--r) 0 !important;
+    z-index: 1048 !important;
+  }
+
+  /* Overview two-column → single column */
+  .splitcontent { flex-direction: column !important; }
+  .splitcontentleft,
+  .splitcontentright { margin: 0 0 var(--sp-3) 0 !important; width: 100% !important; }
+
+  /* Tables — allow horizontal scroll */
+  .autoscroll { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+
+  /* Contextual actions — wrap */
+  .contextual { flex-wrap: wrap !important; gap: var(--sp-2) !important; }
+
+  /* Issue attributes grid — single column */
+  .attributes table td { display: block !important; width: 100% !important; }
 }
 
 /* ── DARK MODE: override Redmine's hardcoded white backgrounds ── */
