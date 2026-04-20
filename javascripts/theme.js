@@ -75,10 +75,28 @@
     }
 
     btn.addEventListener('click', function () {
-      var isCollapsed = main.classList.toggle('sidebar-collapsed');
-      document.body.classList.toggle('sidebar-collapsed', isCollapsed);
-      btn.textContent = isCollapsed ? '›' : '‹';
-      localStorage.setItem('rm-sidebar', isCollapsed ? '0' : '1');
+      if (window.innerWidth <= 899) {
+        // Mobile: overlay mode — toggle body.sidebar-open
+        var isOpen = document.body.classList.toggle('sidebar-open');
+        btn.textContent = isOpen ? '‹' : '›';
+      } else {
+        // Desktop: collapse mode
+        var isCollapsed = main.classList.toggle('sidebar-collapsed');
+        document.body.classList.toggle('sidebar-collapsed', isCollapsed);
+        btn.textContent = isCollapsed ? '›' : '‹';
+        localStorage.setItem('rm-sidebar', isCollapsed ? '0' : '1');
+      }
+    });
+
+    // Close sidebar on outside tap (mobile)
+    document.addEventListener('click', function (e) {
+      if (window.innerWidth <= 899 && document.body.classList.contains('sidebar-open')) {
+        var sidebar = qs('#sidebar');
+        if (sidebar && !sidebar.contains(e.target) && e.target !== btn) {
+          document.body.classList.remove('sidebar-open');
+          btn.textContent = '›';
+        }
+      }
     });
   }
 
@@ -184,6 +202,47 @@
     });
   }
 
+  /* ── HAMBURGER MENU (mobile) ─────────────────────────────── */
+  function initHamburger() {
+    var topMenu = qs('#top-menu');
+    if (!topMenu) return;
+
+    var btn = document.createElement('button');
+    btn.id = 'rm-hamburger';
+    btn.setAttribute('aria-label', 'Toggle menu');
+    btn.setAttribute('aria-expanded', 'false');
+    btn.innerHTML = '<span></span><span></span><span></span>';
+    topMenu.insertBefore(btn, topMenu.firstChild);
+
+    function close() {
+      document.body.classList.remove('nav-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      var open = document.body.classList.toggle('nav-open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    // close on outside tap
+    document.addEventListener('click', function (e) {
+      if (document.body.classList.contains('nav-open') && !topMenu.contains(e.target)) {
+        close();
+      }
+    });
+
+    // close when a nav link is tapped
+    topMenu.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', close);
+    });
+
+    // close on resize to desktop
+    window.addEventListener('resize', function () {
+      if (window.innerWidth > 899) close();
+    });
+  }
+
   /* ── INIT ─────────────────────────────────────────────────── */
   function init() {
     scheduleLayoutAdjust();
@@ -191,6 +250,7 @@
     initDarkMode();
     initCollapsible();
     highlightNav();
+    initHamburger();
     window.addEventListener('resize', adjustLayout);
   }
 

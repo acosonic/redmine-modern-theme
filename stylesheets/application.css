@@ -537,6 +537,36 @@ body.sidebar-collapsed #rm-sidebar-toggle {
   border-radius: 0 var(--r) var(--r) 0 !important;
 }
 
+/* ── HAMBURGER BUTTON (hidden on desktop) ─────────────────── */
+#rm-hamburger {
+  display: none;
+  flex-shrink: 0;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: var(--r);
+  margin-right: auto;
+  z-index: 1061;
+}
+#rm-hamburger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--c-topbar-text);
+  border-radius: 2px;
+  transition: transform .2s ease, opacity .2s ease;
+}
+/* Animate to X when open */
+body.nav-open #rm-hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+body.nav-open #rm-hamburger span:nth-child(2) { opacity: 0; }
+body.nav-open #rm-hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
 /* ── 8. CONTENT ──────────────────────────────────────────── */
 #content {
   flex: 1 !important;
@@ -1228,20 +1258,23 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
 @media (max-width: 899px) {
   /* Sidebar — slides in from left as overlay */
   #sidebar {
+    display: block !important;
     position: fixed !important;
-    top: var(--total-top) !important;
+    top: 44px !important;
     left: 0 !important;
-    height: calc(100vh - var(--total-top)) !important;
+    height: calc(100vh - 44px) !important;
     z-index: 1049 !important;
     transform: translateX(-100%) !important;
     transition: transform var(--t) !important;
     box-shadow: var(--shadow-lg) !important;
     width: var(--sidebar-w) !important;
     min-width: var(--sidebar-w) !important;
+    overflow-y: auto !important;
     opacity: 1 !important;
   }
-  #main.sidebar-open #sidebar { transform: translateX(0) !important; }
-  #main.sidebar-collapsed #sidebar { transform: translateX(-100%) !important; }
+  body.sidebar-open #sidebar { transform: translateX(0) !important; }
+  /* Redmine puts sidebar content in flyout on mobile — mirror it back to our sidebar */
+  .flyout-menu { display: none !important; }
 
   /* Main content fills full width when sidebar is off-screen */
   #main { flex-direction: column !important; }
@@ -1251,22 +1284,88 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
     min-width: 0 !important;
   }
 
-  /* Topbar + header — not fixed on mobile, scroll with page */
+  /* Show hamburger button on mobile */
+  #rm-hamburger { display: flex !important; }
+
+  /* Topbar — hamburger layout on mobile */
   #top-menu {
     position: static !important;
-    flex-wrap: wrap !important;
+    display: flex !important;
+    align-items: center !important;
     padding: 0 var(--sp-2) !important;
-    height: auto !important;
+    height: 44px !important;
     min-height: 44px !important;
+    overflow: visible !important;
   }
-  #top-menu ul { flex-wrap: wrap !important; gap: 0 !important; }
-  #top-menu li a { padding: var(--sp-1) var(--sp-2) !important; font-size: 12px !important; }
+  /* Hide all top-menu children except the hamburger button */
+  #top-menu > ul,
+  #top-menu #account,
+  #top-menu #loggedas {
+    display: none !important;
+  }
+  /* Dropdown panel — shown when nav-open */
+  body.nav-open #top-menu > ul,
+  body.nav-open #top-menu #account,
+  body.nav-open #top-menu #loggedas {
+    display: block !important;
+    position: absolute !important;
+    top: 44px !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    background: var(--c-topbar-bg) !important;
+    z-index: 1060 !important;
+    box-shadow: 0 4px 12px rgb(0 0 0 / .3) !important;
+    padding: 0 !important;
+    animation: navSlideDown .15s ease both !important;
+  }
+  /* Stack the three panels vertically */
+  body.nav-open #top-menu > ul    { top: 44px !important; }
+  body.nav-open #top-menu #account { top: 44px !important; border-top: 1px solid rgb(255 255 255 / .1) !important; }
+  body.nav-open #top-menu #loggedas { top: 44px !important; }
+  /* Actually use a wrapper approach via flex column on top-menu when open */
+  body.nav-open #top-menu {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    align-items: flex-start !important;
+  }
+  body.nav-open #top-menu > ul,
+  body.nav-open #top-menu #account,
+  body.nav-open #top-menu #loggedas {
+    position: static !important;
+    width: 100% !important;
+    box-shadow: none !important;
+  }
+  /* Dropdown wrapper gets the shadow */
+  body.nav-open #top-menu {
+    box-shadow: 0 6px 16px rgb(0 0 0 / .35) !important;
+  }
+  #top-menu ul li { width: 100% !important; }
+  #top-menu li a {
+    display: block !important;
+    padding: var(--sp-2) var(--sp-4) !important;
+    font-size: var(--text-sm) !important;
+    border-radius: 0 !important;
+  }
+  #top-menu li a:hover { background: rgb(255 255 255 / .08) !important; }
+  #top-menu #loggedas {
+    padding: var(--sp-2) var(--sp-4) !important;
+    font-size: var(--text-xs) !important;
+    opacity: .7 !important;
+    border-top: 1px solid rgb(255 255 255 / .1) !important;
+  }
+  #top-menu #account ul { padding: var(--sp-1) 0 !important; }
+  #top-menu #account li a { padding: var(--sp-2) var(--sp-4) !important; }
 
   #header { display: none !important; }
 
   /* Remove JS-calculated top margin/padding — not needed when header scrolls */
   #main { margin-top: 0 !important; padding-top: 0 !important; }
-  #rm-sidebar-toggle { top: var(--sp-3) !important; position: fixed !important; }
+  #rm-sidebar-toggle { position: fixed !important; }
+
+  /* Redmine's responsive.css offsets sticky-issue-header by 64px for its own flyout.
+     Our theme doesn't use that flyout, so reset to 0. */
+  div#sticky-issue-header { top: 0 !important; }
 
   /* Nav tabs — static on mobile, scroll horizontally */
   #main-menu {
