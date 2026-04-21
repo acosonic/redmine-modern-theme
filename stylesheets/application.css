@@ -1219,13 +1219,14 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
 .rm-collapsible-body.is-collapsed { max-height: 0 !important; opacity: 0 !important; }
 
 /* ── 25. TABS (settings, project settings, user tabs) ──────── */
-.tabs {
+/* Exclude .jstTabs (Edit/Preview wiki toolbar — keeps its own style) */
+.tabs:not(.jstTabs) {
   overflow: visible !important;
   height: auto !important;
 }
 /* Allow #content to expand vertically when tabs wrap */
 #content { overflow: visible !important; }
-.tabs > ul {
+.tabs:not(.jstTabs) > ul {
   display: flex !important;
   flex-wrap: wrap !important;
   width: 100% !important;
@@ -1235,23 +1236,27 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   list-style: none !important;
   margin: 0 0 var(--sp-5) !important;
   padding: 0 !important;
+  position: static !important;
 }
-.tabs > ul li { margin: 0 !important; }
-.tabs > ul li a {
+.tabs:not(.jstTabs) > ul li { margin: 0 !important; }
+.tabs:not(.jstTabs) > ul li a {
   display: block !important;
   padding: var(--sp-2) var(--sp-3) !important;
   font-size: var(--text-sm) !important;
   font-weight: 500 !important;
   color: var(--c-text-muted) !important;
   text-decoration: none !important;
+  border: none !important;
   border-bottom: 2px solid transparent !important;
+  background: none !important;
+  box-shadow: none !important;
   margin-bottom: -2px !important;
-  border-radius: var(--r) var(--r) 0 0 !important;
+  border-radius: 0 !important;
   white-space: nowrap !important;
   transition: color var(--t-fast), border-color var(--t-fast) !important;
 }
-.tabs > ul li a:hover { color: var(--c-text) !important; border-bottom-color: var(--c-border) !important; }
-.tabs > ul li a.selected { color: var(--c-primary) !important; border-bottom-color: var(--c-primary) !important; font-weight: 600 !important; }
+.tabs:not(.jstTabs) > ul li a:hover { color: var(--c-text) !important; border-bottom-color: var(--c-border) !important; }
+.tabs:not(.jstTabs) > ul li a.selected { color: var(--c-primary) !important; border-bottom-color: var(--c-primary) !important; font-weight: 600 !important; }
 /* Hide Redmine's overflow scroll buttons — we wrap instead */
 .tabs-buttons { display: none !important; }
 
@@ -1626,10 +1631,10 @@ html.dark-mode .wiki-preview {
 }
 
 /* Settings / page tabs */
-html.dark-mode .tabs > ul { border-bottom-color: var(--c-border) !important; }
-html.dark-mode .tabs > ul li a { color: var(--c-text-subtle) !important; }
-html.dark-mode .tabs > ul li a:hover { color: var(--c-text) !important; }
-html.dark-mode .tabs > ul li a.selected { color: var(--c-primary-light, var(--c-primary)) !important; }
+html.dark-mode .tabs:not(.jstTabs) > ul { border-bottom-color: var(--c-border) !important; }
+html.dark-mode .tabs:not(.jstTabs) > ul li a { color: var(--c-text-subtle) !important; }
+html.dark-mode .tabs:not(.jstTabs) > ul li a:hover { color: var(--c-text) !important; }
+html.dark-mode .tabs:not(.jstTabs) > ul li a.selected { color: var(--c-primary-light, var(--c-primary)) !important; }
 
 /* Tabular form dark mode */
 html.dark-mode .tabular p { border-bottom-color: var(--c-border) !important; }
