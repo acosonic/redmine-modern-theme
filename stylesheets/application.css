@@ -1271,6 +1271,13 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   margin: 0 !important;
 }
 .tabular p:last-of-type { border-bottom: none !important; }
+.tabular p em.info, .tabular p span.description, .tabular p .description {
+  grid-column: 2 !important;
+  font-size: var(--text-xs) !important;
+  color: var(--c-text-subtle) !important;
+  font-style: normal !important;
+  margin-top: 2px !important;
+}
 .tabular label {
   width: 100% !important;
   margin-left: 0 !important;
