@@ -1218,7 +1218,79 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
 
 .rm-collapsible-body.is-collapsed { max-height: 0 !important; opacity: 0 !important; }
 
-/* ── 25. MISC ────────────────────────────────────────────── */
+/* ── 25. TABS (settings, project settings, user tabs) ──────── */
+.tabs {
+  overflow: visible !important;
+  height: auto !important;
+}
+/* Allow #content to expand vertically when tabs wrap */
+#content { overflow: visible !important; }
+.tabs > ul {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  gap: 2px var(--sp-1) !important;
+  border-bottom: 2px solid var(--c-border) !important;
+  list-style: none !important;
+  margin: 0 0 var(--sp-5) !important;
+  padding: 0 !important;
+}
+.tabs > ul li { margin: 0 !important; }
+.tabs > ul li a {
+  display: block !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  color: var(--c-text-muted) !important;
+  text-decoration: none !important;
+  border-bottom: 2px solid transparent !important;
+  margin-bottom: -2px !important;
+  border-radius: var(--r) var(--r) 0 0 !important;
+  white-space: nowrap !important;
+  transition: color var(--t-fast), border-color var(--t-fast) !important;
+}
+.tabs > ul li a:hover { color: var(--c-text) !important; border-bottom-color: var(--c-border) !important; }
+.tabs > ul li a.selected { color: var(--c-primary) !important; border-bottom-color: var(--c-primary) !important; font-weight: 600 !important; }
+/* Hide Redmine's overflow scroll buttons — we wrap instead */
+.tabs-buttons { display: none !important; }
+
+/* ── 26. TABULAR FORMS (settings, user edit, project settings) ── */
+.tabular p {
+  display: grid !important;
+  grid-template-columns: 220px 1fr !important;
+  align-items: baseline !important;
+  gap: var(--sp-1) var(--sp-4) !important;
+  padding: var(--sp-2) 0 !important;
+  border-bottom: 1px solid var(--c-border) !important;
+  margin: 0 !important;
+}
+.tabular p:last-of-type { border-bottom: none !important; }
+.tabular label {
+  width: 100% !important;
+  margin-left: 0 !important;
+  text-align: right !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  color: var(--c-text-muted) !important;
+  line-height: 1.5 !important;
+  padding-right: var(--sp-1) !important;
+}
+.tabular input[type=text],
+.tabular input[type=email],
+.tabular input[type=password],
+.tabular input[type=number],
+.tabular input[type=url],
+.tabular select {
+  width: auto !important;
+  min-width: 200px !important;
+  max-width: 480px !important;
+}
+.tabular textarea { max-width: 600px !important; width: 100% !important; }
+.tabular .description,
+.tabular em { font-size: var(--text-xs) !important; color: var(--c-text-subtle) !important; }
+
+/* ── 27. MISC ────────────────────────────────────────────── */
 hr { border: none !important; border-top: 1px solid var(--c-border) !important; margin: var(--sp-4) 0 !important; }
 
 .flyout-menu { display: none !important; }
@@ -1552,6 +1624,16 @@ html.dark-mode .wiki-preview {
   border-color: var(--c-border) !important;
   color: var(--c-text) !important;
 }
+
+/* Settings / page tabs */
+html.dark-mode .tabs > ul { border-bottom-color: var(--c-border) !important; }
+html.dark-mode .tabs > ul li a { color: var(--c-text-subtle) !important; }
+html.dark-mode .tabs > ul li a:hover { color: var(--c-text) !important; }
+html.dark-mode .tabs > ul li a.selected { color: var(--c-primary-light, var(--c-primary)) !important; }
+
+/* Tabular form dark mode */
+html.dark-mode .tabular p { border-bottom-color: var(--c-border) !important; }
+html.dark-mode .tabular label { color: var(--c-text-subtle) !important; }
 
 /* Edit / Preview tab links in the wiki toolbar */
 html.dark-mode #content .tabs ul li a,
