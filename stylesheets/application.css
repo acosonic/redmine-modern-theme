@@ -8,13 +8,159 @@
    then applies overrides.
    ============================================================ */
 
-/* Load Inter font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
 /* Load Redmine's default application.css first.
    Relative path: theme lives at themes/modern-redmine-theme/stylesheets/
-   so ../../application.css resolves to /assets/application.css          */
+   so ../../application.css resolves to /assets/application.css.
+   CSS spec: @import rules must precede all other rules (except @charset and
+   other @imports). Must stay at the top. */
 @import url('../../application.css');
+
+/* Self-hosted Inter font — no external CDN dependency (GDPR-safe). */
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/inter-400-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/inter-400-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/inter-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/inter-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/inter-500-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/inter-500-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/inter-500-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/inter-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/inter-600-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/inter-600-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/inter-600-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/inter-600-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* cyrillic-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/inter-700-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* cyrillic */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/inter-700-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/inter-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/inter-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 
 /* ============================================================
    MODERN REDMINE THEME — design tokens + layout + components
@@ -69,6 +215,12 @@
 
   --r-sm: .25rem;  --r: .5rem;  --r-md: .75rem;  --r-lg: 1rem;
   --t-fast: 150ms ease;  --t: 200ms ease;  --t-slow: 300ms ease;
+
+  /* Status / alert text tokens (see flash messages, badges) */
+  --c-badge-private-text: #991B1B;
+  --c-flash-success-text: #065F46;
+  --c-flash-error-text:   #991B1B;
+  --c-flash-warning-text: #92400E;
 }
 
 /* ── 2. DARK MODE TOKENS ─────────────────────────────────── */
@@ -89,11 +241,28 @@ html.dark-mode {
   --c-topbar-bg:   #0C1E2C;   /* dark navy-cyan      */
   --c-header-bg:   #1E2C3A;
   --c-sidebar-bg:  #1A2635;
+
+  --c-badge-private-text: #FCA5A5;
+  --c-flash-success-text: #6EE7B7;
+  --c-flash-error-text:   #FCA5A5;
+  --c-flash-warning-text: #FCD34D;
 }
 
 /* ── 3. BASE ─────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 body {
   font-family: var(--font-sans) !important;
@@ -298,7 +467,7 @@ body {
   display: flex !important;
   list-style: none !important;
   margin: 0 !important;
-  padding: 0 !important;
+  padding: 5px 0 0 !important;
   white-space: nowrap !important;
   overflow: visible !important;
 }
@@ -430,7 +599,7 @@ body {
 #sidebar::-webkit-scrollbar { width: 4px; }
 #sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
 
-#sidebar-wrapper { padding: var(--sp-5) var(--sp-4) !important; }
+#sidebar-wrapper { padding: var(--sp-5) var(--sp-2) !important; }
 
 /* collapsed — do NOT use opacity:0, it also hides position:fixed children */
 #main.collapsiblesidebar.sidebar-collapsed #sidebar {
@@ -438,6 +607,11 @@ body {
   min-width: 0 !important;
   border-right: none !important;
   overflow: hidden !important;
+}
+/* Clip floated/absolute children (e.g. #watchers .contextual > Add) that
+   would otherwise escape width:0 + overflow:hidden. */
+#main.collapsiblesidebar.sidebar-collapsed #sidebar > * {
+  visibility: hidden !important;
 }
 
 /* hide Redmine's own sidebar toggle — replaced by our button */
@@ -450,8 +624,8 @@ body {
   text-transform: uppercase !important;
   letter-spacing: .08em !important;
   color: var(--c-text-subtle) !important;
-  margin: var(--sp-5) 0 var(--sp-2) !important;
-  padding-bottom: var(--sp-1) !important;
+  margin: 0 0 var(--sp-1) !important;
+  padding-bottom: 0 !important;
 }
 
 #sidebar h3:first-child { margin-top: 0 !important; }
@@ -461,7 +635,7 @@ body {
 #sidebar ul li a {
   display: flex !important;
   align-items: center !important;
-  padding: var(--sp-2) var(--sp-3) !important;
+  padding: var(--sp-2) var(--sp-2) !important;
   font-size: var(--text-sm) !important;
   color: var(--c-text-muted) !important;
   border-radius: var(--r-sm) !important;
@@ -815,7 +989,30 @@ table.list tr.group td {
   white-space: nowrap !important;
 }
 
-.badge-private { background: rgba(239,68,68,.1) !important; color: #991B1B !important; }
+.badge-private { background: rgba(239,68,68,.1) !important; color: var(--c-badge-private-text) !important; }
+
+/* Icon-only anchors (e.g. delete-watcher in sidebar #watchers list):
+   hide the text label, keep the SVG/icon. Higher-specificity variants so
+   this beats #sidebar ul li a and other context rules that would re-enable
+   font-size on the text node. */
+a.icon-only,
+#sidebar a.icon-only,
+#sidebar ul li a.icon-only,
+#content a.icon-only {
+  font-size: 0 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+}
+a.icon-only .icon-svg,
+a.icon-only > svg,
+#sidebar a.icon-only .icon-svg,
+#sidebar a.icon-only > svg {
+  font-size: initial !important;
+  width: 14px !important;
+  height: 14px !important;
+  vertical-align: middle !important;
+}
+
 
 .priority-low    { color: var(--c-text-muted) !important; }
 .priority-normal { color: var(--c-info)    !important; }
@@ -1007,19 +1204,19 @@ label { font-size: var(--text-sm) !important; font-weight: 500 !important; color
 #flash_notice, div.flash.notice {
   background: rgba(16,185,129,.1) !important;
   border-color: rgba(16,185,129,.3) !important;
-  color: #065F46 !important;
+  color: var(--c-flash-success-text) !important;
 }
 
 #flash_error, div.flash.error {
   background: rgba(239,68,68,.1) !important;
   border-color: rgba(239,68,68,.3) !important;
-  color: #991B1B !important;
+  color: var(--c-flash-error-text) !important;
 }
 
 #flash_warning, div.flash.warning {
   background: rgba(245,158,11,.1) !important;
   border-color: rgba(245,158,11,.3) !important;
-  color: #92400E !important;
+  color: var(--c-flash-warning-text) !important;
 }
 
 /* ── 18. PAGINATION ──────────────────────────────────────── */
@@ -1190,15 +1387,26 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid var(--c-border) !important;
+  border-radius: 0 !important;
+  font: inherit !important;
+  color: inherit !important;
+  text-align: inherit !important;
   cursor: pointer !important;
   user-select: none !important;
   padding: var(--sp-3) 0 !important;
-  border-bottom: 1px solid var(--c-border) !important;
   margin-bottom: var(--sp-3) !important;
   transition: color var(--t-fast) !important;
 }
 
 .rm-collapsible-header:hover { color: var(--c-primary) !important; }
+.rm-collapsible-header:focus-visible {
+  outline: 2px solid var(--c-primary) !important;
+  outline-offset: 2px !important;
+}
 
 .rm-collapsible-toggle {
   font-size: 11px !important;
@@ -1599,16 +1807,12 @@ html.dark-mode .pagination a,
 html.dark-mode .pagination span.current { background: var(--c-surface) !important; border-color: var(--c-border) !important; color: var(--c-text-muted) !important; }
 html.dark-mode .pagination span.current { background: var(--c-primary) !important; color: white !important; }
 
-/* Flash messages already use rgba — just ensure text is readable */
-html.dark-mode #flash_notice { color: #6EE7B7 !important; }
-html.dark-mode #flash_error   { color: #FCA5A5 !important; }
+/* Flash messages — text color is driven by --c-flash-*-text tokens, redefined in html.dark-mode */
 
 /* Footer */
 html.dark-mode #footer { background: var(--c-surface) !important; border-top-color: var(--c-border) !important; }
 
-/* Misc links & text */
-html.dark-mode a { color: #38BDF8 !important; }
-html.dark-mode a:hover { color: #7DD3FC !important; }
+/* Misc links & text — var(--c-primary) / var(--c-primary-hover) redefine in dark-mode block */
 html.dark-mode h2, html.dark-mode h3 { color: var(--c-text) !important; }
 
 /* Sidebar selected query link — overrides hardcoded #9DB9D5 */
@@ -1758,14 +1962,20 @@ html.dark-mode .tabular label { color: var(--c-text-muted) !important; }
   font-size: var(--text-sm) !important;
 }
 
-/* Overlay backdrop — must be above fixed header (z-index:1000) and nav (z-index:999) */
+/* Overlay + dialog stacking — must exceed fixed topbar (1000), fixed header
+   (999), floating widgets (#rm-darkmode-toggle/toast at 9998-9999), and
+   specificity-bomb plugin rules like redmine_contacts' `div.ui-dialog`. */
+body div.ui-widget-overlay,
+body > .ui-widget-overlay,
 .ui-widget-overlay {
   background: rgb(0 0 0 / .45) !important;
   opacity: 1 !important;
-  z-index: 1050 !important;
+  z-index: 10050 !important;
 }
+body div.ui-dialog,
+body > .ui-dialog,
 .ui-dialog {
-  z-index: 1051 !important;
+  z-index: 10051 !important;
 }
 
 /* Watcher user list */
