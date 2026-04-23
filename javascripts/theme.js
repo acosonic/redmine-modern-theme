@@ -137,9 +137,13 @@
 
     var toast = document.createElement('div');
     toast.className = 'rm-toast rm-toast-' + type;
-    toast.innerHTML =
-      '<span class="rm-toast-icon">' + (icons[type] || icons.info) + '</span>' +
-      '<span>' + message + '</span>';
+    var iconSpan = document.createElement('span');
+    iconSpan.className = 'rm-toast-icon';
+    iconSpan.textContent = icons[type] || icons.info;
+    var textSpan = document.createElement('span');
+    textSpan.textContent = message;
+    toast.appendChild(iconSpan);
+    toast.appendChild(textSpan);
 
     getToastContainer().appendChild(toast);
 
@@ -155,22 +159,37 @@
   function makeCollapsible(sectionId, label) {
     var section = document.getElementById(sectionId);
     if (!section) return;
+    // Scope to main content — sidebar-hosted sections (e.g. sidebar #watchers)
+    // have their own spatial grouping and layout assumptions that the wrapper
+    // breaks (Add link, delete icons, new-watcher form).
+    if (!section.closest('#content')) return;
 
     var heading = qs('h3, h4, p strong, .subtitle', section);
     var title   = label || (heading ? heading.textContent.trim() : sectionId);
     var key     = 'rm-open-' + sectionId;
     var isOpen  = localStorage.getItem(key) !== '0';
 
-    // Build header element
-    var header = document.createElement('div');
+    // Build header as button for keyboard + screen reader support
+    var header = document.createElement('button');
+    header.type = 'button';
     header.className = 'rm-collapsible-header' + (isOpen ? '' : ' is-collapsed');
-    header.innerHTML =
-      '<span style="font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--c-text-subtle)">' + title + '</span>' +
-      '<span class="rm-collapsible-toggle">▼</span>';
+    header.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+
+    var titleSpan = document.createElement('span');
+    titleSpan.style.cssText = 'font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--c-text-subtle)';
+    titleSpan.textContent = title;
+    var toggleSpan = document.createElement('span');
+    toggleSpan.className = 'rm-collapsible-toggle';
+    toggleSpan.textContent = '▼';
+    toggleSpan.setAttribute('aria-hidden', 'true');
+    header.appendChild(titleSpan);
+    header.appendChild(toggleSpan);
 
     // Wrap existing children in body
     var body = document.createElement('div');
     body.className = 'rm-collapsible-body' + (isOpen ? '' : ' is-collapsed');
+    body.id = 'rm-collapsible-body-' + sectionId;
+    header.setAttribute('aria-controls', body.id);
     while (section.firstChild) body.appendChild(section.firstChild);
 
     section.appendChild(header);
@@ -179,8 +198,21 @@
     header.addEventListener('click', function () {
       var nowCollapsed = header.classList.toggle('is-collapsed');
       body.classList.toggle('is-collapsed', nowCollapsed);
+      header.setAttribute('aria-expanded', nowCollapsed ? 'false' : 'true');
       localStorage.setItem(key, nowCollapsed ? '0' : '1');
     });
+
+    // AJAX robustness: Redmine may re-render the section via XHR and append
+    // fresh DOM directly to #section, outside our body. Catch those and move
+    // them into .rm-collapsible-body so collapse still hides them.
+    new MutationObserver(function (muts) {
+      muts.forEach(function (m) {
+        m.addedNodes.forEach(function (node) {
+          if (node === header || node === body) return;
+          if (node.nodeType === 1 || node.nodeType === 3) body.appendChild(node);
+        });
+      });
+    }).observe(section, { childList: true });
   }
 
   function initCollapsible() {
