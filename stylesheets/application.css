@@ -221,13 +221,29 @@
   --c-flash-success-text: #065F46;
   --c-flash-error-text:   #991B1B;
   --c-flash-warning-text: #92400E;
+
+  /* Focus ring — used by :focus-visible across all interactive elements */
+  --c-focus-ring: rgba(8,145,178,.55);
+}
+
+/* Modern browsers (color-mix supported): derive hover/light/ring from
+   --c-primary so changing the primary token propagates everywhere.
+   Older browsers keep the hand-picked fallbacks above. */
+@supports (color: color-mix(in srgb, red, white)) {
+  :root {
+    --c-primary-hover: color-mix(in srgb, var(--c-primary) 85%, black);
+    --c-primary-light: color-mix(in srgb, var(--c-primary) 10%, white);
+    --c-primary-ring:  color-mix(in srgb, var(--c-primary) 35%, transparent);
+    --c-focus-ring:    color-mix(in srgb, var(--c-primary) 55%, transparent);
+  }
 }
 
 /* ── 2. DARK MODE TOKENS ─────────────────────────────────── */
 html.dark-mode {
   --c-primary:       #22D3EE;  /* cyan-400 — vibrant on dark */
-  --c-primary-hover: #38BDF8;  /* sky-400  */
+  --c-primary-hover: #38BDF8;  /* sky-400 — hand-picked fallback */
   --c-primary-ring:  rgba(34,211,238,.22);
+  --c-focus-ring:    rgba(34,211,238,.5);
 
   --c-bg:          #161E2A;   /* lighter than before */
   --c-surface:     #1E2C3A;   /* lighter card bg     */
@@ -246,6 +262,15 @@ html.dark-mode {
   --c-flash-success-text: #6EE7B7;
   --c-flash-error-text:   #FCA5A5;
   --c-flash-warning-text: #FCD34D;
+}
+
+@supports (color: color-mix(in srgb, red, white)) {
+  html.dark-mode {
+    --c-primary-hover: color-mix(in srgb, var(--c-primary) 85%, white);
+    --c-primary-light: color-mix(in srgb, var(--c-primary) 14%, transparent);
+    --c-primary-ring:  color-mix(in srgb, var(--c-primary) 30%, transparent);
+    --c-focus-ring:    color-mix(in srgb, var(--c-primary) 50%, transparent);
+  }
 }
 
 /* ── 3. BASE ─────────────────────────────────────────────── */
@@ -271,6 +296,30 @@ body {
   color: var(--c-text) !important;
   line-height: 1.6 !important;
   -webkit-font-smoothing: antialiased;
+}
+
+/* ── 3b. FOCUS VISIBLE — keyboard-only ring on all interactive elements.
+   Uses :focus-visible so mouse clicks don't show the ring; keyboard
+   navigation (tab) does. WCAG AA contrast met by --c-focus-ring. */
+:focus { outline: none !important; }
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--c-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px var(--c-focus-ring) !important;
+  border-radius: var(--r-sm);
+}
+/* Icons + text links get a softer ring (no outline offset) */
+a:focus-visible,
+#top-menu a:focus-visible,
+#main-menu a:focus-visible,
+#sidebar a:focus-visible {
+  outline-offset: 1px !important;
 }
 
 /* ── 4. TOPBAR (#top-menu) ──────────────────────────────── */
@@ -347,6 +396,120 @@ body {
 
 /* ── Hide mobile hamburger — not needed on desktop ───────── */
 .mobile-toggle-button { display: none !important; }
+
+/* ── ACCOUNT DROPDOWN (JS-injected) ───────────────────────
+   Trigger button with avatar + name + caret; panel opens on click. */
+.rm-account-dropdown {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+.rm-account-trigger {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--c-topbar-text) !important;
+  padding: 4px 8px !important;
+  border-radius: var(--r) !important;
+  cursor: pointer !important;
+  font-size: var(--text-sm) !important;
+  font-family: var(--font-sans) !important;
+  transition: background var(--t-fast) !important;
+}
+.rm-account-trigger:hover { background: var(--c-topbar-hover) !important; color: white !important; }
+.rm-account-trigger[aria-expanded="true"] { background: var(--c-topbar-hover) !important; color: white !important; }
+.rm-account-trigger .rm-account-caret { display: inline-flex !important; transition: transform var(--t-fast) !important; opacity: .7; }
+.rm-account-trigger[aria-expanded="true"] .rm-account-caret { transform: rotate(180deg) !important; }
+
+.rm-account-avatar {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 26px !important;
+  height: 26px !important;
+  border-radius: 50% !important;
+  background: var(--c-primary) !important;
+  color: white !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: .03em !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+}
+.rm-account-avatar-lg { width: 40px !important; height: 40px !important; font-size: 14px !important; }
+
+.rm-account-name {
+  font-weight: 500 !important;
+  max-width: 160px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.rm-account-panel {
+  /* Fixed so the dropdown escapes #top-menu's overflow:hidden clip.
+     Position is set in JS to track the trigger's bounding rect. */
+  position: fixed !important;
+  top: calc(var(--topbar-h) + 4px) !important;
+  right: var(--sp-4) !important;
+  min-width: 220px !important;
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: var(--sp-1) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translateY(-4px) !important;
+  transition: opacity var(--t-fast), transform var(--t-fast), visibility var(--t-fast) !important;
+  z-index: 1001 !important;
+  color: var(--c-text) !important;
+}
+.rm-account-panel.is-open {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) !important;
+}
+
+.rm-account-panel-head {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-3) !important;
+  padding: var(--sp-3) !important;
+  border-radius: var(--r-sm) !important;
+  color: var(--c-text) !important;
+  text-decoration: none !important;
+  transition: background var(--t-fast) !important;
+}
+.rm-account-panel-head:hover { background: var(--c-primary-light) !important; }
+.rm-account-panel-name { display: block !important; font-weight: 600 !important; color: var(--c-text) !important; }
+.rm-account-panel-view { display: block !important; font-size: var(--text-xs) !important; color: var(--c-text-muted) !important; margin-top: 2px !important; }
+.rm-account-panel-sep { height: 1px !important; background: var(--c-border) !important; margin: var(--sp-1) 0 !important; }
+
+.rm-account-panel ul {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+.rm-account-panel ul li a {
+  display: flex !important;
+  align-items: center !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  color: var(--c-text) !important;
+  font-size: var(--text-sm) !important;
+  text-decoration: none !important;
+  border-radius: var(--r-sm) !important;
+  transition: background var(--t-fast) !important;
+}
+.rm-account-panel ul li a:hover { background: var(--c-primary-light) !important; color: var(--c-primary) !important; }
+
+/* Dark-mode adjustments for the panel */
+html.dark-mode .rm-account-panel { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
+html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-light) !important; color: var(--c-primary) !important; }
 
 /* ── 5. HEADER ──────────────────────────────────────────── */
 #header {
@@ -460,21 +623,49 @@ body {
   max-width: 340px !important;
 }
 
-#quick-search form { float: none !important; display: flex !important; align-items: center !important; gap: var(--sp-1) !important; margin: 0 !important; }
+#quick-search form { float: none !important; display: flex !important; align-items: center !important; gap: var(--sp-1) !important; margin: 0 !important; position: relative !important; }
+
+/* Search magnifier (injected by theme.js as first child of <form>).
+   Absolutely positioned inside the input; input gets left padding. */
+#quick-search .rm-search-icon {
+  position: absolute !important;
+  left: var(--sp-3) !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: var(--c-text-subtle) !important;
+  pointer-events: none !important;
+  display: inline-flex !important;
+  z-index: 1 !important;
+}
 
 #quick-search #q,
 #quick-search input[type=text] {
   border: 1px solid var(--c-border) !important;
   border-radius: var(--r) !important;
-  padding: var(--sp-1) var(--sp-3) !important;
+  padding: var(--sp-1) var(--sp-3) var(--sp-1) calc(var(--sp-3) + 22px) !important;
   font-size: var(--text-sm) !important;
   font-family: var(--font-sans) !important;
   background: var(--c-surface-2) !important;
   color: var(--c-text) !important;
   outline: none !important;
-  width: 140px !important;
+  width: 160px !important;
   height: 28px !important;
   transition: border-color var(--t-fast), box-shadow var(--t-fast), width var(--t) !important;
+}
+
+#quick-search form:focus-within .rm-search-icon { color: var(--c-primary) !important; }
+
+/* Visually-hidden utility — kept in DOM for screen readers, not shown. */
+.rm-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0,0,0,0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
 
 #quick-search #q:focus,

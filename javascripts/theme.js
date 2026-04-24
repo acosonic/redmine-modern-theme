@@ -269,6 +269,136 @@
     h1.insertBefore(badge, h1.firstChild);
   }
 
+  /* ── ACCOUNT DROPDOWN ────────────────────────────────────
+     Wrap the bare #account <ul> into a proper button + panel: avatar
+     with user initials + name + caret, panel opens on click / hover. */
+  function initAccountDropdown() {
+    var account = qs('#account');
+    if (!account) return;
+    if (qs('.rm-account-trigger', account)) return; // idempotent
+    // Logged-out state: show plain login link, nothing else
+    if (qs('a.login', account)) return;
+
+    var ul = qs('ul', account);
+    if (!ul) return;
+
+    var loggedas = qs('#loggedas');
+    var userLink = loggedas && qs('a', loggedas);
+    var username = userLink ? userLink.textContent.trim() : 'Account';
+    var profileHref = userLink ? userLink.getAttribute('href') : '#';
+
+    // Initials: first letters of up to 2 words (e.g. "Aleksandar Pavić" → "AP").
+    // Fall back to first char or first two of a single-word login.
+    var words = (username.match(/[\p{L}\p{N}]+/gu) || [username]);
+    var initials;
+    if (words.length >= 2) {
+      initials = (words[0][0] + words[1][0]).toUpperCase();
+    } else {
+      initials = words[0].slice(0, 2).toUpperCase();
+    }
+
+    var wrapper = document.createElement('div');
+    wrapper.className = 'rm-account-dropdown';
+
+    var trigger = document.createElement('button');
+    trigger.className = 'rm-account-trigger';
+    trigger.type = 'button';
+    trigger.setAttribute('aria-expanded', 'false');
+    trigger.setAttribute('aria-haspopup', 'menu');
+
+    var badge = document.createElement('span');
+    badge.className = 'rm-account-avatar';
+    badge.setAttribute('aria-hidden', 'true');
+    badge.textContent = initials;
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'rm-account-name';
+    nameSpan.textContent = username;
+    var caret = document.createElement('span');
+    caret.className = 'rm-account-caret';
+    caret.setAttribute('aria-hidden', 'true');
+    caret.innerHTML = '<svg width="10" height="10" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 3.5l3 3 3-3" stroke-linecap="round"/></svg>';
+    trigger.appendChild(badge);
+    trigger.appendChild(nameSpan);
+    trigger.appendChild(caret);
+
+    var panel = document.createElement('div');
+    panel.className = 'rm-account-panel';
+    panel.setAttribute('role', 'menu');
+
+    // Header with full name + profile link
+    var head = document.createElement('a');
+    head.className = 'rm-account-panel-head';
+    head.href = profileHref;
+    head.setAttribute('role', 'menuitem');
+    head.innerHTML = '<span class="rm-account-avatar rm-account-avatar-lg" aria-hidden="true">' + initials + '</span>' +
+                    '<span><span class="rm-account-panel-name">' + username + '</span>' +
+                    '<span class="rm-account-panel-view">View profile</span></span>';
+    panel.appendChild(head);
+    // Divider
+    var sep = document.createElement('div');
+    sep.className = 'rm-account-panel-sep';
+    panel.appendChild(sep);
+    // Clone the original ul so Redmine's links (My account / Sign out /
+    // administration shortcut) are preserved. Hide original.
+    panel.appendChild(ul.cloneNode(true));
+    ul.setAttribute('data-rm-original', 'true');
+    ul.style.display = 'none';
+
+    wrapper.appendChild(trigger);
+    account.insertBefore(wrapper, account.firstChild);
+    // Mount the panel on <body> so it escapes #top-menu's cascade (white
+    // text from #top-menu ul li a) and its overflow:hidden clip.
+    document.body.appendChild(panel);
+    if (loggedas) loggedas.style.display = 'none';
+
+    function open() {
+      // Track trigger position so the fixed panel aligns under it.
+      var r = trigger.getBoundingClientRect();
+      panel.style.top = (r.bottom + 6) + 'px';
+      panel.style.right = Math.max(8, window.innerWidth - r.right) + 'px';
+      panel.classList.add('is-open');
+      trigger.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+      panel.classList.remove('is-open');
+      trigger.setAttribute('aria-expanded', 'false');
+    }
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      panel.classList.contains('is-open') ? close() : open();
+    });
+    document.addEventListener('click', function (e) {
+      if (!wrapper.contains(e.target)) close();
+    });
+    trigger.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') { close(); trigger.focus(); }
+    });
+  }
+
+  /* ── SEARCH WIDGET: magnifier icon inline ───────────────── */
+  function initSearchWidget() {
+    var form = qs('#quick-search form');
+    var input = qs('#quick-search #q');
+    if (!form || !input) return;
+    if (qs('.rm-search-icon', form)) return; // idempotent
+    input.setAttribute('placeholder', input.getAttribute('placeholder') || 'Search');
+    // Hide the "Search:" label's visible text but keep the element for a11y.
+    // Redmine renders <label for="q">Search:</label> as a stray text node
+    // that otherwise collides with the magnifier.
+    var label = qs('label', form);
+    if (label) label.classList.add('rm-visually-hidden');
+    // Also strip any loose text nodes inside the form ("Search:" lives
+    // sometimes as raw text outside the label).
+    Array.from(form.childNodes).forEach(function (n) {
+      if (n.nodeType === 3 && n.textContent.trim()) n.textContent = '';
+    });
+    var icon = document.createElement('span');
+    icon.className = 'rm-search-icon';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="4.5"/><path d="M10 10l3 3" stroke-linecap="round"/></svg>';
+    input.parentNode.insertBefore(icon, input);
+  }
+
   /* ── HAMBURGER MENU (mobile) ─────────────────────────────── */
   function initHamburger() {
     var topMenu = qs('#top-menu');
@@ -319,6 +449,8 @@
     highlightNav();
     initHamburger();
     initProjectBadge();
+    initSearchWidget();
+    initAccountDropdown();
     watchSidebar();
     window.addEventListener('resize', adjustLayout);
   }
