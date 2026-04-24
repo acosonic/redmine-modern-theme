@@ -234,6 +234,25 @@
     });
   }
 
+  /* ── RECONSOLIDATE SIDEBAR ──────────────────────────────
+     Redmine's responsive.js detects "mobile" and moves #sidebar > *
+     into .js-sidebar (flyout). Our theme shows #sidebar as a slide-in
+     overlay instead of the flyout, so we need to move content back.
+     Observe .js-sidebar so we handle late detaches (DOMContentLoaded
+     ordering, window resize) without timing guesses. */
+  function reconsolidateSidebar() {
+    var src = qs('.js-sidebar');
+    var dst = qs('#sidebar');
+    if (!src || !dst) return;
+    while (src.firstChild) dst.appendChild(src.firstChild);
+  }
+  function watchSidebar() {
+    var src = qs('.js-sidebar');
+    if (!src) return;
+    new MutationObserver(reconsolidateSidebar).observe(src, { childList: true });
+    reconsolidateSidebar();
+  }
+
   /* ── PROJECT HEADER BADGE ───────────────────────────────── */
   function initProjectBadge() {
     var h1 = qs('#header h1');
@@ -300,6 +319,7 @@
     highlightNav();
     initHamburger();
     initProjectBadge();
+    watchSidebar();
     window.addEventListener('resize', adjustLayout);
   }
 
