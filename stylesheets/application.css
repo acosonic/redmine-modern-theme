@@ -900,6 +900,35 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   transition: background var(--t-fast), color var(--t-fast) !important;
 }
 
+/* Watchers list — keep avatar, name, and delete icon on one row.
+   Default #sidebar ul li a { display: flex } would otherwise make each
+   <a> occupy a full row, stacking them 3 high. */
+#watchers ul.watchers li {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  padding: 2px 0 !important;
+  margin: 0 !important;
+}
+#watchers ul.watchers li > .avatar { flex: 0 0 auto !important; }
+#watchers ul.watchers li > a.user {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: var(--text-sm) !important;
+}
+#watchers ul.watchers li > a.delete {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  width: 22px !important;
+  height: 22px !important;
+  padding: 0 !important;
+}
+
 /* Don't flex links inside labels (e.g. activity filter links) */
 #sidebar ul li label a {
   display: inline !important;
