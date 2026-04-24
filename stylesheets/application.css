@@ -1988,6 +1988,33 @@ div#sticky-issue-header .subject {
   /* Issue history entries — reduce left indent so content has room */
   #history .journal { padding: var(--sp-3) !important; }
 
+  /* Journal header (avatar + "Updated by X N days ago" + action icons).
+     On desktop it's flex with info left + meta right. On narrow viewports
+     meta steals horizontal space and the info text wraps into a stack.
+     Stack them vertically so both get full width. */
+  .journal-header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: var(--sp-2) !important;
+  }
+  .journal-info { flex: 1 1 auto !important; min-width: 0 !important; }
+  .journal-meta {
+    align-self: flex-end !important;
+    flex: 0 0 auto !important;
+  }
+  .journal-actions { flex-wrap: wrap !important; }
+
+  /* History/Notes tabs wrap to multiple rows on narrow screens — keep
+     them tight with smaller padding and no extra gaps. */
+  #history > .tabs ul,
+  #history .tabs ul {
+    gap: 0 !important;
+  }
+  #history .tabs li a {
+    padding: var(--sp-2) var(--sp-3) !important;
+    font-size: var(--text-sm) !important;
+  }
+
   /* File attachment links: bigger tap area */
   a.icon.icon-attachment { padding: var(--sp-1) 0 !important; min-height: 32px !important; display: inline-flex !important; align-items: center !important; }
 }
