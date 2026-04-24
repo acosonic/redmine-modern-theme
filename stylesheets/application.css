@@ -1744,7 +1744,23 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
   #top-menu #account ul { padding: var(--sp-1) 0 !important; }
   #top-menu #account li a { padding: var(--sp-2) var(--sp-4) !important; }
 
-  #header { display: none !important; }
+  /* Keep #header visible so its #main-menu child can render, but hide
+     the heavy bits (h1/title, quick-search) — they'd take too much room
+     on narrow viewports. Users still see project context via the sticky
+     issue header when drilling into an issue. */
+  #header {
+    display: block !important;
+    position: static !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border-bottom: none !important;
+  }
+  #header h1,
+  #header h1:has(.current-project),
+  #header #quick-search,
+  #header #project-jump { display: none !important; }
 
   /* Remove JS-calculated top margin/padding — not needed when header scrolls */
   #main { margin-top: 0 !important; padding-top: 0 !important; }
@@ -1804,13 +1820,19 @@ div#sticky-issue-header .subject {
   /* keep the mobile override explicit */
   /* placeholder to preserve CSS block structure */
 
-  /* Nav tabs — static on mobile, scroll horizontally */
+  /* Nav tabs — static on mobile, scroll horizontally.
+     Match Redmine's `#header #main-menu { display: none }` specificity
+     (0,2,0) so we re-show it here. */
+  #header #main-menu,
   #main-menu {
+    display: block !important;
     position: static !important;
     overflow-x: auto !important;
     overflow-y: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     scrollbar-width: none !important;
+    background: var(--c-header-bg) !important;
+    border-top: 1px solid var(--c-border) !important;
   }
   #main-menu::-webkit-scrollbar { display: none !important; }
   #main-menu ul {
