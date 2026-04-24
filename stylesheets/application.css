@@ -1848,6 +1848,126 @@ div#sticky-issue-header .subject {
 
   /* Issue attributes grid — single column */
   .attributes table td { display: block !important; width: 100% !important; }
+
+  /* Tabular forms — stack label above input so narrow viewports don't
+     get forced into a 220px label column that overflows right. */
+  .tabular p {
+    grid-template-columns: 1fr !important;
+    row-gap: var(--sp-1) !important;
+    padding: var(--sp-3) 0 !important;
+  }
+  .tabular label {
+    text-align: left !important;
+    padding-right: 0 !important;
+    color: var(--c-text-subtle) !important;
+    font-weight: 500 !important;
+  }
+  .tabular input[type=text],
+  .tabular input[type=email],
+  .tabular input[type=password],
+  .tabular input[type=number],
+  .tabular input[type=url],
+  .tabular select,
+  form select,
+  form input[type=text] {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Larger tap targets for icon-only buttons (36x36 hits 32px min) */
+  a.icon-only,
+  #sidebar a.icon-only,
+  #sidebar ul li a.icon-only,
+  #content a.icon-only {
+    width: 36px !important;
+    height: 36px !important;
+  }
+  a.icon-only .icon-svg,
+  a.icon-only > svg,
+  #sidebar a.icon-only .icon-svg,
+  #sidebar a.icon-only > svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
+  /* Sidebar toggle — wider, taller */
+  #rm-sidebar-toggle {
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 48px !important;
+    font-size: 20px !important;
+  }
+
+  /* JSToolbar — let buttons wrap instead of overflowing right.
+     Redmine's jstoolbar sets display:inline-block + white-space:nowrap on
+     <li class="tab-elements"> which forces a single-line toolbar. Flip the
+     chain so buttons wrap into multiple rows on mobile. */
+  .jstBlock .jstTabs.tabs ul {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+  .jstBlock .jstTabs.tabs li.tab-elements {
+    max-width: 100% !important;
+    white-space: normal !important;
+  }
+  .jstElements {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    white-space: normal !important;
+    max-width: 100% !important;
+  }
+  .jstElements button {
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+  }
+
+  /* JSToolbar tabs (Edit / Preview) — taller for tap */
+  .jstTabs a.tab-edit,
+  .jstTabs a.tab-preview {
+    min-height: 40px !important;
+    padding: var(--sp-2) var(--sp-3) !important;
+  }
+
+  /* Issue attributes word-wrap so long text doesn't push table wider */
+  .attributes table td { word-break: break-word !important; overflow-wrap: break-word !important; }
+
+  /* Sticky issue header — tighter padding + smaller text on narrow screens */
+  div#sticky-issue-header {
+    padding: 0 var(--sp-2) !important;
+    gap: var(--sp-2) !important;
+  }
+  div#sticky-issue-header .issue-heading,
+  div#sticky-issue-header .subject {
+    font-size: var(--text-xs) !important;
+  }
+
+  /* Toast container — full width minus small margin */
+  #rm-toast-container {
+    left: var(--sp-3) !important;
+    right: var(--sp-3) !important;
+    width: auto !important;
+    max-width: none !important;
+  }
+
+  /* Forms/box containers — reduce internal padding on small screens */
+  .box, fieldset.box {
+    padding: var(--sp-3) !important;
+  }
+
+  /* Contextual bar — stack on very narrow widths; buttons fill row */
+  .contextual a.icon, .contextual a.icon.icon-add {
+    padding: var(--sp-2) var(--sp-3) !important;
+    min-height: 36px !important;
+  }
+
+  /* Issue history entries — reduce left indent so content has room */
+  #history .journal { padding: var(--sp-3) !important; }
+
+  /* File attachment links: bigger tap area */
+  a.icon.icon-attachment { padding: var(--sp-1) 0 !important; min-height: 32px !important; display: inline-flex !important; align-items: center !important; }
 }
 
 /* ── DARK MODE: override Redmine's hardcoded white backgrounds ── */
