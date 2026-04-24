@@ -357,8 +357,9 @@ body {
   z-index: 999 !important;
   border-bottom: 1px solid var(--c-border) !important;
   box-shadow: var(--shadow-xs) !important;
-  /* padding-bottom makes room for #main-menu (originally position:absolute;bottom:0) */
-  padding: var(--sp-2) var(--sp-6) 42px var(--sp-6) !important;
+  /* padding-bottom: reserves space for #main-menu (absolute, bottom:0) + visual
+     breathing room between project title and tabs. */
+  padding: var(--sp-2) var(--sp-6) 58px var(--sp-6) !important;
   transition: background var(--t) !important;
   /* position:fixed already creates a containing block for absolute children like #main-menu */
 }
@@ -368,21 +369,86 @@ body {
   padding-bottom: var(--sp-2) !important;
 }
 
+/* Default h1 (non-project pages: My page, Projects list, Admin, etc.) */
 #header h1 {
   font-size: var(--text-lg) !important;
   font-weight: 700 !important;
   color: var(--c-text) !important;
-  margin: 0 !important;
+  margin: 0 340px 0 0 !important;
   padding: var(--sp-2) 0 !important;
   line-height: 1.3 !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
-  /* leave space for the floated quick-search */
-  margin-right: 340px !important;
+}
+#header h1 a { color: inherit !important; text-decoration: none !important; }
+
+/* Project pages — h1 contains .breadcrumbs + .current-project. Render as a
+   two-column grid: [badge] [breadcrumb ↑ / project-name ↓]. */
+#header h1:has(.current-project) {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  grid-template-rows: auto auto !important;
+  grid-auto-flow: column !important;
+  column-gap: 10px !important;
+  row-gap: 0 !important;
+  align-items: center !important;
+  padding: 2px 0 !important;
+  font-size: 0 !important;
+  line-height: 1.15 !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
 }
 
-#header h1 a { color: inherit !important; text-decoration: none !important; }
+#header h1 > .rm-project-badge {
+  grid-row: 1 / 3 !important;
+  grid-column: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  background: var(--c-primary) !important;
+  color: white !important;
+  border-radius: var(--r-md) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: .03em !important;
+  line-height: 1 !important;
+  flex-shrink: 0 !important;
+  align-self: center !important;
+}
+
+#header h1 > .breadcrumbs {
+  grid-row: 1 !important;
+  grid-column: 2 !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .08em !important;
+  color: var(--c-text-subtle) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+#header h1 > .breadcrumbs a.root {
+  color: var(--c-text-muted) !important;
+  text-decoration: none !important;
+}
+#header h1 > .breadcrumbs a.root:hover { color: var(--c-primary) !important; }
+#header h1 > .breadcrumbs .separator { opacity: .5 !important; margin: 0 4px !important; }
+
+#header h1 > .current-project {
+  grid-row: 2 !important;
+  grid-column: 2 !important;
+  font-size: var(--text-lg) !important;
+  font-weight: 700 !important;
+  color: var(--c-text) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  line-height: 1.2 !important;
+}
 
 #quick-search {
   float: right !important;
@@ -796,7 +862,7 @@ table.list thead {
 }
 
 table.list thead th {
-  padding: var(--sp-3) var(--sp-4) !important;
+  padding: var(--sp-2) var(--sp-3) !important;
   font-weight: 600 !important;
   font-size: var(--text-xs) !important;
   text-transform: uppercase !important;
@@ -821,7 +887,7 @@ table.list tbody tr.even { background: var(--c-surface-2) !important; }
 table.list tbody tr:hover { background: var(--c-primary-light) !important; }
 
 table.list tbody td {
-  padding: var(--sp-3) var(--sp-4) !important;
+  padding: var(--sp-2) var(--sp-3) !important;
   color: var(--c-text) !important;
   vertical-align: middle !important;
   border: none !important;
@@ -867,7 +933,7 @@ table.list tr.group td {
   font-size: var(--text-xl) !important;
   font-weight: 700 !important;
   color: var(--c-text) !important;
-  margin-bottom: var(--sp-3) !important;
+  /* margin-bottom: var(--sp-3) !important; */
   line-height: 1.4 !important;
 }
 
@@ -991,18 +1057,45 @@ table.list tr.group td {
 
 .badge-private { background: rgba(239,68,68,.1) !important; color: var(--c-badge-private-text) !important; }
 
-/* Icon-only anchors (e.g. delete-watcher in sidebar #watchers list):
-   hide the text label, keep the SVG/icon. Higher-specificity variants so
-   this beats #sidebar ul li a and other context rules that would re-enable
-   font-size on the text node. */
+/* Icon-only anchors (delete-watcher, new-category, new-version, etc):
+   hide label text, keep SVG, constrain to a small square button. Higher-
+   specificity variants so this beats #sidebar ul li a and other context
+   rules that set font-size / width on anchors. */
 a.icon-only,
 #sidebar a.icon-only,
 #sidebar ul li a.icon-only,
 #content a.icon-only {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 24px !important;
+  height: 24px !important;
+  padding: 0 !important;
+  border-radius: var(--r-sm) !important;
   font-size: 0 !important;
   line-height: 1 !important;
   text-decoration: none !important;
+  flex: 0 0 auto !important;
+  vertical-align: middle !important;
+  transition: background var(--t-fast), color var(--t-fast) !important;
 }
+a.icon-only:hover {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+}
+
+/* icon-only + icon-add (New category / New version next to form selects):
+   give them a pale-cyan chip look so they don't read as orphaned glyphs. */
+a.icon-only.icon-add,
+#content a.icon-only.icon-add {
+  background: var(--c-primary-light) !important;
+  border: 1px solid rgba(8,145,178,.25) !important;
+}
+a.icon-only.icon-add:hover {
+  background: var(--c-primary) !important;
+  border-color: var(--c-primary) !important;
+}
+a.icon-only.icon-add:hover .icon-svg { stroke: white !important; }
 a.icon-only .icon-svg,
 a.icon-only > svg,
 #sidebar a.icon-only .icon-svg,
@@ -1011,7 +1104,9 @@ a.icon-only > svg,
   width: 14px !important;
   height: 14px !important;
   vertical-align: middle !important;
+  flex: 0 0 auto !important;
 }
+a.icon-only .icon-label { display: none !important; }
 
 
 .priority-low    { color: var(--c-text-muted) !important; }
@@ -1471,7 +1566,7 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
 /* ── 26. TABULAR FORMS (settings, user edit, project settings) ── */
 .tabular p {
   display: grid !important;
-  grid-template-columns: 220px 1fr !important;
+  grid-template-columns: 220px 1fr auto !important;
   align-items: baseline !important;
   gap: var(--sp-1) var(--sp-4) !important;
   padding: var(--sp-2) 0 !important;
@@ -1658,6 +1753,56 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
   /* Redmine's responsive.css offsets sticky-issue-header by 64px for its own flyout.
      Our theme doesn't use that flyout, so reset to 0. */
   div#sticky-issue-header { top: 0 !important; }
+}
+
+/* Sticky issue header (JS-inserted when scrolling past the original H1):
+   takes over the topbar position — same height, same dark navy — so the
+   user always sees "what issue am I on" in the same strip. */
+div#sticky-issue-header {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: var(--topbar-h) !important;
+  padding: 0 var(--sp-4) !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-3) !important;
+  background: var(--c-topbar-bg) !important;
+  color: var(--c-topbar-text) !important;
+  border-bottom: none !important;
+  box-shadow: 0 1px 3px rgb(0 0 0 / .4) !important;
+  z-index: 1001 !important;              /* above #top-menu (1000) */
+  font-family: var(--font-sans) !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  transform: translateY(-100%) !important;
+  transition: transform var(--t) ease !important;
+}
+div#sticky-issue-header.is-visible {
+  transform: translateY(0) !important;
+}
+div#sticky-issue-header .issue-heading {
+  font-size: var(--text-sm) !important;
+  font-weight: 600 !important;
+  color: rgba(255, 255, 255, .7) !important;
+  letter-spacing: .02em !important;
+  flex-shrink: 0 !important;
+}
+div#sticky-issue-header .subject {
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  color: white !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+@media (max-width: 899px) {
+  /* keep the mobile override explicit */
+  /* placeholder to preserve CSS block structure */
 
   /* Nav tabs — static on mobile, scroll horizontally */
   #main-menu {

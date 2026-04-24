@@ -234,6 +234,22 @@
     });
   }
 
+  /* ── PROJECT HEADER BADGE ───────────────────────────────── */
+  function initProjectBadge() {
+    var h1 = qs('#header h1');
+    if (!h1) return;
+    var curr = qs('.current-project', h1);
+    if (!curr) return;
+    if (qs('.rm-project-badge', h1)) return; // idempotent
+    var words = (curr.textContent.match(/[A-Za-z0-9]+/g) || [curr.textContent]);
+    var initials = words.slice(0, 2).map(function (w) { return w[0]; }).join('').toUpperCase();
+    var badge = document.createElement('span');
+    badge.className = 'rm-project-badge';
+    badge.setAttribute('aria-hidden', 'true');
+    badge.textContent = initials || '·';
+    h1.insertBefore(badge, h1.firstChild);
+  }
+
   /* ── HAMBURGER MENU (mobile) ─────────────────────────────── */
   function initHamburger() {
     var topMenu = qs('#top-menu');
@@ -283,6 +299,7 @@
     initCollapsible();
     highlightNav();
     initHamburger();
+    initProjectBadge();
     window.addEventListener('resize', adjustLayout);
   }
 
