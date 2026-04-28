@@ -1816,6 +1816,30 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   text-align: left !important;
   width: auto !important;
   padding-right: 0 !important;
+  font-weight: normal !important;
+}
+/* Project modules + role permissions use <label class="floating"> for a
+   horizontal checkbox grid. Restore Redmine's fixed-width inline-block
+   layout so they don't stack one-per-row under our width:100% reset. */
+.tabular label.floating {
+  display: inline-block !important;
+  width: 270px !important;
+  margin-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: left !important;
+  font-weight: normal !important;
+  vertical-align: top !important;
+  float: none !important;
+}
+/* <label class="block"> (e.g. role member-management radio choices) — one per row */
+.tabular label.block {
+  display: block !important;
+  width: auto !important;
+  margin-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: left !important;
+  font-weight: normal !important;
+  float: none !important;
 }
 .tabular input[type=text],
 .tabular input[type=email],
