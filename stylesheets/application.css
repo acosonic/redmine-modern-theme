@@ -1811,6 +1811,12 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   line-height: 1.5 !important;
   padding-right: var(--sp-1) !important;
 }
+.tabular label:has(input[type=checkbox]),
+.tabular label:has(input[type=radio]) {
+  text-align: left !important;
+  width: auto !important;
+  padding-right: 0 !important;
+}
 .tabular input[type=text],
 .tabular input[type=email],
 .tabular input[type=password],
