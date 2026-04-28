@@ -1811,8 +1811,11 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   line-height: 1.5 !important;
   padding-right: var(--sp-1) !important;
 }
-.tabular label:has(input[type=checkbox]),
-.tabular label:has(input[type=radio]) {
+/* Bare checkbox/radio labels (inside <p>, not .floating/.block) — left-align,
+   shrink to content. Excluding .floating/.block so their explicit rules below
+   win the width war (otherwise :has() specificity 0,3,1 beats 0,2,1). */
+.tabular label:not(.floating):not(.block):has(input[type=checkbox]),
+.tabular label:not(.floating):not(.block):has(input[type=radio]) {
   text-align: left !important;
   width: auto !important;
   padding-right: 0 !important;
