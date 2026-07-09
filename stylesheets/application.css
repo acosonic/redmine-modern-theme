@@ -240,10 +240,15 @@
 
 /* ── 2. DARK MODE TOKENS ─────────────────────────────────── */
 html.dark-mode {
-  --c-primary:       #22D3EE;  /* cyan-400 — vibrant on dark */
-  --c-primary-hover: #38BDF8;  /* sky-400 — hand-picked fallback */
+  /*--c-primary:       #22D3EE;
+  --c-primary-hover: #38BDF8;
   --c-primary-ring:  rgba(34,211,238,.22);
-  --c-focus-ring:    rgba(34,211,238,.5);
+  --c-focus-ring:    rgba(34,211,238,.5);*/
+
+  --c-primary:        #0D9488;  /* teal-600, más oscuro y con verde, no tan celeste */
+  --c-primary-hover:  #14B8A6;  /* teal-500, un poco más claro para hover en dark mode */
+  --c-primary-ring:   rgba(13,148,136,.22);
+  --c-primary-light:  rgba(13,148,136,.12);
 
   --c-bg:          #161E2A;   /* lighter than before */
   --c-surface:     #1E2C3A;   /* lighter card bg     */
