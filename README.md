@@ -6,8 +6,9 @@ A clean, modern UI theme for Redmine 6 with dark mode, collapsible sidebar, and 
 
 The theme is built for speed — it adds **zero render-blocking resources** and imposes no measurable overhead on Redmine's response times:
 
-- **No JavaScript frameworks** — theme.js is plain vanilla JS (~4 KB minified)
+- **No JavaScript frameworks** — theme.js is plain vanilla JS (19 KB raw, ~5.6 KB gzipped)
 - **No runtime CSS-in-JS** — everything is static CSS delivered in a single file
+- **No external requests** — Inter is self-hosted and split by `unicode-range`, so a Latin-only page downloads one ~48 KB woff2 and never touches a CDN
 - **Dark mode initialised synchronously** before first paint — no flash of unstyled content, no layout shift
 - **CSS custom properties** (design tokens) let the browser resolve the entire palette in one pass — no cascade recalculations at runtime
 - **Transitions use `transform` and `opacity`** wherever possible — GPU-composited, never triggering layout or paint
@@ -17,8 +18,9 @@ The theme is built for speed — it adds **zero render-blocking resources** and 
 - Dark / light mode toggle (persisted per browser, no flash on load)
 - Collapsible left sidebar (persisted per browser)
 - Design tokens — change the entire palette by editing 3 lines
-- Inter font (via Google Fonts), modern card layout, smooth transitions
+- Inter font (self-hosted woff2, no CDN), modern card layout, smooth transitions
 - Toast notifications, collapsible issue sections
+- Responsive down to mobile — hamburger menu, stacked forms, larger tap targets (breakpoint at 899px)
 - Properly styled jQuery UI modals (watchers, etc.) with full-page overlay
 - **Zero layout changes required** — drop in and select in Admin settings
 
@@ -78,7 +80,7 @@ The CSS starts with `@import url('../../application.css')` which pulls in Redmin
 
 | Technology | Purpose |
 |-----------|---------|
-| [Inter](https://rsms.me/inter/) | UI typeface (loaded via Google Fonts) |
+| [Inter](https://rsms.me/inter/) | UI typeface — self-hosted woff2 in `stylesheets/fonts/`, weights 400/500/600/700, Latin + Cyrillic subsets |
 | [jQuery UI](https://jqueryui.com/) | Dialog/modal system (bundled with Redmine) |
 | [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
 | [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Design token system |
@@ -98,7 +100,7 @@ Contributions are welcome. Please follow these guidelines:
 1. Fork the repo and create a branch: `git checkout -b fix/my-fix`
 2. Edit only `stylesheets/application.css` and/or `javascripts/theme.js` — do not modify Redmine core files.
 3. Test in both light and dark mode.
-4. Test at 1280px and 1440px viewport widths.
+4. Test at 1280px and 1440px viewport widths, and below 899px (mobile breakpoint).
 5. Keep CSS changes scoped — prefer specific selectors over broad resets.
 6. Open a PR with a short description and before/after screenshots if visual.
 
