@@ -3,6 +3,11 @@
 Drop-in UI theme for **Redmine 6** (dark mode, collapsible sidebar, design tokens).
 Repo: `https://github.com/acosonic/redmine-modern-theme` — branch `main`.
 
+**Before making a visual change, read [HANDOFF.md](HANDOFF.md).** It carries what this
+file does not: how to measure a layout change so the result is trustworthy (headless
+Chrome cannot see scrollbars — use xvfb), deliberate trade-offs that must not be
+reverted by accident, and what is still open.
+
 Only two source files ship behaviour:
 
 | File | Notes |
