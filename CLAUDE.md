@@ -80,9 +80,14 @@ README screenshots are 1440×900; theme is tested at 1280 and 1440.
   `initSearchWidget`, `initAccountDropdown`, `watchSidebar`. Toasts are exposed as the
   global `window.rmToast(message, type, duration)`.
 - JS-injected elements are namespaced `rm-*` (`rm-sidebar`, `rm-toast`, `rm-account-panel`, …).
-- **Known dead code:** `stylesheets/application.css` (~line 2000) styles
-  `div#sticky-issue-header`, but nothing in `theme.js` ever creates that element. Either
-  re-implement the JS or drop the CSS block — don't assume the feature works.
+- **Not everything styled here comes from `theme.js`.** `div#sticky-issue-header`
+  (~line 2030) is a **Redmine 6 core** element — rendered by
+  `app/views/issues/show.html.erb` and toggled by the Stimulus controller
+  `app/javascript/controllers/sticky_issue_header_controller.js`. The theme only
+  restyles it to match the topbar, plus resets Redmine `responsive.css`'s
+  `top: 64px` (that offset is for the project-jump flyout, which this theme hides).
+  Before deleting any rule that `theme.js` does not create, check Redmine's views and
+  Stimulus controllers — grep `~/rubydev/redmine6/app` first.
 - Redmine re-renders parts of the page over AJAX — section wrapping/collapsible code has
   to be AJAX-safe (re-runnable, idempotent).
 
