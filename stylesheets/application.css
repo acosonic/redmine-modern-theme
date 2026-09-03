@@ -1070,6 +1070,23 @@ body.nav-open #rm-hamburger span:nth-child(3) { transform: translateY(-7px) rota
    the wrapper already provides one, and a second border-top creates a double line */
 .autoscroll table { border-top: none !important; border-bottom: none !important; }
 
+/* Wide issue lists scroll horizontally. Keep that scrollbar full-size and give it
+   theme colours so it reads as part of the table rather than an OS artefact —
+   deliberately NOT `scrollbar-width: thin`, since this bar is the only clue that
+   there are more columns off to the right. */
+.autoscroll { scrollbar-color: var(--c-border-2) var(--c-surface-2) !important; }
+.autoscroll::-webkit-scrollbar { height: 12px !important; }
+.autoscroll::-webkit-scrollbar-track {
+  background: var(--c-surface-2) !important;
+  border-top: 1px solid var(--c-border) !important;
+}
+.autoscroll::-webkit-scrollbar-thumb {
+  background: var(--c-border-2) !important;
+  border-radius: 5px !important;
+  border: 2px solid var(--c-surface-2) !important;
+}
+.autoscroll::-webkit-scrollbar-thumb:hover { background: var(--c-text-subtle) !important; }
+
 table.list {
   width: 100% !important;
   border-collapse: collapse !important;
@@ -1111,6 +1128,28 @@ table.list tbody td {
   color: var(--c-text) !important;
   vertical-align: middle !important;
   border: none !important;
+}
+
+/* Long-text columns are kept to a single line with an ellipsis. Without this the
+   table squeezes them to their minimum content width and one long value wraps to
+   four or five lines, so every row in the list inherits that height — a list with
+   a long parent task subject went to 149px per row.
+
+   Trade-off, measured: rows drop to 61px, but a wide issue list is now wider than
+   the viewport and scrolls horizontally where it used to just fit. That is the
+   intended call — a compact scannable list plus a scrollbar beats five-line rows. */
+table.list td.subject {
+  max-width: 320px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+table.list td.parent-subject,
+table.list td.parent {
+  max-width: 260px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 table.list tbody td a {
