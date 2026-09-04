@@ -1292,6 +1292,18 @@ table.list tr.group td {
   padding-right: var(--sp-4) !important;
 }
 
+/* Redmine core hardcodes light colours on the journal header — #f6f7f8 for the
+   strip, #DDEEFF for the one you jumped to via anchor, #666 for the timestamp.
+   None of them react to dark mode, so the header stayed white on a dark page.
+   Re-expressed as tokens, which already carry both palettes. */
+.journals h4.journal-header {
+  background: var(--c-surface-2) !important;
+  color: var(--c-text) !important;
+  border-radius: var(--r-sm) !important;
+}
+.journals div:target h4.journal-header { background: var(--c-primary-light) !important; }
+.journals h4.journal-header .update-info { color: var(--c-text-muted) !important; }
+
 /* ── 13. SUBTASKS & RELATIONS CARDS ─────────────────────── */
 #issue_tree, #relations {
   background: var(--c-surface) !important;
