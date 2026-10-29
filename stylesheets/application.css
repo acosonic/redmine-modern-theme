@@ -227,6 +227,9 @@
 
   /* Text on a --c-primary background (buttons, current page, badges) */
   --c-on-primary: white;
+
+  /* Default SVG icon colour — Redmine core's link blue, kept as-is for Modern */
+  --c-icon: #116699;
 }
 
 /* Modern browsers (color-mix supported): derive hover/light/ring from
@@ -299,6 +302,7 @@ html.dark-mode {
     --c-danger:      var(--s-red);
     --c-info:        var(--s-blue);
     --c-topbar-bg:   var(--s-topbar);
+    --c-icon:        var(--c-primary);
   }
   /* Default topbar; zero specificity so a scheme's own --s-topbar wins */
   :where(html[data-scheme].dark-mode)        { --s-topbar: color-mix(in srgb, var(--s-bg) 72%, black); }
@@ -1478,7 +1482,7 @@ a.icon-only.icon-add:hover {
   background: var(--c-primary) !important;
   border-color: var(--c-primary) !important;
 }
-a.icon-only.icon-add:hover .icon-svg { stroke: white !important; }
+a.icon-only.icon-add:hover .icon-svg { stroke: var(--c-on-primary) !important; }
 a.icon-only .icon-svg,
 a.icon-only > svg,
 #sidebar a.icon-only .icon-svg,
@@ -1537,7 +1541,12 @@ a.icon.icon-add:hover {
 }
 /* Hover state: icon stroke white (override Redmine's red) */
 a.icon.new-issue:hover .icon-svg,
-a.icon.icon-add:hover .icon-svg { stroke: white !important; }
+a.icon.icon-add:hover .icon-svg { stroke: var(--c-on-primary) !important; }
+
+/* Core colours every icon #169 via svg.icon-svg; same specificity, no !important,
+   so core's more specific icon colours (error, ok, readonly, flash) still win. */
+svg.icon-svg { stroke: var(--c-icon); }
+svg.icon-svg-filled { fill: var(--c-icon); stroke: none; }
 
 /* All other icon links: use theme color instead of Redmine's red on hover */
 .contextual a.icon:hover { background: var(--c-surface-2) !important; border-color: var(--c-border-2) !important; }
@@ -2976,4 +2985,87 @@ html.dark-mode #sidebar select { background: var(--c-surface-2) !important; bord
   html[data-scheme].dark-mode .cal .calbody.nwday:not(.other-month) { background: color-mix(in srgb, var(--c-primary) 6%, transparent) !important; }
   html[data-scheme].dark-mode .cal .calbody.today { background: var(--c-primary-light) !important; }
   html[data-scheme].dark-mode .highlight.token-2 { background: color-mix(in srgb, var(--c-primary) 25%, transparent) !important; }
+
+  /* Redmine core greys (#d0d7de, #ddd, #eee, #f7f7f7, #888, #666 …). Modern keeps
+     them — they read as neutral next to its slate palette — but on a tinted scheme
+     background they show up as cold grey patches, so map each to its token. */
+  html[data-scheme] table.list,
+  html[data-scheme] .table-list,
+  html[data-scheme] table.list td,
+  html[data-scheme] table.list th,
+  html[data-scheme] .table-list-header,
+  html[data-scheme] fieldset,
+  html[data-scheme] .box,
+  html[data-scheme] .mypage-box,
+  html[data-scheme] #sidebar,
+  html[data-scheme] #footer,
+  html[data-scheme] ul.cal,
+  html[data-scheme] .cal .calbody,
+  html[data-scheme] div.issue,
+  html[data-scheme] #projects-index ul.projects li.root,
+  html[data-scheme] .filecontent.wiki,
+  html[data-scheme] tr.group td,
+  html[data-scheme] div#sticky-issue-header,
+  html[data-scheme] ul.pages li,
+  html[data-scheme] div#issue-changesets div.changeset { border-color: var(--c-border) !important; }
+  html[data-scheme] table.list th,
+  html[data-scheme] .table-list-header,
+  html[data-scheme] .cal .calhead,
+  html[data-scheme] .cal .week-number { background-color: var(--c-surface-2) !important; }
+  html[data-scheme] legend { color: var(--c-text-muted) !important; }
+  html[data-scheme] span.pagination,
+  html[data-scheme] p.other-formats,
+  html[data-scheme] .journals .journal-details,
+  html[data-scheme] ul.revision-info,
+  html[data-scheme] em.info,
+  html[data-scheme] div.attachments span.author,
+  html[data-scheme] .wiki-update-info,
+  html[data-scheme] div#activity dd span.description,
+  html[data-scheme] .cal .day-num,
+  html[data-scheme] .task,
+  html[data-scheme] div.issue div.subject p,
+  html[data-scheme] div.issue .next-prev-links,
+  html[data-scheme] .gantt_hdr.nwday { color: var(--c-text-muted) !important; }
+  html[data-scheme] span.required { color: var(--c-danger) !important; }
+
+  /* Current page, selected sidebar query, count badge — core #628DB6 / #9DB9D5 */
+  html[data-scheme] ul.pages li.current,
+  html[data-scheme] #sidebar a.selected,
+  html[data-scheme] .badge-count {
+    background-color: var(--c-primary) !important;
+    border-color: var(--c-primary) !important;
+    color: var(--c-on-primary) !important;
+  }
+  html[data-scheme] #sidebar a.selected svg.icon-svg { stroke: var(--c-on-primary) !important; }
+  html[data-scheme] .badge-status-open { color: var(--c-primary) !important; border-color: var(--c-primary) !important; }
+
+  /* Wiki toolbar (jstoolbar.css: #f7f7f7 / #ddd) */
+  html[data-scheme] .jstElements button,
+  html[data-scheme] .jstTabs.tabs ul li a { background-color: var(--c-surface-2) !important; border-color: var(--c-border) !important; }
+
+  /* Calendar and gantt */
+  html[data-scheme] .cal .calbody.other-month { background-color: var(--c-bg) !important; }
+  html[data-scheme] .cal .calbody.nwday:not(.other-month),
+  html[data-scheme] .gantt_hdr.nwday { background-color: var(--c-surface-2) !important; }
+  html[data-scheme] .cal .calbody.today { background-color: var(--c-primary-light) !important; }
+  html[data-scheme] .gantt_hdr { border-color: var(--c-border-2) !important; background-color: var(--c-surface-2) !important; }
+  html[data-scheme]:not(.dark-mode) table.list:not(.odd-even) tbody tr:nth-child(even),
+  html[data-scheme]:not(.dark-mode) .even,
+  html[data-scheme]:not(.dark-mode) div#activity h3 { background-color: var(--c-surface-2) !important; }
+
+  /* Light schemes: core .box is #f9fafb, form controls are #fff */
+  html[data-scheme]:not(.dark-mode) .box { background-color: var(--c-surface-2) !important; color: var(--c-text) !important; }
+  html[data-scheme]:not(.dark-mode) input[type=text],
+  html[data-scheme]:not(.dark-mode) input[type=email],
+  html[data-scheme]:not(.dark-mode) input[type=password],
+  html[data-scheme]:not(.dark-mode) input[type=number],
+  html[data-scheme]:not(.dark-mode) input[type=search],
+  html[data-scheme]:not(.dark-mode) input[type=url],
+  html[data-scheme]:not(.dark-mode) input[type=date],
+  html[data-scheme]:not(.dark-mode) select,
+  html[data-scheme]:not(.dark-mode) textarea { background-color: var(--c-surface) !important; color: var(--c-text) !important; }
+
+  /* Native checkboxes / radios / range follow the accent */
+  html[data-scheme] input[type=checkbox],
+  html[data-scheme] input[type=radio] { accent-color: var(--c-primary); }
 }

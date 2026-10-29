@@ -199,12 +199,15 @@ To reproduce the wide-list case the last change addressed:
    with Dracula, Nord, Solarized Light: each scheme sets eight raw `--s-*` values, one
    block (section 2b) derives all `--c-*` tokens via `color-mix()`; new
    `--c-on-primary` token replaces hardcoded white on primary backgrounds. Modern
-   light/dark is pixel-identical to `main` on 16 pages. **Not done** — the user agreed it
-   is not yet a real feature: SVG icon strokes stay core blue `#116699`, and Redmine
-   core greys (table headers `#eee`, borders `#d0d7de`/`#ddd`, wiki toolbar `#f7f7f7`,
-   gantt, calendar, pagination, status badge) ignore the scheme — very visible on
-   Solarized Light. Finishing means tokenising those at source (touches Modern, so
-   before/after on every page) and only offering curated schemes (10–20), not 1000.
+   light/dark is pixel-identical to `main` on 16 pages.
+   SVG icons go through a new `--c-icon` token (Modern value = core's `#116699`, so no
+   pixel change; schemes = accent). Redmine core greys (`#d0d7de`, `#ddd`, `#eee`,
+   `#f7f7f7`, `#888`, `#666`, `#9DB9D5`, `#628DB6` …) are remapped only under
+   `html[data-scheme]` at the end of `application.css` — deliberately not at source, so
+   Modern stays identical. A colour scan of 16 pages per scheme finds only intended
+   colours left (avatars, native checkboxes, overdue red, topbar text). **Still open:**
+   only 3 schemes; adding 10–20 curated ones should be a small script over Gogh's
+   `data/themes.json`, plus a contrast check of `--s-on-accent` per scheme.
 6. **Second local fixture:** issue custom field id 1, "Test checkbox group" (list, multiple,
    check-box style, all trackers/projects) was added to `redmine_development` so
    `.check_box_group` renders on `/issues/21/edit`. Delete it if pristine seed data is wanted.
