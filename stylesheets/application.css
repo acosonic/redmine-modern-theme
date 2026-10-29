@@ -2819,18 +2819,28 @@ html.dark-mode .jstElements button:hover {
 /* "pre" text label on the pre button */
 html.dark-mode .jstb_pre::before { color: var(--c-text-muted) !important; }
 
-/* Wiki editor: core .jstTabs overlaps the textarea's top edge by 1px (margin-bottom:
-   -1px) so the Edit tab looks attached — but the focus ring then showed only in the
-   gaps between the toolbar buttons, as a dashed line. The toolbar row now sits 8px
-   above the textarea, which keeps the theme's normal outer focus ring, and the
-   Edit / Preview tabs become complete chips instead of tabs open at the bottom. */
-#content .jstTabs.tabs { margin-bottom: 8px !important; }
-#content .jstTabs.tabs li a,
-html.dark-mode #content .jstTabs.tabs li a,
-html.dark-mode #content .jstTabs.tabs li a.selected {
-  border-bottom: 1px solid var(--c-border) !important;
-  border-radius: var(--r-sm) !important;
+/* Wiki editor (Edit / Preview + toolbar over the textarea). Core overlaps this row
+   1px onto the textarea (margin-bottom: -1px) so the selected tab joins the field —
+   which makes the field's focus ring and the row share pixels. Left to paint order,
+   the buttons covered the ring and it showed only between them, as dashes.
+   The layering is explicit instead:
+   - the textarea (z 1) sits under the row (z 2); the row itself is transparent, so
+     the ring shows through everywhere except under the tabs;
+   - the selected tab has the field's colour, bottom border included, so it covers
+     the ring exactly where tab and field join;
+   - the toolbar buttons sit 4px above the edge (core: 2px), out of reach of the
+     2px ring, so it never touches the icons. */
+#content .jstTabs.tabs { position: relative !important; z-index: 2 !important; }
+.jstEditor textarea { position: relative; z-index: 1; }
+.jstTabs .jstElements { height: auto !important; padding-bottom: 4px !important; }  /* core: fixed 26px, border-box would eat the padding */
+.jstEditor textarea:focus,
+.jstEditor textarea:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 2px var(--c-primary-ring) !important;
 }
+#content .jstTabs.tabs li a { border-radius: var(--r-sm) var(--r-sm) 0 0 !important; }
+#content .jstTabs.tabs li a.selected { border-bottom-color: var(--c-surface) !important; }
+html.dark-mode #content .jstTabs.tabs li a.selected { border-bottom-color: var(--c-surface-2) !important; }
 
 /* Dark mode: core toolbar icons are dark SVG backgrounds — invisible on the dark
    button. The button hides its own image and ::after redraws it inverted, so the
@@ -3385,6 +3395,10 @@ html.dark-mode #main .activity_date_heading .date_title { color: var(--c-text); 
   /* Wiki toolbar (jstoolbar.css: #f7f7f7 / #ddd) */
   html[data-scheme] .jstElements button,
   html[data-scheme] .jstTabs.tabs ul li a { background-color: var(--c-surface-2) !important; border-color: var(--c-border) !important; }
+  html[data-scheme]:not(.dark-mode) #content .jstTabs.tabs li a.selected {
+    background-color: var(--c-surface) !important;
+    border-bottom-color: var(--c-surface) !important;
+  }
 
   /* Calendar and gantt */
   html[data-scheme] .cal .calbody.other-month { background-color: var(--c-bg) !important; }
