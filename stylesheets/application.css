@@ -1507,7 +1507,7 @@ input[type=button]:hover, button.button:hover {
 /* ── 16. FORM INPUTS ─────────────────────────────────────── */
 /* Shared border/color — keep height/padding compatible with Redmine's 24px default */
 input[type=text], input[type=email], input[type=password],
-input[type=number], input[type=search], input[type=url], textarea {
+input[type=number], input[type=search], input[type=url], input[type=date], textarea {
   border: 1px solid var(--c-border) !important;
   border-radius: var(--r) !important;
   padding: 4px var(--sp-3) !important;
@@ -1541,7 +1541,7 @@ textarea {
 
 input[type=text]:focus, input[type=email]:focus, input[type=password]:focus,
 input[type=number]:focus, input[type=search]:focus, input[type=url]:focus,
-textarea:focus {
+input[type=date]:focus, textarea:focus {
   border-color: var(--c-primary) !important;
   box-shadow: 0 0 0 3px var(--c-primary-ring) !important;
 }
@@ -1550,6 +1550,7 @@ select:focus { border-color: var(--c-primary) !important; }
 
 input[type=text]:hover:not(:focus),
 input[type=email]:hover:not(:focus),
+input[type=date]:hover:not(:focus),
 select:hover:not(:focus) { border-color: var(--c-border-2) !important; }
 
 label { font-size: var(--text-sm) !important; font-weight: 500 !important; color: var(--c-text) !important; }
@@ -2385,6 +2386,7 @@ html.dark-mode input[type=password],
 html.dark-mode input[type=number],
 html.dark-mode input[type=search],
 html.dark-mode input[type=url],
+html.dark-mode input[type=date],
 html.dark-mode select,
 html.dark-mode textarea { background: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
 
