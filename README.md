@@ -86,7 +86,7 @@ The CSS starts with `@import url('../../application.css')` which pulls in Redmin
 | [jQuery UI](https://jqueryui.com/) | Dialog/modal system (bundled with Redmine) |
 | [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
 | [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Design token system |
-| [Puppeteer](https://pptr.dev/) | Screenshot automation for README images |
+| [Puppeteer](https://pptr.dev/) | Screenshot automation for README images — `src/screenshots.mjs`, run against a local Redmine with seed data |
 | [Tailwind CSS](https://tailwindcss.com/) | Design token methodology and spacing/colour scale inspiration |
 
 Design inspired by modern SaaS dashboards (Linear, GitHub, Notion).
@@ -121,6 +121,22 @@ MIT
 ---
 
 ## Screenshots
+
+### Colour schemes
+
+Pick a scheme on **My account** — 27 curated ones, or search all ~1,250 Gogh palettes. The four you used last sit in the account menu.
+
+| My account | Account menu |
+|-------|------|
+| ![Colour scheme picker on My account](screenshots/light-scheme-picker.png) | ![Recent schemes in the account menu](screenshots/light-account-menu.png) |
+| ![Searching every Gogh palette, with accent choice](screenshots/dark-gogh-search.png) | |
+
+| | | |
+|---|---|---|
+| ![Dracula](screenshots/scheme-dracula.png) | ![Gruvbox Dark](screenshots/scheme-gruvbox-dark.png) | ![Tokyo Night](screenshots/scheme-tokyo-night.png) |
+| Dracula | Gruvbox Dark | Tokyo Night |
+| ![Gruvbox Light](screenshots/scheme-gruvbox-light.png) | ![Solarized Light](screenshots/scheme-solarized-light.png) | ![Rosé Pine Dawn](screenshots/scheme-rose-pine-dawn.png) |
+| Gruvbox Light | Solarized Light | Rosé Pine Dawn |
 
 ### Projects & Dashboard
 
