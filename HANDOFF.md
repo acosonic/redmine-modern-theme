@@ -205,9 +205,19 @@ To reproduce the wide-list case the last change addressed:
    `#f7f7f7`, `#888`, `#666`, `#9DB9D5`, `#628DB6` …) are remapped only under
    `html[data-scheme]` at the end of `application.css` — deliberately not at source, so
    Modern stays identical. A colour scan of 16 pages per scheme finds only intended
-   colours left (avatars, native checkboxes, overdue red, topbar text). **Still open:**
-   only 3 schemes; adding 10–20 curated ones should be a small script over Gogh's
-   `data/themes.json`, plus a contrast check of `--s-on-accent` per scheme.
+   colours left (avatars, native checkboxes, overdue red, topbar text).
+   **27 schemes** now come from `tools/gen-schemes.py` (see CLAUDE.md). It pulls a
+   failing accent / red / foreground towards white or black until WCAG AA passes, fits a
+   per-scheme `--s-muted`, picks `--s-on-accent`, and drops what it cannot fix without
+   changing the scheme (Material Palenight, Solarized Dark). Measured in the browser:
+   all 27 pass AA — lowest label 4.68, link 4.71, button text 4.99. Gogh's "One Dark"
+   has a grey foreground; the script uses "One Dark Pro" instead.
+   UI (user's choice): full card picker on `/my/account` under Preferences, the four
+   most recently used as dots in the account menu. Storage is `localStorage` only —
+   the JSON API ignores the session cookie, so a theme cannot read a per-user setting
+   without a plugin. Cards are `<button>`s: core's `button { height: 24px }` had
+   collapsed them until `height: auto` was added.
+   **Still open:** merge decision; README screenshots do not show schemes yet.
 6. **Second local fixture:** issue custom field id 1, "Test checkbox group" (list, multiple,
    check-box style, all trackers/projects) was added to `redmine_development` so
    `.check_box_group` renders on `/issues/21/edit`. Delete it if pristine seed data is wanted.
