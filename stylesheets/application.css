@@ -224,6 +224,9 @@
 
   /* Focus ring — used by :focus-visible across all interactive elements */
   --c-focus-ring: rgba(8,145,178,.55);
+
+  /* Text on a --c-primary background (buttons, current page, badges) */
+  --c-on-primary: white;
 }
 
 /* Modern browsers (color-mix supported): derive hover/light/ring from
@@ -270,6 +273,78 @@ html.dark-mode {
     --c-primary-light: color-mix(in srgb, var(--c-primary) 14%, transparent);
     --c-primary-ring:  color-mix(in srgb, var(--c-primary) 30%, transparent);
     --c-focus-ring:    color-mix(in srgb, var(--c-primary) 50%, transparent);
+  }
+}
+
+/* ── 2b. COLOUR SCHEMES ──────────────────────────────────── */
+/* Optional palettes picked from the account menu (theme.js → initSchemePicker).
+   Each scheme sets only raw --s-* inputs taken from a Gogh terminal palette
+   (github.com/Gogh-Co/Gogh, MIT): background, foreground, an accent, the
+   red/green/yellow/blue slots, and the text colour that sits on the accent.
+   The block below derives every --c-* token from them, so a new scheme is
+   one short block. Needs color-mix(); theme.js hides the picker without it.
+   Must stay after the dark-mode blocks — same specificity, later wins. */
+@supports (color: color-mix(in srgb, red, white)) {
+  html[data-scheme] {
+    --c-bg:          var(--s-bg);
+    --c-text:        var(--s-fg);
+    --c-text-muted:  color-mix(in srgb, var(--s-fg) 72%, var(--s-bg));
+    --c-text-subtle: color-mix(in srgb, var(--s-fg) 48%, var(--s-bg));
+    --c-border:      color-mix(in srgb, var(--s-fg) 15%, var(--s-bg));
+    --c-border-2:    color-mix(in srgb, var(--s-fg) 24%, var(--s-bg));
+    --c-primary:     var(--s-accent);
+    --c-on-primary:  var(--s-on-accent);
+    --c-success:     var(--s-green);
+    --c-warning:     var(--s-yellow);
+    --c-danger:      var(--s-red);
+    --c-info:        var(--s-blue);
+    --c-topbar-bg:   var(--s-topbar);
+  }
+  /* Default topbar; zero specificity so a scheme's own --s-topbar wins */
+  :where(html[data-scheme].dark-mode)        { --s-topbar: color-mix(in srgb, var(--s-bg) 72%, black); }
+  :where(html[data-scheme]:not(.dark-mode))  { --s-topbar: color-mix(in srgb, var(--s-fg) 80%, black); }
+
+  /* Dark schemes: cards lift towards the foreground */
+  html[data-scheme].dark-mode {
+    --c-surface:     color-mix(in srgb, var(--s-fg) 6%, var(--s-bg));
+    --c-surface-2:   color-mix(in srgb, var(--s-fg) 10%, var(--s-bg));
+    --c-sidebar-bg:  color-mix(in srgb, var(--s-fg) 3%, var(--s-bg));
+    --c-header-bg:   var(--c-surface);
+    --c-badge-private-text: var(--s-red);
+    --c-flash-success-text: var(--s-green);
+    --c-flash-error-text:   var(--s-red);
+    --c-flash-warning-text: var(--s-yellow);
+  }
+  /* Light schemes: cards lift towards white */
+  html[data-scheme]:not(.dark-mode) {
+    --c-surface:     color-mix(in srgb, white 65%, var(--s-bg));
+    --c-surface-2:   color-mix(in srgb, white 35%, var(--s-bg));
+    --c-sidebar-bg:  var(--c-surface);
+    --c-header-bg:   var(--c-surface);
+    --c-badge-private-text: color-mix(in srgb, var(--s-red) 75%, black);
+    --c-flash-success-text: color-mix(in srgb, var(--s-green) 70%, black);
+    --c-flash-error-text:   color-mix(in srgb, var(--s-red) 75%, black);
+    --c-flash-warning-text: color-mix(in srgb, var(--s-yellow) 65%, black);
+  }
+
+  /* Gogh: Dracula */
+  html[data-scheme="dracula"] {
+    --s-bg: #282A36;  --s-fg: #F8F8F2;
+    --s-accent: #BD93F9;  --s-on-accent: #282A36;
+    --s-red: #FF5555;  --s-green: #50FA7B;  --s-yellow: #F1FA8C;  --s-blue: #8BE9FD;
+  }
+  /* Gogh: Nord */
+  html[data-scheme="nord"] {
+    --s-bg: #2E3440;  --s-fg: #D8DEE9;
+    --s-accent: #88C0D0;  --s-on-accent: #2E3440;
+    --s-red: #BF616A;  --s-green: #A3BE8C;  --s-yellow: #EBCB8B;  --s-blue: #81A1C1;
+  }
+  /* Gogh: Solarized Light */
+  html[data-scheme="solarized-light"] {
+    --s-bg: #FCF4DC;  --s-fg: #536870;
+    --s-accent: #2176C7;  --s-on-accent: #FFFFFF;
+    --s-red: #D11C24;  --s-green: #738A05;  --s-yellow: #A57706;  --s-blue: #2176C7;
+    --s-topbar: #002831;
   }
 }
 
@@ -431,7 +506,7 @@ a:focus-visible,
   height: 26px !important;
   border-radius: 50% !important;
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   font-size: 11px !important;
   font-weight: 700 !important;
   letter-spacing: .03em !important;
@@ -507,6 +582,43 @@ a:focus-visible,
 }
 .rm-account-panel ul li a:hover { background: var(--c-primary-light) !important; color: var(--c-primary) !important; }
 
+/* Colour scheme picker (theme.js → initSchemePicker) */
+.rm-scheme-picker { display: flex !important; flex-direction: column !important; padding: var(--sp-1) 0 !important; }
+.rm-scheme-label {
+  padding: var(--sp-1) var(--sp-3) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .05em !important;
+  color: var(--c-text-subtle) !important;
+}
+.rm-scheme-option {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-2) !important;
+  width: 100% !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: var(--r-sm) !important;
+  color: var(--c-text) !important;
+  font: inherit !important;
+  font-size: var(--text-sm) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition: background var(--t-fast) !important;
+}
+.rm-scheme-option:hover { background: var(--c-primary-light) !important; color: var(--c-primary) !important; }
+.rm-scheme-option[aria-checked="true"] { font-weight: 600 !important; }
+.rm-scheme-option[aria-checked="true"]::after { content: '✓' !important; margin-left: auto !important; color: var(--c-primary) !important; }
+.rm-scheme-swatch {
+  width: 16px !important;
+  height: 16px !important;
+  flex-shrink: 0 !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--c-border-2) !important;
+}
+
 /* Dark-mode adjustments for the panel */
 html.dark-mode .rm-account-panel { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
 html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-light) !important; color: var(--c-primary) !important; }
@@ -572,7 +684,7 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   width: 34px !important;
   height: 34px !important;
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   border-radius: var(--r-md) !important;
   font-size: 12px !important;
   font-weight: 700 !important;
@@ -796,7 +908,7 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   padding: 0 !important;
   margin: auto var(--sp-3) auto 0 !important;
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   border: none !important;
   border-bottom: none !important;
   border-radius: var(--r-md) !important;
@@ -810,7 +922,7 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
 
 #main-menu a#new-object:hover {
   background: var(--c-primary-hover) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   border-bottom: none !important;
   transform: scale(1.08) !important;
 }
@@ -987,7 +1099,7 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
 
 #rm-sidebar-toggle:hover {
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   border-color: var(--c-primary) !important;
 }
 
@@ -1419,7 +1531,7 @@ a.icon.icon-add .icon-svg { stroke: var(--c-primary) !important; }
 a.icon.new-issue:hover,
 a.icon.icon-add:hover {
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   border-color: var(--c-primary) !important;
   box-shadow: var(--shadow-sm) !important;
 }
@@ -1490,7 +1602,7 @@ input[type=button] {
 
 input[type=submit] {
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   border-color: var(--c-primary) !important;
 }
 
@@ -1631,7 +1743,7 @@ label { font-size: var(--text-sm) !important; font-weight: 500 !important; color
 
 .pagination span.current, .pagination em.current {
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   border-color: var(--c-primary) !important;
 }
 
@@ -1708,7 +1820,7 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   transform: scale(1.1) !important;
   box-shadow: var(--shadow-lg) !important;
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   border-color: var(--c-primary) !important;
 }
 
@@ -1943,7 +2055,7 @@ hr { border: none !important; border-top: 1px solid var(--c-border) !important; 
   left: 50% !important;
   transform: translateX(-50%) !important;
   background: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
   padding: var(--sp-2) var(--sp-4) !important;
   border-radius: 0 0 var(--r) var(--r) !important;
   font-size: var(--text-sm) !important;
@@ -2448,7 +2560,7 @@ html.dark-mode .wiki pre { background: var(--c-surface-2) !important; border-col
 /* Pagination */
 html.dark-mode .pagination a,
 html.dark-mode .pagination span.current { background: var(--c-surface) !important; border-color: var(--c-border) !important; color: var(--c-text-muted) !important; }
-html.dark-mode .pagination span.current { background: var(--c-primary) !important; color: white !important; }
+html.dark-mode .pagination span.current { background: var(--c-primary) !important; color: var(--c-on-primary) !important; }
 
 /* Flash messages — text color is driven by --c-flash-*-text tokens, redefined in html.dark-mode */
 
@@ -2461,7 +2573,7 @@ html.dark-mode h2, html.dark-mode h3 { color: var(--c-text) !important; }
 /* Sidebar selected query link — overrides hardcoded #9DB9D5 */
 html.dark-mode #sidebar a.selected {
   background-color: var(--c-primary) !important;
-  color: white !important;
+  color: var(--c-on-primary) !important;
 }
 
 /* Wiki toolbar buttons — overrides jstoolbar.css hardcoded #f7f7f7 */
@@ -2850,3 +2962,18 @@ html.dark-mode .block-receiver { border-color: var(--c-border) !important; }
 /* ── Activity page user/filter inputs in sidebar ── */
 html.dark-mode #sidebar input[type=text],
 html.dark-mode #sidebar select { background: var(--c-surface-2) !important; border-color: var(--c-border) !important; color: var(--c-text) !important; }
+
+/* ── Colour schemes: hardcoded colours that would otherwise leak through ── */
+/* Modern renders these values directly; a scheme re-expresses them from its
+   tokens. Scoped to [data-scheme] so the default palette stays pixel-identical. */
+@supports (color: color-mix(in srgb, red, white)) {
+  /* Redmine core paints #content white; Modern light relies on that = --c-surface */
+  html[data-scheme]:not(.dark-mode) #content { background-color: var(--c-surface) !important; }
+  html[data-scheme] a.icon-only.icon-add,
+  html[data-scheme] #content a.icon-only.icon-add,
+  html[data-scheme] a.icon.new-issue,
+  html[data-scheme] a.icon.icon-add { border-color: color-mix(in srgb, var(--c-primary) 25%, transparent) !important; }
+  html[data-scheme].dark-mode .cal .calbody.nwday:not(.other-month) { background: color-mix(in srgb, var(--c-primary) 6%, transparent) !important; }
+  html[data-scheme].dark-mode .cal .calbody.today { background: var(--c-primary-light) !important; }
+  html[data-scheme].dark-mode .highlight.token-2 { background: color-mix(in srgb, var(--c-primary) 25%, transparent) !important; }
+}

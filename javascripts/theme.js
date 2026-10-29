@@ -13,6 +13,10 @@
   if (stored === '1' || (stored === null && prefersDark)) {
     document.documentElement.classList.add('dark-mode');
   }
+  // Colour scheme (see initSchemePicker). rm-dark is kept in step with the
+  // scheme's variant when one is picked, so the class above already matches.
+  var scheme = localStorage.getItem('rm-scheme');
+  if (scheme) document.documentElement.setAttribute('data-scheme', scheme);
 }());
 
 /* ── REST runs after DOM is ready ──────────────────────────── */
@@ -114,8 +118,82 @@
       var nowDark = document.documentElement.classList.toggle('dark-mode');
       btn.textContent = nowDark ? '☀️' : '🌙';
       localStorage.setItem('rm-dark', nowDark ? '1' : '0');
+      // A scheme fixes its own variant, so toggling falls back to the default palette
+      if (document.documentElement.hasAttribute('data-scheme')) applyScheme('');
       rmToast(nowDark ? 'Dark mode on' : 'Light mode on', 'info', 2000);
     });
+  }
+
+  /* ── COLOUR SCHEMES ──────────────────────────────────────── */
+  // Palettes live in application.css (section 2b); swatch = [background, accent].
+  // dark: null keeps whatever light/dark state the user already has.
+  var SCHEMES = [
+    { id: '',                name: 'Modern',          dark: null,  swatch: ['#F0F4F8', '#0891B2'] },
+    { id: 'dracula',         name: 'Dracula',         dark: true,  swatch: ['#282A36', '#BD93F9'] },
+    { id: 'nord',            name: 'Nord',            dark: true,  swatch: ['#2E3440', '#88C0D0'] },
+    { id: 'solarized-light', name: 'Solarized Light', dark: false, swatch: ['#FCF4DC', '#2176C7'] }
+  ];
+
+  function applyScheme(id) {
+    var root = document.documentElement;
+    var scheme = SCHEMES.filter(function (s) { return s.id === id; })[0] || SCHEMES[0];
+    if (scheme.id) {
+      root.setAttribute('data-scheme', scheme.id);
+      localStorage.setItem('rm-scheme', scheme.id);
+    } else {
+      root.removeAttribute('data-scheme');
+      localStorage.removeItem('rm-scheme');
+    }
+    if (scheme.dark !== null) {
+      root.classList.toggle('dark-mode', scheme.dark);
+      localStorage.setItem('rm-dark', scheme.dark ? '1' : '0');
+      var toggle = qs('#rm-darkmode-toggle');
+      if (toggle) toggle.textContent = scheme.dark ? '☀️' : '🌙';
+    }
+    qsa('.rm-scheme-option').forEach(function (b) {
+      b.setAttribute('aria-checked', b.getAttribute('data-scheme-id') === scheme.id ? 'true' : 'false');
+    });
+  }
+
+  function initSchemePicker() {
+    var panel = qs('.rm-account-panel');
+    if (!panel || qs('.rm-scheme-picker', panel)) return; // idempotent
+    if (!(window.CSS && CSS.supports('color', 'color-mix(in srgb, red, white)'))) return;
+
+    var current = document.documentElement.getAttribute('data-scheme') || '';
+    var sep = document.createElement('div');
+    sep.className = 'rm-account-panel-sep';
+    var picker = document.createElement('div');
+    picker.className = 'rm-scheme-picker';
+    picker.setAttribute('role', 'radiogroup');
+    picker.setAttribute('aria-label', 'Colour scheme');
+    var label = document.createElement('div');
+    label.className = 'rm-scheme-label';
+    label.textContent = 'Colour scheme';
+    picker.appendChild(label);
+
+    SCHEMES.forEach(function (s) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rm-scheme-option';
+      b.setAttribute('role', 'radio');
+      b.setAttribute('data-scheme-id', s.id);
+      b.setAttribute('aria-checked', s.id === current ? 'true' : 'false');
+      var sw = document.createElement('span');
+      sw.className = 'rm-scheme-swatch';
+      sw.setAttribute('aria-hidden', 'true');
+      sw.style.background = 'linear-gradient(135deg, ' + s.swatch[0] + ' 50%, ' + s.swatch[1] + ' 50%)';
+      b.appendChild(sw);
+      b.appendChild(document.createTextNode(s.name));
+      b.addEventListener('click', function (e) {
+        e.stopPropagation();
+        applyScheme(s.id);
+      });
+      picker.appendChild(b);
+    });
+
+    panel.appendChild(sep);
+    panel.appendChild(picker);
   }
 
   /* ── TOASTS ──────────────────────────────────────────────── */
@@ -451,6 +529,7 @@
     initProjectBadge();
     initSearchWidget();
     initAccountDropdown();
+    initSchemePicker();
     watchSidebar();
     window.addEventListener('resize', adjustLayout);
   }
