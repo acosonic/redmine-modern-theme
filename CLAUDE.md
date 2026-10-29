@@ -18,6 +18,16 @@ Only two source files ship behaviour:
 
 `screenshots/` feeds the README tables only.
 
+`tools/gen-schemes.py` generates the colour schemes (it does not ship): it reads Gogh's
+`data/themes.json` (https://github.com/Gogh-Co/Gogh — download it, it is not vendored),
+contrast-checks every palette, and rewrites the text between the `@schemes:begin` /
+`@schemes:end` markers in both source files. Never hand-edit between those markers —
+change the `SCHEMES` dict in the script and rerun:
+
+```bash
+python3 -I tools/gen-schemes.py /path/to/themes.json          # --check = report only
+```
+
 ## Local test setup (verified working)
 
 Local Redmine 6 lives at **`~/rubydev/redmine6`**, and `themes/modern-redmine-theme`
@@ -86,7 +96,9 @@ README screenshots are 1440×900; theme is tested at 1280 and 1440.
   from `init()` on `DOMContentLoaded`.
 - JS features are one function each, all called from `init()`: `initSidebar`,
   `initDarkMode`, `initCollapsible`, `highlightNav`, `initHamburger`, `initProjectBadge`,
-  `initSearchWidget`, `initAccountDropdown`, `watchSidebar`. Toasts are exposed as the
+  `initSearchWidget`, `initAccountDropdown`, `initSchemePicker` (4 recent schemes in the
+  account menu), `initSchemeSettings` (full picker on `/my/account`), `watchSidebar`.
+  Toasts are exposed as the
   global `window.rmToast(message, type, duration)`.
 - JS-injected elements are namespaced `rm-*` (`rm-sidebar`, `rm-toast`, `rm-account-panel`, …).
 - **Not everything styled here comes from `theme.js`.** `div#sticky-issue-header`

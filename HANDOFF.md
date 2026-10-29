@@ -199,12 +199,25 @@ To reproduce the wide-list case the last change addressed:
    with Dracula, Nord, Solarized Light: each scheme sets eight raw `--s-*` values, one
    block (section 2b) derives all `--c-*` tokens via `color-mix()`; new
    `--c-on-primary` token replaces hardcoded white on primary backgrounds. Modern
-   light/dark is pixel-identical to `main` on 16 pages. **Not done** — the user agreed it
-   is not yet a real feature: SVG icon strokes stay core blue `#116699`, and Redmine
-   core greys (table headers `#eee`, borders `#d0d7de`/`#ddd`, wiki toolbar `#f7f7f7`,
-   gantt, calendar, pagination, status badge) ignore the scheme — very visible on
-   Solarized Light. Finishing means tokenising those at source (touches Modern, so
-   before/after on every page) and only offering curated schemes (10–20), not 1000.
+   light/dark is pixel-identical to `main` on 16 pages.
+   SVG icons go through a new `--c-icon` token (Modern value = core's `#116699`, so no
+   pixel change; schemes = accent). Redmine core greys (`#d0d7de`, `#ddd`, `#eee`,
+   `#f7f7f7`, `#888`, `#666`, `#9DB9D5`, `#628DB6` …) are remapped only under
+   `html[data-scheme]` at the end of `application.css` — deliberately not at source, so
+   Modern stays identical. A colour scan of 16 pages per scheme finds only intended
+   colours left (avatars, native checkboxes, overdue red, topbar text).
+   **27 schemes** now come from `tools/gen-schemes.py` (see CLAUDE.md). It pulls a
+   failing accent / red / foreground towards white or black until WCAG AA passes, fits a
+   per-scheme `--s-muted`, picks `--s-on-accent`, and drops what it cannot fix without
+   changing the scheme (Material Palenight, Solarized Dark). Measured in the browser:
+   all 27 pass AA — lowest label 4.68, link 4.71, button text 4.99. Gogh's "One Dark"
+   has a grey foreground; the script uses "One Dark Pro" instead.
+   UI (user's choice): full card picker on `/my/account` under Preferences, the four
+   most recently used as dots in the account menu. Storage is `localStorage` only —
+   the JSON API ignores the session cookie, so a theme cannot read a per-user setting
+   without a plugin. Cards are `<button>`s: core's `button { height: 24px }` had
+   collapsed them until `height: auto` was added.
+   **Still open:** merge decision; README screenshots do not show schemes yet.
 6. **Second local fixture:** issue custom field id 1, "Test checkbox group" (list, multiple,
    check-box style, all trackers/projects) was added to `redmine_development` so
    `.check_box_group` renders on `/issues/21/edit`. Delete it if pristine seed data is wanted.
