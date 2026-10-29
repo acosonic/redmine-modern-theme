@@ -1553,6 +1553,16 @@ input[type=email]:hover:not(:focus),
 input[type=date]:hover:not(:focus),
 select:hover:not(:focus) { border-color: var(--c-border-2) !important; }
 
+/* Multi-select custom field editor (core's own .check_box_group) - core hardcodes a plain
+   white background, gray border and no radius regardless of theme, so it stood out against
+   every other themed input. Match the same border/radius/background/text color. */
+.check_box_group {
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  background: var(--c-surface) !important;
+  color: var(--c-text) !important;
+}
+
 label { font-size: var(--text-sm) !important; font-weight: 500 !important; color: var(--c-text) !important; }
 
 /* ── 17. FLASH MESSAGES ──────────────────────────────────── */
@@ -2388,7 +2398,8 @@ html.dark-mode input[type=search],
 html.dark-mode input[type=url],
 html.dark-mode input[type=date],
 html.dark-mode select,
-html.dark-mode textarea { background: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+html.dark-mode textarea,
+html.dark-mode .check_box_group { background: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
 
 /* Query form */
 html.dark-mode #query_form { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
