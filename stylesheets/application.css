@@ -2819,13 +2819,17 @@ html.dark-mode .jstElements button:hover {
 /* "pre" text label on the pre button */
 html.dark-mode .jstb_pre::before { color: var(--c-text-muted) !important; }
 
-/* Wiki editor: the toolbar row overlaps the textarea's top edge by 1px (core
-   .jstTabs margin-bottom: -1px), so the outer focus ring only showed in the gaps
-   between the buttons — a dashed line under the toolbar. Keep the ring inside. */
-.jstEditor textarea:focus,
-.jstEditor textarea:focus-visible {
-  outline: none !important;
-  box-shadow: inset 0 0 0 2px var(--c-primary-ring) !important;
+/* Wiki editor: core .jstTabs overlaps the textarea's top edge by 1px (margin-bottom:
+   -1px) so the Edit tab looks attached — but the focus ring then showed only in the
+   gaps between the toolbar buttons, as a dashed line. The toolbar row now sits 8px
+   above the textarea, which keeps the theme's normal outer focus ring, and the
+   Edit / Preview tabs become complete chips instead of tabs open at the bottom. */
+#content .jstTabs.tabs { margin-bottom: 8px !important; }
+#content .jstTabs.tabs li a,
+html.dark-mode #content .jstTabs.tabs li a,
+html.dark-mode #content .jstTabs.tabs li a.selected {
+  border-bottom: 1px solid var(--c-border) !important;
+  border-radius: var(--r-sm) !important;
 }
 
 /* Dark mode: core toolbar icons are dark SVG backgrounds — invisible on the dark
