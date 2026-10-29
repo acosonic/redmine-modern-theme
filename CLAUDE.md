@@ -63,6 +63,10 @@ ln -sfn /home/acop/scrapers/jordan-scrapes-secretary-of-states/node_modules ./no
 node shot.mjs   # must be an .mjs in the same dir; NODE_PATH does NOT work for ESM
 ```
 
+That puppeteer's bundled browser is **Chromium 80** — no `color-mix()`, so it renders
+the fallbacks. Pass `executablePath: '/home/acop/.cache/puppeteer/chrome/linux-147.0.7727.57/chrome-linux64/chrome'`
+(details in HANDOFF.md §0).
+
 Script pattern: goto `/login`, type into `#username` / `#password`, click
 `input[type=submit]`, wait for navigation, then navigate and `page.screenshot`.
 README screenshots are 1440×900; theme is tested at 1280 and 1440.
