@@ -18,15 +18,25 @@ Only two source files ship behaviour:
 
 `screenshots/` feeds the README tables only.
 
-`tools/gen-schemes.py` generates the colour schemes (it does not ship): it reads Gogh's
+`src/gen-schemes.py` generates the colour schemes (it does not ship): it reads Gogh's
 `data/themes.json` (https://github.com/Gogh-Co/Gogh — download it, it is not vendored),
 contrast-checks every palette, and rewrites the text between the `@schemes:begin` /
-`@schemes:end` markers in both source files. Never hand-edit between those markers —
-change the `SCHEMES` dict in the script and rerun:
+`@schemes:end` markers in both source files. It also writes `stylesheets/gogh/palettes.json`
+(all ~1250 palettes, ~50 KB gzipped) for the "Any Gogh scheme" search on My account.
+Never hand-edit between the markers or the JSON — change the `SCHEMES` dict and rerun:
 
 ```bash
-python3 -I tools/gen-schemes.py /path/to/themes.json          # --check = report only
+python3 -I src/gen-schemes.py /path/to/themes.json          # --check = report only
 ```
+
+`buildGoghScheme` in `theme.js` is a JS port of the generator's colour logic (same
+surfaces, WCAG targets and nudging; it may also move the background, which the
+generator never needs). Keep the two in step: for the 27 generated schemes, the JS
+must produce the same `--s-*` values (±1/255) as the CSS blocks.
+
+**Redmine serves every top-level directory of a theme as public assets**
+(`Redmine::Themes::Theme#asset_paths`) — except `src/` and dot-directories. Anything
+that must not be published (tools, notes) goes in `src/`.
 
 ## Local test setup (verified working)
 
@@ -61,6 +71,9 @@ Redmine 6 serves theme files through Propshaft, not statically:
 - Theme asset paths are registered **at boot** (`config/initializers/30-redmine.rb` →
   `Redmine::Themes`). **Adding a new file or directory requires a server restart**;
   editing existing files does not.
+- theme.js cannot know a digested URL. To reach a theme file from JS, reference it from
+  CSS with `url()` (Propshaft rewrites every `url()`, custom properties included) and
+  read it back: see `--rm-gogh-palettes` in `:root`.
 - CSS edits still need a hard reload (digest changes, but browser caches the old link).
 
 ### Screenshots (Puppeteer)

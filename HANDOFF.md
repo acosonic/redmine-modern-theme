@@ -200,7 +200,7 @@ To reproduce the wide-list case the last change addressed:
    `html[data-scheme]` at the end of `application.css` — deliberately not at source, so
    Modern stays identical. A colour scan of 16 pages per scheme finds only intended
    colours left (avatars, native checkboxes, overdue red, topbar text).
-   **27 schemes** now come from `tools/gen-schemes.py` (see CLAUDE.md). It pulls a
+   **27 schemes** now come from `src/gen-schemes.py` (see CLAUDE.md). It pulls a
    failing accent / red / foreground towards white or black until WCAG AA passes, fits a
    per-scheme `--s-muted`, picks `--s-on-accent`, and drops what it cannot fix without
    changing the scheme (Material Palenight, Solarized Dark). Measured in the browser:
@@ -211,6 +211,15 @@ To reproduce the wide-list case the last change addressed:
    the JSON API ignores the session cookie, so a theme cannot read a per-user setting
    without a plugin. Cards are `<button>`s: core's `button { height: 24px }` had
    collapsed them until `height: auto` was added.
+   **Any Gogh palette (branch `feature/gogh-any`):** My account also has a search over
+   all 1,251 Gogh palettes (`stylesheets/gogh/palettes.json`, fetched only on the first
+   keystroke; its digested URL comes from `--rm-gogh-palettes` in CSS). The pick is
+   built in the browser by `buildGoghScheme` and stored as `rm-scheme=gogh` +
+   `rm-scheme-gogh` (computed `--s-*`), which the early IIFE sets inline on `<html>`.
+   Six accent dots (blue, cyan, magenta, green, yellow, red). Verified: JS output equals
+   the generator for all 27; all 1,251 palettes × 6 accents reach the targets
+   computationally; a 44-palette sample (incl. Solarized Dark, Nep) passes AA rendered.
+   `tools/` moved to `src/` because Redmine publishes every other theme directory.
    **Still open:** README screenshots do not show schemes yet.
 6. **Second local fixture:** issue custom field id 1, "Test checkbox group" (list, multiple,
    check-box style, all trackers/projects) was added to `redmine_development` so
