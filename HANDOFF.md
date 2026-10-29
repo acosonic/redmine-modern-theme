@@ -7,10 +7,14 @@ silently undone, and what is still open.**
 
 ## State at handoff
 
-`main` is clean and pushed to `origin/main`. Last three commits:
+`main` is clean and pushed to `origin/main`. Last commits:
 
 | Commit | What |
 |---|---|
+| `b8b504c` | Merged PR #7 (evfool) — `.check_box_group` (multi-select custom field, check-box style) themed in light + dark; closes #6 |
+| `e589c7b` | Merged PR #5 (evfool) — `input[type=date]` added to the shared input rules (border, radius, padding, focus, dark bg); closes #4 |
+| `9dd65b2` | Journal header (`.journals h4.journal-header`, "Updated by X" strip) re-expressed with tokens — Redmine core hardcodes `#f6f7f8` / `#DDEEFF` (`:target`) / `#666` (`.update-info`), so it stayed white in dark mode. Light mode visually unchanged; dark now `#243040` with `#E8F0F8` text. Added after this file was first written. |
+| `372ef7d` | Added this `HANDOFF.md` |
 | `2ba6c50` | Issue-list subject / parent-subject / parent columns forced to one line + ellipsis; `.autoscroll` scrollbar themed |
 | `72076b2` | Fixed a wrong claim in `CLAUDE.md` about `#sticky-issue-header` |
 | `c32c948` | Added `CLAUDE.md`; corrected stale README claims (fonts, JS size, mobile) |
@@ -165,6 +169,15 @@ To reproduce the wide-list case the last change addressed:
 4. `td.description` and `td.last_notes` were left alone. A rule for them was written
    and then dropped: those columns did not render from the URL params tried, so the
    rule could not be verified. Do not ship it unverified.
+5. **PR #8 (evfool, fixes #1) is waiting on the contributor.** Its `html.dark-mode legend`
+   rule is good (Filters/Options legends were `#333` on dark). Its
+   `html.dark-mode svg.icon-svg { stroke }` rule is not: it turns the accent-cyan icons on
+   the issue page (Edit / Log time / Watch / Copy, reaction) grey. Asked on the PR to narrow
+   it to `legend svg.icon-svg` or drop it. Issue #2 / PR #3 were closed as already fixed by
+   `9dd65b2`.
+6. **Second local fixture:** issue custom field id 1, "Test checkbox group" (list, multiple,
+   check-box style, all trackers/projects) was added to `redmine_development` so
+   `.check_box_group` renders on `/issues/21/edit`. Delete it if pristine seed data is wanted.
 
 ## Two mistakes made this session, and the rules from them
 
