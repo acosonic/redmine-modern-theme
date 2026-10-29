@@ -2819,6 +2819,39 @@ html.dark-mode .jstElements button:hover {
 /* "pre" text label on the pre button */
 html.dark-mode .jstb_pre::before { color: var(--c-text-muted) !important; }
 
+/* Wiki editor: the toolbar row overlaps the textarea's top edge by 1px (core
+   .jstTabs margin-bottom: -1px), so the outer focus ring only showed in the gaps
+   between the buttons — a dashed line under the toolbar. Keep the ring inside. */
+.jstEditor textarea:focus,
+.jstEditor textarea:focus-visible {
+  outline: none !important;
+  box-shadow: inset 0 0 0 2px var(--c-primary-ring) !important;
+}
+
+/* Dark mode: core toolbar icons are dark SVG backgrounds — invisible on the dark
+   button. The button hides its own image and ::after redraws it inverted, so the
+   button keeps its themed background and border. Plugin buttons (DMSF, macros…)
+   bring their own icons and are left alone; .jstb_pre is a text label. */
+html.dark-mode .jstElements :is(.jstb_strong, .jstb_em, .jstb_ins, .jstb_del, .jstb_code,
+  .jstb_h1, .jstb_h2, .jstb_h3, .jstb_ul, .jstb_ol, .jstb_tl, .jstb_bq, .jstb_unbq,
+  .jstb_table, .jstb_precode, .jstb_link, .jstb_img, .jstb_help) {
+  position: relative !important;
+  background-size: 0 0 !important;
+}
+html.dark-mode .jstElements :is(.jstb_strong, .jstb_em, .jstb_ins, .jstb_del, .jstb_code,
+  .jstb_h1, .jstb_h2, .jstb_h3, .jstb_ul, .jstb_ol, .jstb_tl, .jstb_bq, .jstb_unbq,
+  .jstb_table, .jstb_precode, .jstb_link, .jstb_img, .jstb_help)::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background-image: inherit !important;
+  background-repeat: no-repeat !important;
+  background-position: 50% 50% !important;
+  filter: invert(1) !important;
+  opacity: .85 !important;
+  pointer-events: none !important;
+}
+
 /* Wiki preview area — overrides hardcoded #ffffff */
 html.dark-mode .wiki-preview {
   background-color: var(--c-surface-2) !important;
