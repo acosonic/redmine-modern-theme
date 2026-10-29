@@ -181,9 +181,10 @@ To reproduce the wide-list case the last change addressed:
    Infrastructure, List Warm-Up & Launch Gate` to reproduce the long-parent-subject
    case. It was `Synergized multimedia hardware`. Useful as a fixture; revert if the
    user wants the seed data pristine.
-3. **No screenshot tooling is committed.** The README credits Puppeteer for the
-   README images, but no script lives in the repo — each session rebuilds one. The
-   `screenshots/` PNGs predate the recent table changes.
+3. **Screenshots: `src/screenshots.mjs`** (2026-10-29) regenerates every README image
+   against the local Redmine (Chrome 147, 1440×900). Do not point it at production —
+   real names and data. It needs the local fixtures below and a puppeteer
+   `node_modules` symlink in `src/` (git-ignored).
 4. `td.description` and `td.last_notes` were left alone. A rule for them was written
    and then dropped: those columns did not render from the URL params tried, so the
    rule could not be verified. Do not ship it unverified.
@@ -211,7 +212,7 @@ To reproduce the wide-list case the last change addressed:
    the JSON API ignores the session cookie, so a theme cannot read a per-user setting
    without a plugin. Cards are `<button>`s: core's `button { height: 24px }` had
    collapsed them until `height: auto` was added.
-   **Any Gogh palette (branch `feature/gogh-any`):** My account also has a search over
+   **Any Gogh palette (merged, deployed `aef7b64`):** My account also has a search over
    all 1,251 Gogh palettes (`stylesheets/gogh/palettes.json`, fetched only on the first
    keystroke; its digested URL comes from `--rm-gogh-palettes` in CSS). The pick is
    built in the browser by `buildGoghScheme` and stored as `rm-scheme=gogh` +
@@ -220,10 +221,11 @@ To reproduce the wide-list case the last change addressed:
    the generator for all 27; all 1,251 palettes × 6 accents reach the targets
    computationally; a 44-palette sample (incl. Solarized Dark, Nep) passes AA rendered.
    `tools/` moved to `src/` because Redmine publishes every other theme directory.
-   **Still open:** README screenshots do not show schemes yet.
-6. **Second local fixture:** issue custom field id 1, "Test checkbox group" (list, multiple,
-   check-box style, all trackers/projects) was added to `redmine_development` so
-   `.check_box_group` renders on `/issues/21/edit`. Delete it if pristine seed data is wanted.
+
+6. **More local fixtures:** issue custom field id 1, "Platforms" (list, multiple, check-box
+   style, values Web/iOS/Android/Desktop, all trackers/projects) so `.check_box_group`
+   renders on `/issues/21/edit`; three News items in project `schimmel13` for the README
+   news screenshot. Delete them if pristine seed data is wanted.
 
 ## Production — redmine.inctime.com
 
