@@ -16,7 +16,7 @@ The theme is built for speed — it adds **zero render-blocking resources** and 
 ## Features
 
 - Dark / light mode toggle (persisted per browser, no flash on load)
-- 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox, Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more, each contrast-checked to WCAG AA. Pick one on **My account**; the four you used last sit in the account menu. Saved per browser, needs a browser with CSS `color-mix()`
+- 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox, Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more, each contrast-checked to WCAG AA. Pick one on **My account**; the four you used last sit in the account menu. Or search **all ~1,250 Gogh palettes** by name and pick an accent; any palette is adjusted in the browser until it passes WCAG AA, and you are told when that changed it noticeably. Saved per browser, needs a browser with CSS `color-mix()`
 - Collapsible left sidebar (persisted per browser)
 - Design tokens — change the entire palette by editing 3 lines
 - Inter font (self-hosted woff2, no CDN), modern card layout, smooth transitions
@@ -81,7 +81,7 @@ The CSS starts with `@import url('../../application.css')` which pulls in Redmin
 
 | Technology | Purpose |
 |-----------|---------|
-| [Gogh](https://github.com/Gogh-Co/Gogh) | Source palettes for the colour schemes (MIT / Apache-2.0), turned into theme tokens by `tools/gen-schemes.py` |
+| [Gogh](https://github.com/Gogh-Co/Gogh) | Source palettes for the colour schemes (MIT / Apache-2.0), turned into theme tokens by `src/gen-schemes.py` |
 | [Inter](https://rsms.me/inter/) | UI typeface — self-hosted woff2 in `stylesheets/fonts/`, weights 400/500/600/700, Latin + Cyrillic subsets |
 | [jQuery UI](https://jqueryui.com/) | Dialog/modal system (bundled with Redmine) |
 | [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
