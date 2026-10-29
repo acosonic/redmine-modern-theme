@@ -3247,6 +3247,37 @@ html.dark-mode #main .activity_date_heading { background-color: var(--c-surface-
 html.dark-mode #main .sidebar_right_header h5 span,
 html.dark-mode #main .activity_date_heading .date_title { color: var(--c-text); }
 
+/* Vault (Passwords) — search row: Find and Clear are two forms inside a flex h2 with
+   no gap, the field is 24px next to 36px buttons, and Clear looked as primary as Find */
+.controller-keys #content .keys-search-title { gap: var(--sp-2) !important; flex-wrap: wrap !important; }
+.controller-keys #content .keys-search-form { display: flex !important; align-items: center !important; gap: var(--sp-2) !important; }
+.controller-keys #content .keys-search-title input#query { height: 36px !important; }
+.controller-keys #content .keys-search-title form.button_to input[type=submit] {
+  background: var(--c-surface) !important;
+  color: var(--c-text) !important;
+  border-color: var(--c-border-2) !important;
+}
+.controller-keys #content .keys-search-title form.button_to input[type=submit]:hover { background: var(--c-surface-2) !important; }
+
+/* Vault — popular tags: the plugin's 3-column layout squeezes each tag into ~56px of
+   sidebar and the theme's #sidebar link style (muted text, 8px padding) clipped the
+   label. Pills instead; white text on the user-chosen colour, as the plugin intends,
+   dark text on its default bisque (no inline colour). */
+#tags-list:has(li.vault-tag) { column-count: auto !important; }
+#tags-list ul:has(> li.vault-tag) { display: flex !important; flex-wrap: wrap !important; gap: 6px !important; margin: 0 !important; padding: 0 !important; }
+#tags-list li.vault-tag { margin: 0 !important; padding: 0 !important; overflow: visible !important; border-radius: 999px !important; }
+#sidebar #tags-list li.vault-tag a.vault-tag-link {
+  display: inline-block !important;
+  padding: 2px 10px !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 600 !important;
+  color: white !important;
+  background: transparent !important;
+  border-radius: inherit !important;
+}
+#sidebar #tags-list li.vault-tag:not([style*="background"]) a.vault-tag-link { color: var(--c-text) !important; }
+#sidebar #tags-list li.vault-tag a.vault-tag-link:hover { text-decoration: underline !important; }
+
 /* ── Colour schemes: hardcoded colours that would otherwise leak through ── */
 /* Modern renders these values directly; a scheme re-expresses them from its
    tokens. Scoped to [data-scheme] so the default palette stays pixel-identical. */
