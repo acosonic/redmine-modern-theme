@@ -20,8 +20,6 @@ silently undone, and what is still open.**
 | `72076b2` | Fixed a wrong claim in `CLAUDE.md` about `#sticky-issue-header` |
 | `c32c948` | Added `CLAUDE.md`; corrected stale README claims (fonts, JS size, mobile) |
 
-Unmerged work lives on branch **`feature/colour-schemes`** — see open item 5.
-
 Working tree has one untracked file, `Screenshot From 2026-09-02 15-51-15.png`, in the
 repo root. It is the user's, not build output — leave it alone unless asked.
 
@@ -175,13 +173,9 @@ To reproduce the wide-list case the last change addressed:
 
 ## Open items
 
-1. **Production may be running an older theme.** The user's screenshot from
-   `redmine.inctime.com` showed a table clipped at the viewport edge with no
-   scrollbar at all. That could not be reproduced locally — locally the wrapper
-   stays inside `#content` and does scroll. The local checkout in
-   `~/rubydev/redmine6/themes/` had been a month-stale *copy* until it was replaced
-   with a symlink this session, so the same may be true of production. Worth
-   confirming which commit is deployed there before chasing it as a CSS bug.
+1. **Production (`redmine.inctime.com`) — resolved, facts below.** The clipped-table
+   screenshot was most likely the separate `redmine-modern-theme-dev` copy (see below).
+
 2. **Local test fixture was modified.** Issue #2 in `redmine_development` had its
    subject changed to `Email Program Remediation Plan: Template Rebuild, Sending
    Infrastructure, List Warm-Up & Launch Gate` to reproduce the long-parent-subject
@@ -193,7 +187,7 @@ To reproduce the wide-list case the last change addressed:
 4. `td.description` and `td.last_notes` were left alone. A rule for them was written
    and then dropped: those columns did not render from the URL params tried, so the
    rule could not be verified. Do not ship it unverified.
-5. **Colour schemes — branch `feature/colour-schemes`, prototype, not merged.** The user
+5. **Colour schemes — merged to `main` (`9da1f48`) and deployed 2026-10-29.** The user
    asked for selectable palettes from Gogh (github.com/Gogh-Co/Gogh, MIT/Apache, 1000
    terminal schemes). The prototype adds a "Colour scheme" section to the account menu
    with Dracula, Nord, Solarized Light: each scheme sets eight raw `--s-*` values, one
@@ -217,10 +211,37 @@ To reproduce the wide-list case the last change addressed:
    the JSON API ignores the session cookie, so a theme cannot read a per-user setting
    without a plugin. Cards are `<button>`s: core's `button { height: 24px }` had
    collapsed them until `height: auto` was added.
-   **Still open:** merge decision; README screenshots do not show schemes yet.
+   **Still open:** README screenshots do not show schemes yet.
 6. **Second local fixture:** issue custom field id 1, "Test checkbox group" (list, multiple,
    check-box style, all trackers/projects) was added to `redmine_development` so
    `.check_box_group` renders on `/issues/21/edit`. Delete it if pristine seed data is wanted.
+
+## Production — redmine.inctime.com
+
+- Host `15.204.154.156`. SSH `ubuntu@redmine.inctime.com` (key auth, passwordless sudo),
+  then work as `sudo -u redmine -i`. Rails needs a login shell for rvm:
+  `sudo -u redmine -i bash -l -s <<'EOF' … EOF` (quoting through ssh+sudo breaks otherwise).
+- Redmine 6.1.0 in `/home/redmine/redmine`, `RAILS_ENV=production`, Apache → puma socket
+  `/run/redmine/puma.sock`, service `redmine.service`. A second, unrelated instance runs as
+  `support` (`support-redmine.service`) — leave it alone.
+- Theme: `themes/redmine-modern-theme` is a git clone of this repo on `main`.
+  `themes/redmine-modern-theme-dev` is a plain copy (not git), used by one user.
+- Apache serves `/assets/` from `public/`, i.e. **precompiled** assets.
+  `config.assets.redmine_detect_update = true` recompiles on boot, so a deploy is:
+  `git -C ~/redmine/themes/redmine-modern-theme pull --ff-only` then
+  `sudo systemctl restart redmine` (~20–60 s downtime), then check
+  `public/assets/.manifest.json` points at a new `application-*.css`.
+  Rollback: `git checkout <previous sha>` + restart.
+- Plugin `redmine_user_specific_theme`: users pick a theme per account. Since
+  2026-10-29 the global default (`Setting.ui_theme`) is `redmine-modern-theme`
+  (was `""`). Revert: `bin/rails runner 'Setting.ui_theme = ""'`.
+- Other plugins whose pages were audited light + dark: Agile (board, backlog),
+  Redmineflux Testcase, DMSF, Vault (`/keys`, not opened — passwords), Contacts.
+  Not theme issues: `/helpdesk_tickets` returns an empty 200, `/contacts` throws
+  `observe_field is not a function` (plugin vs Redmine 6.1).
+- Logging in for checks: credentials in the repo's `.env` (`PROD_USER`, `PROD_PW`,
+  git-ignored); the account has TOTP 2FA, so the user has to type a code. Read-only
+  audits only — never submit forms there.
 
 ## Two mistakes made this session, and the rules from them
 

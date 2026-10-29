@@ -184,7 +184,7 @@
   --c-border-2:    #C4CDD6;
   --c-text:        #0F1923;
   --c-text-muted:  #5A6A7A;
-  --c-text-subtle: #8FA0B0;
+  --c-text-subtle: #617282;   /* lightest text that still passes WCAG AA (4.5:1) on --c-bg */
 
   --c-topbar-bg:   #083344;   /* deep cyan-900 */
   --c-topbar-text: rgba(255,255,255,.88);
@@ -258,7 +258,7 @@ html.dark-mode {
   --c-border-2:    #3A5068;
   --c-text:        #E8F0F8;   /* softer white        */
   --c-text-muted:  #8AAABF;
-  --c-text-subtle: #56748A;
+  --c-text-subtle: #7B9AB0;   /* AA on --c-surface-2 */
   --c-primary-light: rgba(34,211,238,.12);
   --c-topbar-bg:   #0C1E2C;   /* dark navy-cyan      */
   --c-header-bg:   #1E2C3A;
@@ -268,6 +268,9 @@ html.dark-mode {
   --c-flash-success-text: #6EE7B7;
   --c-flash-error-text:   #FCA5A5;
   --c-flash-warning-text: #FCD34D;
+
+  /* White on the bright dark-mode cyan is ~1.8:1; dark navy reads at ~10:1 */
+  --c-on-primary: #0C1E2C;
 }
 
 @supports (color: color-mix(in srgb, red, white)) {
@@ -294,7 +297,7 @@ html.dark-mode {
     --c-bg:          var(--s-bg);
     --c-text:        var(--s-fg);
     --c-text-muted:  var(--s-muted, color-mix(in srgb, var(--s-fg) 72%, var(--s-bg)));
-    --c-text-subtle: color-mix(in srgb, var(--s-fg) 48%, var(--s-bg));
+    --c-text-subtle: var(--s-muted, color-mix(in srgb, var(--s-fg) 48%, var(--s-bg)));
     --c-border:      color-mix(in srgb, var(--s-fg) 15%, var(--s-bg));
     --c-border-2:    color-mix(in srgb, var(--s-fg) 24%, var(--s-bg));
     --c-primary:     var(--s-accent);
@@ -1879,6 +1882,11 @@ label { font-size: var(--text-sm) !important; font-weight: 500 !important; color
   align-items: center !important;
   gap: var(--sp-2) !important;
 }
+/* …but a flash that Redmine or a plugin hid inline (jQuery .hide(), e.g. Agile's
+   empty #agile-board-errors) must stay hidden — display:flex !important beat it. */
+#flash_notice[style*="display: none"], #flash_error[style*="display: none"],
+#flash_warning[style*="display: none"], div.flash[style*="display: none"],
+div.flash[style*="display:none"] { display: none !important; }
 
 #flash_notice, div.flash.notice {
   background: rgba(16,185,129,.1) !important;
@@ -2759,12 +2767,33 @@ html.dark-mode #footer { background: var(--c-surface) !important; border-top-col
 
 /* Misc links & text — var(--c-primary) / var(--c-primary-hover) redefine in dark-mode block */
 html.dark-mode h2, html.dark-mode h3 { color: var(--c-text) !important; }
+/* Core: #content h1…h6 { color: #555 } — the wiki h1 read at 2.2:1 */
+html.dark-mode #content h1, html.dark-mode #content h4,
+html.dark-mode #content h5, html.dark-mode #content h6 { color: var(--c-text) !important; }
+/* Core secondary text (#555 / #666 / #888 / #959595) is fine on white, ~2.2–2.9:1 on dark */
+html.dark-mode div#activity dt .time,
+html.dark-mode div#activity dd span.description,
+html.dark-mode #search-results dd span.description,
+html.dark-mode p.other-formats,
+html.dark-mode .wiki-update-info,
+html.dark-mode span.pagination,
+html.dark-mode em.info,
+html.dark-mode div.attachments span.author,
+html.dark-mode ul.revision-info { color: var(--c-text-muted) !important; }
+/* Core #959595 is 3.0:1 even on white */
+.journals .journal-details { color: var(--c-text-muted) !important; }
+/* Core paints the selected sidebar link #9DB9D5 (2.7:1 with muted text); dark mode
+   and schemes already re-colour it, light Modern gets the theme's active style */
+#sidebar a.selected { background-color: var(--c-primary-light) !important; color: var(--c-primary) !important; }
+#sidebar a.selected svg.icon-svg { stroke: var(--c-primary) !important; }
+html.dark-mode .badge-status-open { color: var(--c-primary) !important; border-color: var(--c-primary) !important; }
 
 /* Sidebar selected query link — overrides hardcoded #9DB9D5 */
 html.dark-mode #sidebar a.selected {
   background-color: var(--c-primary) !important;
   color: var(--c-on-primary) !important;
 }
+html.dark-mode #sidebar a.selected svg.icon-svg { stroke: var(--c-on-primary) !important; }
 
 /* Wiki toolbar buttons — overrides jstoolbar.css hardcoded #f7f7f7 */
 html.dark-mode .jstElements button {
@@ -3152,6 +3181,60 @@ html.dark-mode .block-receiver { border-color: var(--c-border) !important; }
 /* ── Activity page user/filter inputs in sidebar ── */
 html.dark-mode #sidebar input[type=text],
 html.dark-mode #sidebar select { background: var(--c-surface-2) !important; border-color: var(--c-border) !important; color: var(--c-text) !important; }
+
+/* ── Plugin compatibility (dark mode) ─────────────────────── */
+/* Plugins hardcode light backgrounds that the dark palette then puts light text on.
+   Selectors are deliberately more specific than the plugin's (and !important only
+   where the plugin uses it), so a plugin's own inline colour coding still wins.
+   Checked against redmine.inctime.com, 2026-10-29. */
+
+/* RedmineUP Agile — cards #ffffdd, planning columns #f6f7f8/#eee, WIP limits.
+   Colour-coded cards (.bk-*) keep their meaning as a left stripe. */
+html.dark-mode .issue-card { background-color: var(--c-surface-2); border-color: var(--c-border); color: var(--c-text); }
+html.dark-mode .issues-board td.issue-status-col.closed .issue-card,
+html.dark-mode .planning-board .closed-issue { background-color: var(--c-surface); opacity: .8; }
+html.dark-mode .planning-board .closed-issue p.name a,
+html.dark-mode .planning-board .closed-issue p.issue-id { color: var(--c-text-muted) !important; }
+html.dark-mode .issue-card p.project,
+html.dark-mode .assignable-user.draggable-active { background-color: var(--c-surface); border-color: var(--c-border); }
+html.dark-mode .issue-card[class*="bk-"] { border-left-width: 4px; }
+html.dark-mode .issue-card.bk-red        { border-left-color: var(--c-danger); }
+html.dark-mode .issue-card.bk-green,
+html.dark-mode .issue-card.bk-lightgreen { border-left-color: var(--c-success); }
+html.dark-mode .issue-card.bk-blue       { border-left-color: var(--c-info); }
+html.dark-mode .issue-card.bk-turquoise  { border-left-color: var(--c-primary); }
+html.dark-mode .issue-card.bk-yellow,
+html.dark-mode .issue-card.bk-orange     { border-left-color: var(--c-warning); }
+html.dark-mode .issue-card.bk-purple     { border-left-color: var(--c-border-2); }
+html.dark-mode .issue-card.bk-gray       { border-left-color: var(--c-text-subtle); }
+html.dark-mode table.issues-board td.issue-status-col.closed,
+html.dark-mode table.issues-board tbody td.under_wp_limit,
+html.dark-mode table.issues-board tbody td.over_wp_limit { background-color: transparent; }
+html.dark-mode table.issues-board thead th.under_wp_limit { background-color: color-mix(in srgb, var(--c-success) 18%, var(--c-surface)); }
+html.dark-mode table.issues-board thead th.over_wp_limit  { background-color: color-mix(in srgb, var(--c-danger) 18%, var(--c-surface)); }
+html.dark-mode .issues-board .backlog-column-header,
+html.dark-mode .issues-board .issue-backlog-col { background: var(--c-surface); }
+html.dark-mode .planning-board .column-content { background-color: var(--c-surface); border-color: var(--c-border); }
+html.dark-mode .planning-board .column-header { background-color: var(--c-surface-2); border-bottom-color: var(--c-border); }
+html.dark-mode .planning-board .column-header .version-name,
+html.dark-mode .planning-board .column-header .version-estimate { color: var(--c-text-muted); }
+html.dark-mode.agile-board-fullscreen div.agile-board { background: var(--c-bg); }
+
+/* Redmineflux Testcase Management — #eaf7ff !important sidebar on ~25 controllers,
+   white activity panel and filters. Its chart (#testcase_graph_id) is left white on
+   purpose: the canvas draws dark axis labels that would vanish on a dark card. */
+html.dark-mode body:is([class*="controller-test"], [class*="controller-run"], .controller-requirements,
+  .controller-traceability_rtms, .controller-issue_testcase) #sidebar {
+  background: var(--c-sidebar-bg) !important; box-shadow: none !important;
+}
+html.dark-mode #main #sidebar_right,
+html.dark-mode #main .activity_item,
+html.dark-mode #main .parent_calendar { background-color: var(--c-surface); color: var(--c-text); border-color: var(--c-border); }
+html.dark-mode #main #reset_filters_button { background-color: var(--c-surface-2); color: var(--c-text); border: 1px solid var(--c-border); }
+html.dark-mode #main .activity_detail_date { color: var(--c-text-muted); }
+html.dark-mode #main .activity_date_heading { background-color: var(--c-surface-2); }
+html.dark-mode #main .sidebar_right_header h5 span,
+html.dark-mode #main .activity_date_heading .date_title { color: var(--c-text); }
 
 /* ── Colour schemes: hardcoded colours that would otherwise leak through ── */
 /* Modern renders these values directly; a scheme re-expresses them from its
