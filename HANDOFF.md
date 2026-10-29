@@ -11,6 +11,7 @@ silently undone, and what is still open.**
 
 | Commit | What |
 |---|---|
+| `4d5a4e2` | Merged PR #8 (evfool) — dark-mode `legend` text + legend chevron stroke; closes #1. `d9ecaed` (pushed to the contributor's branch before merging) narrowed its site-wide `svg.icon-svg` rule to `legend svg.icon-svg`, which had greyed the accent icons on the issue page |
 | `b8b504c` | Merged PR #7 (evfool) — `.check_box_group` (multi-select custom field, check-box style) themed in light + dark; closes #6 |
 | `e589c7b` | Merged PR #5 (evfool) — `input[type=date]` added to the shared input rules (border, radius, padding, focus, dark bg); closes #4 |
 | `9dd65b2` | Journal header (`.journals h4.journal-header`, "Updated by X" strip) re-expressed with tokens — Redmine core hardcodes `#f6f7f8` / `#DDEEFF` (`:target`) / `#666` (`.update-info`), so it stayed white in dark mode. Light mode visually unchanged; dark now `#243040` with `#E8F0F8` text. Added after this file was first written. |
@@ -18,6 +19,8 @@ silently undone, and what is still open.**
 | `2ba6c50` | Issue-list subject / parent-subject / parent columns forced to one line + ellipsis; `.autoscroll` scrollbar themed |
 | `72076b2` | Fixed a wrong claim in `CLAUDE.md` about `#sticky-issue-header` |
 | `c32c948` | Added `CLAUDE.md`; corrected stale README claims (fonts, JS size, mobile) |
+
+Unmerged work lives on branch **`feature/colour-schemes`** — see open item 5.
 
 Working tree has one untracked file, `Screenshot From 2026-09-02 15-51-15.png`, in the
 repo root. It is the user's, not build output — leave it alone unless asked.
@@ -29,6 +32,22 @@ The local Redmine dev server may still be running on `http://127.0.0.1:3000`
 
 This is the part that is easy to get wrong, and getting it wrong produces confident
 but false conclusions.
+
+### 0. Use a current Chrome, not the one bundled with the borrowed puppeteer
+
+The borrowed `node_modules` (below) is an old puppeteer whose bundled browser is
+**Chromium 80** (2019). It has no `color-mix()` (Chrome 111+), so every
+`@supports (color: color-mix(...))` block in `application.css` is skipped and you
+measure the static fallbacks, not what users see. Everything measured before
+2026-10-29 — including the reference numbers that used to be here — was Chromium 80.
+Point the old puppeteer at a current Chrome; its API works with it:
+
+```js
+puppeteer.launch({ executablePath:
+  '/home/acop/.cache/puppeteer/chrome/linux-147.0.7727.57/chrome-linux64/chrome', ... })
+```
+
+Chromium 80 is still useful for one thing: checking the no-`color-mix()` fallback.
 
 ### 1. Headless Chrome cannot verify scrollbars or anything that reserves layout space
 
@@ -79,6 +98,7 @@ ln -sfn /home/acop/scrapers/jordan-scrapes-secretary-of-states/node_modules ./no
 import puppeteer from 'puppeteer';
 const BASE = 'http://127.0.0.1:3000', W = Number(process.env.W || 1440);
 const b = await puppeteer.launch({ headless: false,
+  executablePath: '/home/acop/.cache/puppeteer/chrome/linux-147.0.7727.57/chrome-linux64/chrome',
   args: ['--no-sandbox', '--disable-setuid-sandbox', `--window-size=${W},900`],
   defaultViewport: { width: W, height: 900 } });
 const p = await b.newPage();
@@ -107,16 +127,18 @@ for (const [name, path] of Object.entries(pages)) {
 await b.close();
 ```
 
-Reference numbers on the current commit (`W=1440`, sidebar expanded):
+Reference numbers on `4d5a4e2`, Chrome 147 under xvfb (`W=1440`, sidebar expanded):
 
 ```
-my-page      autoscroll #2: overflow 90,  bar 12
-issues       overflow 194, bar 12
-admin-users  overflow 100, bar 12
+my-page      autoscroll #2: overflow 99,  bar 15
+issues       overflow 192, bar 15
+admin-users  overflow 99,  bar 15
 time         overflow 0
-projects / issue-detail / project-settings: no .autoscroll
+projects / issue-detail / project-settings / issue-edit / time_entries/new: no .autoscroll
 mobile (W=390): bodyOverflow 0 — tables scroll inside their own wrapper
 ```
+
+(Chromium 80 gave 90 / 194 / 100 with a 12px bar — compare like with like.)
 
 To reproduce the wide-list case the last change addressed:
 
@@ -129,7 +151,7 @@ To reproduce the wide-list case the last change addressed:
 
 ## Decisions that must not be silently reverted
 
-- **`/issues` scrolling horizontally by 194px at 1440px is intentional**, not a bug.
+- **`/issues` scrolling horizontally by ~192px at 1440px is intentional**, not a bug.
   It is the accepted cost of `table.list td.subject { white-space: nowrap }`, which
   took rows on wide lists from 149px to 61px. The user was shown both measured
   options and chose this one. If you think it should change, ask — do not "fix" it.
@@ -140,8 +162,10 @@ To reproduce the wide-list case the last change addressed:
 
 ## Known, pre-existing, not regressions
 
-- `my page` overflows by 90px and `admin/users` by 100px at 1440px. Both did so
-  before any change in this session. Untouched.
+- `my page` and `admin/users` overflow by ~99px at 1440px (Chrome 147). Both did so
+  before any of the table work. Untouched.
+- The textarea resize grip on `/projects/1/settings` renders differently between two
+  Chromium 80 captures of the same CSS. Screenshot noise, not a change.
 - Redmine core throws two JS errors on issue pages, unrelated to the theme:
   `Failed to resolve module specifier "application"` and an invalid selector in
   `setupCopyButtonsToPreElements` (`.wiki pre:not(.pre-wrapper pre)`). Ignore them.
@@ -169,12 +193,18 @@ To reproduce the wide-list case the last change addressed:
 4. `td.description` and `td.last_notes` were left alone. A rule for them was written
    and then dropped: those columns did not render from the URL params tried, so the
    rule could not be verified. Do not ship it unverified.
-5. **PR #8 (evfool, fixes #1) is waiting on the contributor.** Its `html.dark-mode legend`
-   rule is good (Filters/Options legends were `#333` on dark). Its
-   `html.dark-mode svg.icon-svg { stroke }` rule is not: it turns the accent-cyan icons on
-   the issue page (Edit / Log time / Watch / Copy, reaction) grey. Asked on the PR to narrow
-   it to `legend svg.icon-svg` or drop it. Issue #2 / PR #3 were closed as already fixed by
-   `9dd65b2`.
+5. **Colour schemes — branch `feature/colour-schemes`, prototype, not merged.** The user
+   asked for selectable palettes from Gogh (github.com/Gogh-Co/Gogh, MIT/Apache, 1000
+   terminal schemes). The prototype adds a "Colour scheme" section to the account menu
+   with Dracula, Nord, Solarized Light: each scheme sets eight raw `--s-*` values, one
+   block (section 2b) derives all `--c-*` tokens via `color-mix()`; new
+   `--c-on-primary` token replaces hardcoded white on primary backgrounds. Modern
+   light/dark is pixel-identical to `main` on 16 pages. **Not done** — the user agreed it
+   is not yet a real feature: SVG icon strokes stay core blue `#116699`, and Redmine
+   core greys (table headers `#eee`, borders `#d0d7de`/`#ddd`, wiki toolbar `#f7f7f7`,
+   gantt, calendar, pagination, status badge) ignore the scheme — very visible on
+   Solarized Light. Finishing means tokenising those at source (touches Modern, so
+   before/after on every page) and only offering curated schemes (10–20), not 1000.
 6. **Second local fixture:** issue custom field id 1, "Test checkbox group" (list, multiple,
    check-box style, all trackers/projects) was added to `redmine_development` so
    `.check_box_group` renders on `/issues/21/edit`. Delete it if pristine seed data is wanted.
@@ -189,3 +219,7 @@ To reproduce the wide-list case the last change addressed:
 - **Added a `min-width` that regressed a page nobody asked about.** Caught only by
   the control run described above.
   → Never report a visual fix without before/after numbers from the same script.
+- **Measured on Chromium 80 for a whole session without noticing.** The borrowed
+  puppeteer's bundled browser ignores every `color-mix()` block. Caught only when a
+  new feature gated on `color-mix()` silently did not appear.
+  → Check `await browser.version()` once per session; see section 0 above.
