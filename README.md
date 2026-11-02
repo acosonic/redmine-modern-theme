@@ -15,7 +15,7 @@ The theme is built for speed — it adds **zero render-blocking resources** and 
 
 ## Features
 
-- Dark / light mode toggle (persisted per browser, no flash on load)
+- Dark / light mode toggle (persisted per browser, no flash on load) — remembers your colour scheme for each mode, so it switches between your dark and your light scheme
 - 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox, Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more, each contrast-checked to WCAG AA. Pick one on **My account**; the four you used last sit in the account menu. Or search **all ~1,250 Gogh palettes** by name and pick an accent; any palette is adjusted in the browser until it passes WCAG AA, and you are told when that changed it noticeably. Saved per browser, needs a browser with CSS `color-mix()`
 - Collapsible left sidebar (persisted per browser)
 - Design tokens — change the entire palette by editing 3 lines
