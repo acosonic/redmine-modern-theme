@@ -1,6 +1,6 @@
 # Modern Redmine Theme
 
-A clean, modern UI theme for Redmine 6 with dark mode, collapsible sidebar, and design tokens.
+A clean, modern UI theme for Redmine 6 with dark mode, 27 colour schemes (plus any of ~1,250 Gogh palettes), collapsible sidebar, and design tokens.
 
 ## Performance
 

@@ -1,6 +1,6 @@
 # Modern Redmine Theme — project context
 
-Drop-in UI theme for **Redmine 6** (dark mode, collapsible sidebar, design tokens).
+Drop-in UI theme for **Redmine 6** (dark mode, colour schemes from Gogh, collapsible sidebar, design tokens).
 Repo: `https://github.com/acosonic/redmine-modern-theme` — branch `main`.
 
 **Before making a visual change, read [HANDOFF.md](HANDOFF.md).** It carries what this
