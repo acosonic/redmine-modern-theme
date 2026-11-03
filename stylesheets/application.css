@@ -1849,11 +1849,34 @@ select {
   /* Do NOT set width:100% globally — breaks narrow operator selects */
 }
 
+/* height: auto WITHOUT !important — dragging the resize grip sets an inline height,
+   and an !important height silently overrode it, so no textarea could be resized */
 textarea {
-  height: auto !important;
+  height: auto;
   min-height: 80px !important;
   resize: vertical !important;
 }
+
+/* File inputs: the "No file chosen" label is core #333, invisible on dark surfaces */
+html.dark-mode input[type=file] { color: var(--c-text-muted) !important; }
+
+/* @mention autocomplete (core tribute.js): #efefef list with inherited text — white on
+   near-white in dark mode. Themed in both modes so it matches the other dropdowns. */
+.tribute-container ul {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  box-shadow: var(--shadow-md) !important;
+  overflow: hidden !important;
+}
+.tribute-container li { color: var(--c-text) !important; }
+.tribute-container li.highlight,
+html.dark-mode .tribute-container li.highlight {   /* beats the search-result .highlight amber */
+  background: var(--c-primary-light) !important;
+  color: var(--c-text) !important;
+  box-shadow: inset 3px 0 0 var(--c-primary) !important;
+}
+.tribute-container li.no-match { color: var(--c-text-muted) !important; }
 
 input[type=text]:focus, input[type=email]:focus, input[type=password]:focus,
 input[type=number]:focus, input[type=search]:focus, input[type=url]:focus,
@@ -2238,6 +2261,13 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   max-width: 480px !important;
 }
 .tabular textarea { max-width: 600px !important; width: 100% !important; }
+/* Wiki editors in forms (issue description, notes, wiki, news) take the full row: the
+   600px cap above is for plain textareas, a description needs the room */
+.tabular textarea.wiki-edit { max-width: none !important; }
+/* RedmineUP Checklists: the new-item field is "width: 40%", which .tabular input[type=text]
+   { width: auto } above turned into ~170px */
+.tabular span.checklist-edit-box input,
+span.checklist-edit-box input[type=text] { width: min(640px, 100%) !important; max-width: 100% !important; }
 .tabular .description,
 .tabular em { font-size: var(--text-xs) !important; color: var(--c-text-subtle) !important; }
 
