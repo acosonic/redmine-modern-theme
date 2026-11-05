@@ -778,6 +778,34 @@ a:focus-visible,
 }
 .rm-account-panel a.rm-scheme-more:hover { background: var(--c-primary-light) !important; color: var(--c-primary) !important; }
 
+/* My account → Sidebar position (theme.js → initSidebarSettings) */
+#rm-layout .rm-side-options { display: flex !important; gap: var(--sp-2) !important; }
+.rm-side-option {
+  height: auto !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  width: 118px !important;
+  padding: 6px !important;
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  color: var(--c-text) !important;
+  font: inherit !important;
+  font-size: var(--text-xs) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+.rm-side-option:hover { border-color: var(--c-primary) !important; }
+.rm-side-option[aria-checked="true"] { border-color: var(--c-primary) !important; box-shadow: 0 0 0 2px var(--c-primary-ring) !important; font-weight: 600 !important; }
+/* mini layout preview: <i> = sidebar, <b> = content */
+.rm-side-preview { display: flex !important; gap: 4px !important; height: 46px !important; padding: 5px !important; border-radius: var(--r-sm) !important; background: var(--c-bg) !important; }
+.rm-side-preview.rm-side-right { flex-direction: row-reverse !important; }
+.rm-side-preview i { display: block !important; width: 28% !important; border-radius: 3px !important; background: var(--c-border-2) !important; }
+.rm-side-preview b { display: block !important; flex: 1 !important; border-radius: 3px !important; background: var(--c-surface-2) !important; border: 1px solid var(--c-border) !important; }
+#rm-layout .rm-scheme-hint { margin: var(--sp-2) 0 0 !important; font-size: var(--text-xs) !important; color: var(--c-text-muted) !important; }
+
 #rm-schemes .rm-scheme-group { margin: var(--sp-2) 0 var(--sp-1) !important; font-size: var(--text-xs) !important; font-weight: 600 !important; text-transform: uppercase !important; letter-spacing: .05em !important; color: var(--c-text-subtle) !important; }
 #rm-schemes .rm-scheme-grid { display: grid !important; grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)) !important; gap: var(--sp-2) !important; }
 #rm-schemes .rm-scheme-hint { margin: var(--sp-3) 0 0 !important; font-size: var(--text-xs) !important; color: var(--c-text-muted) !important; }
@@ -1318,6 +1346,34 @@ body.sidebar-collapsed #rm-sidebar-toggle {
   left: 0 !important;
   border-left: 1px solid var(--c-border) !important;
   border-radius: 0 var(--r) var(--r) 0 !important;
+}
+
+/* Sidebar on the right (My account → Sidebar position; html[data-sidebar="right"], set
+   before first paint, per browser). Redmine itself puts the sidebar right — the theme
+   moves it left by default. Desktop only: the mobile overlay keeps opening from the left. */
+@media (min-width: 900px) {
+  html[data-sidebar="right"] #main { flex-direction: row-reverse !important; }
+  html[data-sidebar="right"] #sidebar {
+    border-right: none !important;
+    border-left: 1px solid var(--c-border) !important;
+  }
+  html[data-sidebar="right"] #main.collapsiblesidebar.sidebar-collapsed #sidebar { border-left: none !important; }
+  html[data-sidebar="right"] #rm-sidebar-toggle {
+    left: auto !important;
+    right: calc(var(--sidebar-w) - 1px) !important;
+    border-left: 1px solid var(--c-border) !important;
+    border-right: none !important;
+    border-radius: var(--r) 0 0 var(--r) !important;
+    box-shadow: -2px 0 6px rgb(0 0 0/.08) !important;
+    transition: right var(--t), background var(--t-fast), color var(--t-fast) !important;
+  }
+  html[data-sidebar="right"] body.sidebar-collapsed #rm-sidebar-toggle {
+    left: auto !important;
+    right: 0 !important;
+    border-left: 1px solid var(--c-border) !important;
+    border-right: none !important;
+    border-radius: var(--r) 0 0 var(--r) !important;
+  }
 }
 
 /* ── HAMBURGER BUTTON (hidden on desktop) ─────────────────── */
