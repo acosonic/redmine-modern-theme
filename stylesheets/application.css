@@ -1004,6 +1004,13 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
 
 /* project jump box */
 #project-jump { float: none !important; }
+/* "Jump to a project" items: core colours them with an #id selector
+   (#project-jump .drdn-items > * { color: #555 !important }, hover #759FCF / #fff), which
+   beat the theme's .drdn-items rules — 1.9:1 in dark mode, 2.8:1 on hover in light. */
+#project-jump .drdn-items > * { color: var(--c-text) !important; }
+#project-jump .drdn-items > span { color: var(--c-text-muted) !important; }
+#project-jump .drdn-items > a:hover,
+#project-jump .drdn-items > a:focus { background-color: var(--c-primary-light) !important; color: var(--c-text) !important; }
 #project-jump .drdn-trigger {
   display: flex !important;
   align-items: center !important;
