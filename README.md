@@ -17,7 +17,8 @@ The theme is built for speed — it adds **zero render-blocking resources** and 
 
 - Dark / light mode toggle (persisted per browser, no flash on load) — remembers your colour scheme for each mode, so it switches between your dark and your light scheme
 - 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox, Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more, each contrast-checked to WCAG AA. Pick one on **My account**; the four you used last sit in the account menu. Or search **all ~1,250 Gogh palettes** by name and pick an accent; any palette is adjusted in the browser until it passes WCAG AA, and you are told when that changed it noticeably. Saved per browser, needs a browser with CSS `color-mix()`
-- Collapsible left sidebar (persisted per browser)
+- Collapsible sidebar on the left or the right — pick the side on **My account** (desktop; on mobile it opens from the left). Both settings are persisted per browser
+- Plugin pages styled for dark mode too: RedmineUP Agile and Checklists, Redmineflux Testcase, DMSF, Vault
 - Design tokens — change the entire palette by editing 3 lines
 - Inter font (self-hosted woff2, no CDN), modern card layout, smooth transitions
 - Toast notifications, collapsible issue sections
