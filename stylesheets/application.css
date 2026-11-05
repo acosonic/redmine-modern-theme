@@ -231,6 +231,10 @@
   /* Default SVG icon colour — Redmine core's link blue, kept as-is for Modern */
   --c-icon: #116699;
 
+  /* Select chevron — an SVG data URI cannot read CSS variables, so the colour is
+     baked in here (= --c-text-muted) and again in the dark block */
+  --c-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%235A6A7A' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5l3 3 3-3'/%3E%3C/svg%3E");
+
   /* Not a colour: where theme.js fetches every Gogh palette from for the search on
      My account. Propshaft rewrites this url() to the digested asset path. */
   --rm-gogh-palettes: url('gogh/palettes.json');
@@ -275,6 +279,7 @@ html.dark-mode {
 
   /* White on the bright dark-mode cyan is ~1.8:1; dark navy reads at ~10:1 */
   --c-on-primary: #0C1E2C;
+  --c-select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='%238AAABF' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 4.5l3 3 3-3'/%3E%3C/svg%3E");
 }
 
 @supports (color: color-mix(in srgb, red, white)) {
@@ -1835,18 +1840,40 @@ input[type=number], input[type=search], input[type=url], input[type=date], texta
   transition: border-color var(--t-fast), box-shadow var(--t-fast) !important;
 }
 
-/* Select: keep Redmine's original height:24px, just restyle border/colors */
+/* Select: keep Redmine's original height:24px, just restyle border/colors.
+   Core draws the dropdown arrow as a background-image (appearance: none +
+   chevron-down.svg) — a `background:` shorthand here wiped it on every select, so
+   only background-color is set and the theme's own chevron is drawn. */
 select {
   border: 1px solid var(--c-border) !important;
   border-radius: var(--r) !important;
-  padding: 2px var(--sp-2) !important;
+  padding: 2px 28px 2px var(--sp-2) !important;
   font-size: var(--text-sm) !important;
   font-family: var(--font-sans) !important;
-  background: var(--c-surface) !important;
+  background-color: var(--c-surface) !important;
+  background-image: var(--c-select-arrow) !important;
+  background-repeat: no-repeat !important;
+  background-position: right 9px center !important;
+  background-size: 12px 12px !important;
   color: var(--c-text) !important;
   outline: none !important;
   transition: border-color var(--t-fast), box-shadow var(--t-fast) !important;
   /* Do NOT set width:100% globally — breaks narrow operator selects */
+}
+/* Issue filters: "Add filter" + its select sat side by side only while the select was
+   ~204px; the arrow's padding pushed it under the label (and longer labels, e.g.
+   Serbian "Додај филтер", break it sooner). A flex row keeps them together and lets
+   the select give way — its popup still shows the options at full width. */
+@media (min-width: 900px) {   /* mobile keeps the label above a full-width select */
+  div.add-filter { display: flex !important; align-items: center !important; justify-content: flex-end !important; gap: var(--sp-2) !important; }
+  div.add-filter label { flex: none !important; white-space: nowrap !important; }
+  div.add-filter select { flex: 0 1 auto !important; min-width: 0 !important; max-width: 100% !important; }
+}
+
+/* List boxes (multiple / size > 1) show their options — no arrow */
+select[multiple], select[size]:not([size="1"]) {
+  background-image: none !important;
+  padding-right: var(--sp-2) !important;
 }
 
 /* height: auto WITHOUT !important — dragging the resize grip sets an inline height,
@@ -2750,7 +2777,7 @@ html.dark-mode input[type=url],
 html.dark-mode input[type=date],
 html.dark-mode select,
 html.dark-mode textarea,
-html.dark-mode .check_box_group { background: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+html.dark-mode .check_box_group { background-color: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
 
 /* Query form */
 html.dark-mode #query_form { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
@@ -3268,7 +3295,7 @@ html.dark-mode .block-receiver { border-color: var(--c-border) !important; }
 
 /* ── Activity page user/filter inputs in sidebar ── */
 html.dark-mode #sidebar input[type=text],
-html.dark-mode #sidebar select { background: var(--c-surface-2) !important; border-color: var(--c-border) !important; color: var(--c-text) !important; }
+html.dark-mode #sidebar select { background-color: var(--c-surface-2) !important; border-color: var(--c-border) !important; color: var(--c-text) !important; }
 
 /* ── Plugin compatibility (dark mode) ─────────────────────── */
 /* Plugins hardcode light backgrounds that the dark palette then puts light text on.
