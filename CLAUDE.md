@@ -110,7 +110,8 @@ README screenshots are 1440×900; theme is tested at 1280 and 1440.
 - JS features are one function each, all called from `init()`: `initSidebar`,
   `initDarkMode`, `initCollapsible`, `highlightNav`, `initHamburger`, `initProjectBadge`,
   `initSearchWidget`, `initAccountDropdown`, `initSchemePicker` (4 recent schemes in the
-  account menu), `initSchemeSettings` (full picker on `/my/account`), `watchSidebar`.
+  account menu), `initSchemeSettings` (full picker on `/my/account`), `initSidebarSettings`
+  (sidebar left/right on `/my/account`, `html[data-sidebar="right"]`, desktop only), `watchSidebar`.
   Toasts are exposed as the
   global `window.rmToast(message, type, duration)`.
 - JS-injected elements are namespaced `rm-*` (`rm-sidebar`, `rm-toast`, `rm-account-panel`, …).

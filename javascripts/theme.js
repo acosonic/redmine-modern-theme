@@ -24,6 +24,8 @@
       for (var k in vars) document.documentElement.style.setProperty(k, vars[k]);
     } catch (e) {}
   }
+  // Sidebar side (see initSidebarSettings) — desktop only, the CSS ignores it on mobile
+  if (localStorage.getItem('rm-sidebar-side') === 'right') document.documentElement.setAttribute('data-sidebar', 'right');
 }());
 
 /* ── REST runs after DOM is ready ──────────────────────────── */
@@ -65,6 +67,15 @@
   }
 
   /* ── SIDEBAR TOGGLE ─────────────────────────────────────── */
+  // The collapse button points the way the sidebar will move: towards its own edge to
+  // hide it, away from it to bring it back. Mobile always uses the left-hand overlay.
+  function sidebarOnRight() {
+    return document.documentElement.getAttribute('data-sidebar') === 'right' && window.innerWidth > 899;
+  }
+  function sidebarArrow(collapsed) {
+    return (collapsed !== sidebarOnRight()) ? '›' : '‹';
+  }
+
   function initSidebar() {
     var main    = qs('#main');
     var sidebar = qs('#sidebar');
@@ -82,8 +93,8 @@
     if (collapsed) {
       main.classList.add('sidebar-collapsed');
       document.body.classList.add('sidebar-collapsed');
-      btn.textContent = '›';
     }
+    btn.textContent = sidebarArrow(collapsed);
 
     btn.addEventListener('click', function () {
       if (window.innerWidth <= 899) {
@@ -94,7 +105,7 @@
         // Desktop: collapse mode
         var isCollapsed = main.classList.toggle('sidebar-collapsed');
         document.body.classList.toggle('sidebar-collapsed', isCollapsed);
-        btn.textContent = isCollapsed ? '›' : '‹';
+        btn.textContent = sidebarArrow(isCollapsed);
         localStorage.setItem('rm-sidebar', isCollapsed ? '0' : '1');
       }
     });
@@ -544,6 +555,55 @@
     return wrap;
   }
 
+  // My account: sidebar on the left (default) or right — desktop only, per browser
+  function initSidebarSettings() {
+    if (!document.body.classList.contains('controller-my') ||
+        !document.body.classList.contains('action-account')) return;
+    if (qs('#rm-layout')) return; // idempotent
+    var prefs = qs('#pref_comments_sorting');
+    var prefsBox = prefs && prefs.closest('fieldset');
+    if (!prefsBox) return;
+
+    var box = document.createElement('fieldset');
+    box.className = 'box';
+    box.id = 'rm-layout';
+    var legend = document.createElement('legend');
+    legend.textContent = 'Sidebar position';
+    box.appendChild(legend);
+    var row = document.createElement('div');
+    row.className = 'rm-side-options';
+    row.setAttribute('role', 'radiogroup');
+    row.setAttribute('aria-label', 'Sidebar position');
+    var current = document.documentElement.getAttribute('data-sidebar') === 'right' ? 'right' : 'left';
+    [['left', 'Left'], ['right', 'Right']].forEach(function (o) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'rm-side-option';
+      b.setAttribute('role', 'radio');
+      b.setAttribute('data-side', o[0]);
+      b.setAttribute('aria-checked', o[0] === current ? 'true' : 'false');
+      b.innerHTML = '<span class="rm-side-preview rm-side-' + o[0] + '" aria-hidden="true"><i></i><b></b></span>';
+      b.appendChild(document.createTextNode(o[1]));
+      b.addEventListener('click', function () {
+        if (o[0] === 'right') document.documentElement.setAttribute('data-sidebar', 'right');
+        else document.documentElement.removeAttribute('data-sidebar');
+        try { localStorage.setItem('rm-sidebar-side', o[0]); } catch (e) {}
+        qsa('.rm-side-option').forEach(function (x) {
+          x.setAttribute('aria-checked', x.getAttribute('data-side') === o[0] ? 'true' : 'false');
+        });
+        var toggle = qs('#rm-sidebar-toggle');
+        if (toggle) toggle.textContent = sidebarArrow(document.body.classList.contains('sidebar-collapsed'));
+      });
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+    var hint = document.createElement('p');
+    hint.className = 'rm-scheme-hint';
+    hint.textContent = 'Desktop only — on small screens the sidebar always opens from the left. Saved in this browser only.';
+    box.appendChild(hint);
+    prefsBox.parentNode.insertBefore(box, prefsBox.nextSibling);
+  }
+
   // My account: every scheme as a preview card, next to Redmine's own Preferences
   function initSchemeSettings() {
     if (!document.body.classList.contains('controller-my') ||
@@ -931,6 +991,7 @@
     if (currentSchemeId() && !findScheme(currentSchemeId())) applyScheme('');
     initSchemePicker();
     initSchemeSettings();
+    initSidebarSettings();
     watchSidebar();
     window.addEventListener('resize', adjustLayout);
   }
