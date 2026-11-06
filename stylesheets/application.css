@@ -1420,15 +1420,36 @@ body.nav-open #rm-hamburger span:nth-child(3) { transform: translateY(-7px) rota
 
 #main.nosidebar #content { padding-left: var(--sp-6) !important; }
 
-/* ── Overview two-column layout ─────────────────────────── */
-.splitcontent { align-items: flex-start !important; gap: var(--sp-4) !important; }
+/* ── Overview two-column layout ─────────────────────────────
+   Grid instead of core's flex-wrap: both columns start on the same row,
+   stretch to the same height, and keep an even gap between the cards
+   stacked inside them. `.splitcontenttop` spans the full width (My page). */
+.splitcontent {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: var(--sp-4) !important;
+  margin-bottom: var(--sp-4) !important;
+}
+.splitcontenttop { grid-column: 1 / -1 !important; }
 .splitcontentleft,
 .splitcontentright {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-4) !important;
+  min-width: 0 !important;
+  margin: 0 !important;
   background: var(--c-surface) !important;
   border: 1px solid var(--c-border) !important;
   border-radius: var(--r-md) !important;
   padding: var(--sp-4) !important;
 }
+/* Core gives .box / .mypage-box their own bottom margin; the flex gap
+   already separates them, so cancel it to avoid doubled spacing. */
+.splitcontentleft > .box,
+.splitcontentright > .box,
+.splitcontentleft > .mypage-box,
+.splitcontentright > .mypage-box { margin-bottom: 0 !important; }
 
 /* ── 9. CONTEXTUAL ACTIONS ───────────────────────────────── */
 .contextual {
@@ -2619,9 +2640,9 @@ div#sticky-issue-header .subject {
   }
 
   /* Overview two-column → single column */
-  .splitcontent { flex-direction: column !important; }
+  .splitcontent { grid-template-columns: minmax(0, 1fr) !important; }
   .splitcontentleft,
-  .splitcontentright { margin: 0 0 var(--sp-3) 0 !important; width: 100% !important; }
+  .splitcontentright { width: 100% !important; }
 
   /* Tables — allow horizontal scroll */
   .autoscroll { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
