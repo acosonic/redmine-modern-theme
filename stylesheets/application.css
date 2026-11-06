@@ -191,7 +191,10 @@
   --c-topbar-hover:rgba(255,255,255,.13);
   --c-header-bg:   #FFFFFF;
   --c-sidebar-bg:  #FFFFFF;
-  --sidebar-w:     280px;
+  --sidebar-w:     240px; /* ancho del sidebar; para cambiarlo añade
+   `data-sidebar-width="280"` a la etiqueta <html> de la página o, desde la
+   admin de Redmine, añade a "Hoja de estilos CSS personalizada":
+   :root { --sidebar-w: 280px; } */
 
   --topbar-h:  44px;
   --header-h:  90px;   /* generous default: h1 row + tabs row */
