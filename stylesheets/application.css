@@ -1630,42 +1630,13 @@ table.list tr.group td {
   border: none !important;
 }
 
-/* Show page attributes: a real two-column grid of bordered field cells.
-   Redmine wraps the fields in .splitcontent[left/right]; `display: contents`
-   flattens those wrappers so every .attribute becomes a grid cell, which
-   keeps both columns exactly equal and aligns the rows across them.
-   Subtasks and relations below stay full width on a single column. */
-.issue .attributes { display: block !important; }
-.issue .attributes .splitcontent {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: var(--sp-2) !important;
-  align-items: stretch !important;
-  margin: 0 !important;
-}
-.issue .attributes .splitcontent + .splitcontent { margin-top: var(--sp-2) !important; }
-.issue .attributes .splitcontentleft,
-.issue .attributes .splitcontentright { display: contents !important; }
-.issue .attributes .attribute {
-  display: grid !important;
-  grid-template-columns: minmax(7rem, 40%) minmax(0, 1fr) !important;
-  align-items: baseline !important;
-  gap: var(--sp-2) !important;
-  min-height: 0 !important;
-  min-width: 0 !important;
-  padding: var(--sp-2) var(--sp-3) !important;
-  background: var(--c-surface-2) !important;
-  border: 1px solid var(--c-border) !important;
-  border-radius: var(--r-sm) !important;
-  clear: none !important;
-}
-.issue .attributes .attribute .label {
-  float: none !important;
-  width: auto !important;
-  margin: 0 !important;
-  overflow: visible !important;
-}
-.issue .attributes .attribute .value { min-width: 0 !important; overflow: visible !important; }
+/* Issue detail attributes: keep the theme's soft rounded card for each
+   column, but stop Redmine's floated reaction ("like") / next-prev links
+   from narrowing the grid. Without the clear, the grid is a formatting
+   context and shrinks to avoid the float, so the right card stops short of
+   the page edge and the columns no longer look centred. */
+.issue .attributes { clear: both !important; }
+.issue .attributes .splitcontent { width: 100% !important; }
 
 /* Description section */
 .issue.details .description {
@@ -2689,10 +2660,6 @@ div#sticky-issue-header .subject {
   /* Issue attributes grid — single column */
   .attributes table td { display: block !important; width: 100% !important; }
   .issue .attributes .splitcontent { grid-template-columns: minmax(0, 1fr) !important; }
-  .issue .attributes .attribute {
-    grid-template-columns: minmax(0, 1fr) !important;
-    row-gap: var(--sp-1) !important;
-  }
 
   /* Tabular forms — stack label above input so narrow viewports don't
      get forced into a 220px label column that overflows right. */
