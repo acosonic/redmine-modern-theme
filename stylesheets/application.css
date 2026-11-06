@@ -1631,6 +1631,35 @@ table.list tr.group td {
   border: none !important;
 }
 
+/* Show page attributes: two equal field columns.
+   Redmine wraps them in .splitcontent/.splitcontentleft/.splitcontentright,
+   but those wrappers are already inside the .issue.details card — they must
+   not render as nested cards. Subtasks and relations below stay full width. */
+.issue .attributes {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-4) !important;
+}
+.issue .attributes .splitcontent {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: var(--sp-3) var(--sp-4) !important;
+  align-items: start !important;
+  margin: 0 !important;
+}
+.issue .attributes .splitcontentleft,
+.issue .attributes .splitcontentright {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-3) !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+
 /* Description section */
 .issue.details .description {
   margin-top: var(--sp-4) !important;
@@ -2652,6 +2681,7 @@ div#sticky-issue-header .subject {
 
   /* Issue attributes grid — single column */
   .attributes table td { display: block !important; width: 100% !important; }
+  .issue .attributes .splitcontent { grid-template-columns: minmax(0, 1fr) !important; }
 
   /* Tabular forms — stack label above input so narrow viewports don't
      get forced into a 220px label column that overflows right. */
