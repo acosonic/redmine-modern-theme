@@ -1471,6 +1471,18 @@ body.nav-open #rm-hamburger span:nth-child(3) { transform: translateY(-7px) rota
   margin-bottom: var(--sp-3) !important;
 }
 
+/* ── Fix: Mi cuenta — evitar que los box queden hacia un costado ──
+   Si .contextual trae float de Redmine core, limpiamos para que el
+   splitcontent de abajo no suba al costado. */
+.contextual {
+  clear: both !important;
+}
+
+body.controller-my .splitcontent,
+body.action-account .splitcontent {
+  clear: both !important;
+}
+
 /* ── 10. ISSUE LIST TABLE ────────────────────────────────── */
 .autoscroll {
   background: var(--c-surface) !important;
