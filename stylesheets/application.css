@@ -2891,14 +2891,20 @@ html.dark-mode #main-menu { background: var(--c-header-bg) !important; border-to
 html.dark-mode #content { background: transparent !important; }
 html.dark-mode #sidebar  { background: var(--c-sidebar-bg) !important; border-right-color: var(--c-border) !important; }
 
-/* Generic white boxes — Redmine uses .box, .splitcontentleft/right, fieldset etc. */
+/* Generic white boxes — Redmine uses .box, fieldset, .tabular etc.
+   No background in dark mode: these keep core's 3px radius (unlike the theme's
+   rounded cards), so a lighter surface reads as a mismatched panel. Letting them
+   sit on the page background matches light mode, where core's #f9fafb is already
+   almost the same as --c-bg. Explicit `transparent` also cancels core's own
+   .box background; .splitcontentleft/right are excluded because they are real
+   cards (base rule below gives them surface + rounded corners). */
 html.dark-mode .box,
 html.dark-mode fieldset,
-html.dark-mode .splitcontentleft,
-html.dark-mode .splitcontentright,
 html.dark-mode .tabular,
 html.dark-mode #query_form_with_buttons,
-html.dark-mode .query-totals { background: var(--c-surface) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+html.dark-mode .query-totals { background-color: transparent !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+html.dark-mode .splitcontentleft,
+html.dark-mode .splitcontentright { color: var(--c-text) !important; border-color: var(--c-border) !important; }
 
 /* Project list cards */
 html.dark-mode ul.projects li div.root,
