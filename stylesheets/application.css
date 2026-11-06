@@ -2078,7 +2078,32 @@ div.flash[style*="display:none"] { display: none !important; }
   flex-wrap: wrap !important;
 }
 
-.pagination a, .pagination span.current, .pagination em.current {
+/* Redmine wraps the pages in <ul class="pages"> and renders previous/next
+   as a disabled <span> on the first/last page. Reset the core li borders so
+   each item is one control instead of a border around another border. */
+.pagination ul.pages {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--sp-1) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.pagination ul.pages li {
+  display: flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.pagination a,
+.pagination li.previous > span,
+.pagination li.next > span,
+.pagination ul.pages li.current > span,
+.pagination span.current,
+.pagination em.current {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -2091,8 +2116,8 @@ div.flash[style*="display:none"] { display: none !important; }
   font-weight: 500 !important;
   color: var(--c-text-muted) !important;
   text-decoration: none !important;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast) !important;
   background: var(--c-surface) !important;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast) !important;
 }
 
 .pagination a:hover {
@@ -2101,10 +2126,44 @@ div.flash[style*="display:none"] { display: none !important; }
   border-color: var(--c-primary) !important;
 }
 
+.pagination ul.pages li.current > span,
 .pagination span.current, .pagination em.current {
   background: var(--c-primary) !important;
   color: var(--c-on-primary) !important;
   border-color: var(--c-primary) !important;
+}
+
+/* Disabled « Anterior / Siguiente » — same box, muted and not clickable */
+.pagination li.previous > span,
+.pagination li.next > span {
+  background: var(--c-surface-2) !important;
+  color: var(--c-text-subtle) !important;
+  opacity: .55 !important;
+  cursor: default !important;
+}
+
+/* Previous/next become arrow-only buttons. The text stays in the DOM for
+   screen readers; font-size:0 only hides it visually. */
+.pagination ul.pages li.previous > a,
+.pagination ul.pages li.previous > span,
+.pagination ul.pages li.next > a,
+.pagination ul.pages li.next > span {
+  width: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  font-size: 0 !important;
+}
+.pagination ul.pages li.previous > a::before,
+.pagination ul.pages li.previous > span::before {
+  content: "←";
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+.pagination ul.pages li.next > a::after,
+.pagination ul.pages li.next > span::after {
+  content: "→";
+  font-size: 16px !important;
+  line-height: 1 !important;
 }
 
 /* ── 19. GLOBAL LINKS ────────────────────────────────────── */
