@@ -1332,7 +1332,8 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
-  z-index: 1002 !important;
+  /* Below #header (999): its project-jump dropdown must paint over this button */
+  z-index: 900 !important;
   font-size: 10px !important;
   color: var(--c-text-subtle) !important;
   padding: 0 !important;
