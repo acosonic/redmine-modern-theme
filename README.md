@@ -1,24 +1,28 @@
 # Modern Redmine Theme
 
-A clean, modern UI theme for Redmine 6 with dark mode, collapsible sidebar, and design tokens.
+A clean, modern UI theme for Redmine 6 with dark mode, 27 colour schemes (plus any of ~1,250 Gogh palettes), collapsible sidebar, and design tokens.
 
 ## Performance
 
 The theme is built for speed — it adds **zero render-blocking resources** and imposes no measurable overhead on Redmine's response times:
 
-- **No JavaScript frameworks** — theme.js is plain vanilla JS (~4 KB minified)
+- **No JavaScript frameworks** — theme.js is plain vanilla JS (19 KB raw, ~5.6 KB gzipped)
 - **No runtime CSS-in-JS** — everything is static CSS delivered in a single file
+- **No external requests** — Inter is self-hosted and split by `unicode-range`, so a Latin-only page downloads one ~48 KB woff2 and never touches a CDN
 - **Dark mode initialised synchronously** before first paint — no flash of unstyled content, no layout shift
 - **CSS custom properties** (design tokens) let the browser resolve the entire palette in one pass — no cascade recalculations at runtime
 - **Transitions use `transform` and `opacity`** wherever possible — GPU-composited, never triggering layout or paint
 
 ## Features
 
-- Dark / light mode toggle (persisted per browser, no flash on load)
-- Collapsible left sidebar (persisted per browser)
+- Dark / light mode toggle (persisted per browser, no flash on load) — remembers your colour scheme for each mode, so it switches between your dark and your light scheme
+- 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox, Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more, each contrast-checked to WCAG AA. Pick one on **My account**; the four you used last sit in the account menu. Or search **all ~1,250 Gogh palettes** by name and pick an accent; any palette is adjusted in the browser until it passes WCAG AA, and you are told when that changed it noticeably. Saved per browser, needs a browser with CSS `color-mix()`
+- Collapsible sidebar on the left or the right — pick the side on **My account** (desktop; on mobile it opens from the left). Both settings are persisted per browser
+- Plugin pages styled for dark mode too: RedmineUP Agile and Checklists, Redmineflux Testcase, DMSF, Vault
 - Design tokens — change the entire palette by editing 3 lines
-- Inter font (via Google Fonts), modern card layout, smooth transitions
+- Inter font (self-hosted woff2, no CDN), modern card layout, smooth transitions
 - Toast notifications, collapsible issue sections
+- Responsive down to mobile — hamburger menu, stacked forms, larger tap targets (breakpoint at 899px)
 - Properly styled jQuery UI modals (watchers, etc.) with full-page overlay
 - **Zero layout changes required** — drop in and select in Admin settings
 
@@ -78,11 +82,12 @@ The CSS starts with `@import url('../../application.css')` which pulls in Redmin
 
 | Technology | Purpose |
 |-----------|---------|
-| [Inter](https://rsms.me/inter/) | UI typeface (loaded via Google Fonts) |
+| [Gogh](https://github.com/Gogh-Co/Gogh) | Source palettes for the colour schemes (MIT / Apache-2.0), turned into theme tokens by `src/gen-schemes.py` |
+| [Inter](https://rsms.me/inter/) | UI typeface — self-hosted woff2 in `stylesheets/fonts/`, weights 400/500/600/700, Latin + Cyrillic subsets |
 | [jQuery UI](https://jqueryui.com/) | Dialog/modal system (bundled with Redmine) |
 | [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
 | [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Design token system |
-| [Puppeteer](https://pptr.dev/) | Screenshot automation for README images |
+| [Puppeteer](https://pptr.dev/) | Screenshot automation for README images — `src/screenshots.mjs`, run against a local Redmine with seed data |
 | [Tailwind CSS](https://tailwindcss.com/) | Design token methodology and spacing/colour scale inspiration |
 
 Design inspired by modern SaaS dashboards (Linear, GitHub, Notion).
@@ -98,7 +103,7 @@ Contributions are welcome. Please follow these guidelines:
 1. Fork the repo and create a branch: `git checkout -b fix/my-fix`
 2. Edit only `stylesheets/application.css` and/or `javascripts/theme.js` — do not modify Redmine core files.
 3. Test in both light and dark mode.
-4. Test at 1280px and 1440px viewport widths.
+4. Test at 1280px and 1440px viewport widths, and below 899px (mobile breakpoint).
 5. Keep CSS changes scoped — prefer specific selectors over broad resets.
 6. Open a PR with a short description and before/after screenshots if visual.
 
@@ -117,6 +122,22 @@ MIT
 ---
 
 ## Screenshots
+
+### Colour schemes
+
+Pick a scheme on **My account** — 27 curated ones, or search all ~1,250 Gogh palettes. The four you used last sit in the account menu.
+
+| My account | Account menu |
+|-------|------|
+| ![Colour scheme picker on My account](screenshots/light-scheme-picker.png) | ![Recent schemes in the account menu](screenshots/light-account-menu.png) |
+| ![Searching every Gogh palette, with accent choice](screenshots/dark-gogh-search.png) | |
+
+| | | |
+|---|---|---|
+| ![Dracula](screenshots/scheme-dracula.png) | ![Gruvbox Dark](screenshots/scheme-gruvbox-dark.png) | ![Tokyo Night](screenshots/scheme-tokyo-night.png) |
+| Dracula | Gruvbox Dark | Tokyo Night |
+| ![Gruvbox Light](screenshots/scheme-gruvbox-light.png) | ![Solarized Light](screenshots/scheme-solarized-light.png) | ![Rosé Pine Dawn](screenshots/scheme-rose-pine-dawn.png) |
+| Gruvbox Light | Solarized Light | Rosé Pine Dawn |
 
 ### Projects & Dashboard
 

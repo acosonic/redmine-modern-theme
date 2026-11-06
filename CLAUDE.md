@@ -1,0 +1,136 @@
+# Modern Redmine Theme — project context
+
+Drop-in UI theme for **Redmine 6** (dark mode, colour schemes from Gogh, collapsible sidebar, design tokens).
+Repo: `https://github.com/acosonic/redmine-modern-theme` — branch `main`.
+
+**Before making a visual change, read [HANDOFF.md](HANDOFF.md).** It carries what this
+file does not: how to measure a layout change so the result is trustworthy (headless
+Chrome cannot see scrollbars — use xvfb), deliberate trade-offs that must not be
+reverted by accident, and what is still open.
+
+Only two source files ship behaviour:
+
+| File | Notes |
+|---|---|
+| `stylesheets/application.css` | ~2750 lines. Replaces Redmine's `application.css`; first line imports the Redmine default, everything after is override. |
+| `javascripts/theme.js` | ~460 lines vanilla JS, no deps. Auto-loaded into `<head>` by Redmine's `heads_for_theme`. |
+| `stylesheets/fonts/*.woff2` | Self-hosted Inter (400/500/600/700 × latin/latin-ext/cyrillic/cyrillic-ext). No Google Fonts CDN — GDPR. |
+
+`screenshots/` feeds the README tables only.
+
+`src/gen-schemes.py` generates the colour schemes (it does not ship): it reads Gogh's
+`data/themes.json` (https://github.com/Gogh-Co/Gogh — download it, it is not vendored),
+contrast-checks every palette, and rewrites the text between the `@schemes:begin` /
+`@schemes:end` markers in both source files. It also writes `stylesheets/gogh/palettes.json`
+(all ~1250 palettes, ~50 KB gzipped) for the "Any Gogh scheme" search on My account.
+Never hand-edit between the markers or the JSON — change the `SCHEMES` dict and rerun:
+
+```bash
+python3 -I src/gen-schemes.py /path/to/themes.json          # --check = report only
+```
+
+`buildGoghScheme` in `theme.js` is a JS port of the generator's colour logic (same
+surfaces, WCAG targets and nudging; it may also move the background, which the
+generator never needs). Keep the two in step: for the 27 generated schemes, the JS
+must produce the same `--s-*` values (±1/255) as the CSS blocks.
+
+**Redmine serves every top-level directory of a theme as public assets**
+(`Redmine::Themes::Theme#asset_paths`) — except `src/` and dot-directories. Anything
+that must not be published (tools, notes) goes in `src/`.
+
+## Local test setup (verified working)
+
+Local Redmine 6 lives at **`~/rubydev/redmine6`**, and `themes/modern-redmine-theme`
+there is a **symlink to this repo** — so edits here are live, no copying.
+
+```
+~/rubydev/redmine6/themes/modern-redmine-theme -> /home/acop/rubydev/modern-redmine-theme
+```
+
+Start the server:
+
+```bash
+cd ~/rubydev/redmine6
+bash -l -c 'rvm use 3.3.5 && bundle exec rails server -b 127.0.0.1 -p 3000'
+```
+
+- Ruby **3.3.5** via rvm (`bash -l -c` is required — rvm is a login-shell function).
+- Rails 7.2.2.2, **development** env, MySQL db **`redmine_development`** (`root` / `root`).
+- Seed data: 30 projects, 95 issues, 20 users.
+- Login: **`admin` / `admin1234`**. Active theme is already set (`Setting.ui_theme = modern-redmine-theme`).
+- Logs: `~/rubydev/redmine6/log/development.log`. Stop with `pkill -f puma`.
+
+### Asset pipeline gotchas (Propshaft)
+
+Redmine 6 serves theme files through Propshaft, not statically:
+
+- CSS is served at `/assets/themes/modern-redmine-theme/application-<digest>.css`.
+- Propshaft **rewrites relative `url()`** — `url('fonts/inter-400-latin.woff2')` in source
+  becomes `/assets/themes/modern-redmine-theme/fonts/inter-400-latin-<digest>.woff2`. Keep
+  font refs relative; do not hand-write `/assets/...` paths.
+- Theme asset paths are registered **at boot** (`config/initializers/30-redmine.rb` →
+  `Redmine::Themes`). **Adding a new file or directory requires a server restart**;
+  editing existing files does not.
+- theme.js cannot know a digested URL. To reach a theme file from JS, reference it from
+  CSS with `url()` (Propshaft rewrites every `url()`, custom properties included) and
+  read it back: see `--rm-gogh-palettes` in `:root`.
+- CSS edits still need a hard reload (digest changes, but browser caches the old link).
+
+### Screenshots (Puppeteer)
+
+Puppeteer is not installed in this repo. Chrome is cached at `~/.cache/puppeteer`;
+borrow an existing install by symlinking its `node_modules` next to the script:
+
+```bash
+ln -sfn /home/acop/scrapers/jordan-scrapes-secretary-of-states/node_modules ./node_modules
+node shot.mjs   # must be an .mjs in the same dir; NODE_PATH does NOT work for ESM
+```
+
+That puppeteer's bundled browser is **Chromium 80** — no `color-mix()`, so it renders
+the fallbacks. Pass `executablePath: '/home/acop/.cache/puppeteer/chrome/linux-147.0.7727.57/chrome-linux64/chrome'`
+(details in HANDOFF.md §0).
+
+Script pattern: goto `/login`, type into `#username` / `#password`, click
+`input[type=submit]`, wait for navigation, then navigate and `page.screenshot`.
+README screenshots are 1440×900; theme is tested at 1280 and 1440.
+
+## Code conventions
+
+- **Colours only via tokens.** 74 custom properties in `:root` (line ~170); dark
+  overrides in `html.dark-mode { }` (line ~242). No hardcoded hex outside those two blocks.
+- A `color-mix()` block (~line 229) derives hover/light/ring shades from `--c-primary`,
+  with static fallbacks above it for older browsers. Changing the accent = changing
+  `--c-primary` + `--c-topbar-bg`.
+- `!important` is used pervasively and deliberately — Redmine's default CSS is imported
+  first and is very specific. Match the surrounding style rather than fighting it.
+- Mobile breakpoint is **`max-width: 899px`** (two blocks, ~line 1871 and ~2045).
+- `theme.js`: the synchronous dark-mode init IIFE at the very top must stay first —
+  it runs before paint to avoid a flash of light mode. Everything else initialises
+  from `init()` on `DOMContentLoaded`.
+- JS features are one function each, all called from `init()`: `initSidebar`,
+  `initDarkMode`, `initCollapsible`, `highlightNav`, `initHamburger`, `initProjectBadge`,
+  `initSearchWidget`, `initAccountDropdown`, `initSchemePicker` (4 recent schemes in the
+  account menu), `initSchemeSettings` (full picker on `/my/account`), `initSidebarSettings`
+  (sidebar left/right on `/my/account`, `html[data-sidebar="right"]`, desktop only), `watchSidebar`.
+  Toasts are exposed as the
+  global `window.rmToast(message, type, duration)`.
+- JS-injected elements are namespaced `rm-*` (`rm-sidebar`, `rm-toast`, `rm-account-panel`, …).
+- **Not everything styled here comes from `theme.js`.** `div#sticky-issue-header`
+  (~line 2030) is a **Redmine 6 core** element — rendered by
+  `app/views/issues/show.html.erb` and toggled by the Stimulus controller
+  `app/javascript/controllers/sticky_issue_header_controller.js`. The theme only
+  restyles it to match the topbar, plus resets Redmine `responsive.css`'s
+  `top: 64px` (that offset is for the project-jump flyout, which this theme hides).
+  Before deleting any rule that `theme.js` does not create, check Redmine's views and
+  Stimulus controllers — grep `~/rubydev/redmine6/app` first.
+- Redmine re-renders parts of the page over AJAX — section wrapping/collapsible code has
+  to be AJAX-safe (re-runnable, idempotent).
+
+## Testing checklist before committing
+
+1. Light **and** dark mode.
+2. 1280px, 1440px, and mobile (<899px).
+3. Pages that historically broke: issue detail/edit, watchers modal, admin
+   roles/permissions (tabular checkboxes), project settings, activity filters, wiki
+   `.jstTabs` toolbar.
+4. Never modify Redmine core files — only these two source files.
