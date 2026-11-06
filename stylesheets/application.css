@@ -2430,6 +2430,71 @@ hr { border: none !important; border-top: 1px solid var(--c-border) !important; 
 h2 { font-size: var(--text-xl) !important; font-weight: 700 !important; color: var(--c-text) !important; margin: 0 0 var(--sp-4) !important; }
 h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color: var(--c-text) !important; }
 
+/* ── 27b. ADMIN INDEX — cards with icons ─────────────────── */
+#admin-index #admin-menu ul {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important;
+  gap: var(--sp-3) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#admin-index #admin-menu li {
+  display: flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+#admin-index #admin-menu a {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-3) !important;
+  height: auto !important;
+  min-height: 56px !important;
+  padding: var(--sp-3) !important;
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  color: var(--c-text) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  text-decoration: none !important;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast),
+              transform var(--t-fast), background var(--t-fast) !important;
+}
+#admin-index #admin-menu a:hover {
+  border-color: var(--c-primary) !important;
+  box-shadow: var(--shadow-sm) !important;
+  transform: translateY(-1px) !important;
+}
+#admin-index #admin-menu a:focus-visible {
+  outline: 2px solid var(--c-focus-ring) !important;
+  outline-offset: 2px !important;
+}
+/* Icon tile — the SVG is the only child that needs a background box */
+#admin-index #admin-menu a .icon-svg {
+  flex: 0 0 auto !important;
+  width: 20px !important;
+  height: 20px !important;
+  padding: 8px !important;
+  box-sizing: content-box !important;
+  border-radius: var(--r) !important;
+  background: var(--c-primary-light) !important;
+  stroke: var(--c-primary) !important;
+  transition: background var(--t-fast), stroke var(--t-fast) !important;
+}
+#admin-index #admin-menu a:hover .icon-svg {
+  background: var(--c-primary) !important;
+  stroke: var(--c-on-primary) !important;
+}
+#admin-index #admin-menu a .icon-label {
+  display: block !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
 /* ── 26. RESPONSIVE ──────────────────────────────────────── */
 @media (max-width: 899px) {
   /* Sidebar — slides in from left as overlay */
