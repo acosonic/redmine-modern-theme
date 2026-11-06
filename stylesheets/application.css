@@ -1557,6 +1557,10 @@ table.list td.parent {
   text-overflow: ellipsis !important;
 }
 
+/* Priority column: core centres every table.list cell, which makes this
+   one look justified next to the left-aligned header and subject. */
+table.list td.priority { text-align: left !important; }
+
 table.list tbody td a {
   color: var(--c-primary) !important;
   text-decoration: none !important;
