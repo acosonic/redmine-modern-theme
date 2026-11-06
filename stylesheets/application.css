@@ -3351,6 +3351,20 @@ a.icon-clear-query {
   height: 20px !important;
   flex-shrink: 0 !important;
 }
+/* The selected query and its Clear (×) link share one <li>. `#sidebar ul li a
+   { display: flex }` made the query a full-width row and pushed the × under it (#12);
+   same fix as the watchers list — one flex row, the query takes the remaining width. */
+#sidebar ul li:has(> a.icon-clear-query) {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-1) !important;
+}
+#sidebar ul li:has(> a.icon-clear-query) > a:not(.icon-clear-query) { flex: 1 1 auto !important; min-width: 0 !important; }
+/* Core keeps sidebar icon-only links at opacity .2 until hover — for the only way to
+   clear the selected query that is too faint, and in core blue it vanished in dark mode */
+#sidebar a.icon-clear-query svg { opacity: .8 !important; stroke: var(--c-text-muted) !important; }
+#sidebar a.icon-clear-query:hover svg,
+#sidebar a.icon-clear-query:focus-visible svg { opacity: 1 !important; stroke: var(--c-primary) !important; }
 
 /* ── My page block drag areas ── */
 html.dark-mode .mypage-box { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
