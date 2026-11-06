@@ -191,7 +191,7 @@
   --c-topbar-hover:rgba(255,255,255,.13);
   --c-header-bg:   #FFFFFF;
   --c-sidebar-bg:  #FFFFFF;
-  --sidebar-w:     240px;
+  --sidebar-w:     280px;
 
   --topbar-h:  44px;
   --header-h:  90px;   /* generous default: h1 row + tabs row */
