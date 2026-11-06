@@ -1187,7 +1187,7 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
 #main {
   display: flex !important;
   flex-direction: row !important;   /* sidebar LEFT, content RIGHT — override Redmine's row-reverse */
-  align-items: flex-start !important;
+  align-items: stretch !important;  /* sidebar column matches the content height */
   min-height: calc(100vh - var(--total-top)) !important;
   margin-top: var(--total-top) !important; /* JS updates this accurately */
 }
@@ -1198,19 +1198,18 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   min-width: var(--sidebar-w) !important;
   background: var(--c-sidebar-bg) !important;
   border-right: 1px solid var(--c-border) !important;
-  position: sticky !important;
-  top: var(--total-top) !important;
-  height: calc(100vh - var(--total-top)) !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  /* Scroll with the page instead of being a viewport-height pane with its
+     own scrollbar: the column grows to the content height (align-stretch on
+     #main), so it no longer cuts off on long issue lists. */
+  position: static !important;
+  top: auto !important;
+  align-self: stretch !important;
+  height: auto !important;
+  overflow-x: clip !important;
+  overflow-y: visible !important;
   flex-shrink: 0 !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--c-border) transparent !important;
   transition: width var(--t), min-width var(--t), opacity var(--t) !important;
 }
-
-#sidebar::-webkit-scrollbar { width: 4px; }
-#sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
 
 #sidebar-wrapper { padding: var(--sp-5) var(--sp-2) !important; }
 
