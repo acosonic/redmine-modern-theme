@@ -191,7 +191,18 @@
   --c-topbar-hover:rgba(255,255,255,.13);
   --c-header-bg:   #FFFFFF;
   --c-sidebar-bg:  #FFFFFF;
-  --sidebar-w:     240px;
+  --sidebar-w:     240px; /* ancho del sidebar.
+
+   Si usas el plugin **View Customize** (Apariencia > View customize),
+   añade aquí tu ancho personalizado, p. ej.:
+
+       :root { --sidebar-w: 280px; }
+
+   O bien, si prefieres hacerlo desde la propia Redmine (Appearance →
+   Stylesheet), añade el mismo bloque.
+
+   El valor por defecto es 240px; cámbialo a gusto y la página se
+   actualizará al recargar sin tocar el archivo fuente del tema. */
 
   --topbar-h:  44px;
   --header-h:  90px;   /* generous default: h1 row + tabs row */
@@ -254,10 +265,15 @@
 
 /* ── 2. DARK MODE TOKENS ─────────────────────────────────── */
 html.dark-mode {
-  --c-primary:       #22D3EE;  /* cyan-400 — vibrant on dark */
-  --c-primary-hover: #38BDF8;  /* sky-400 — hand-picked fallback */
+  /*--c-primary:       #22D3EE;
+  --c-primary-hover: #38BDF8;
   --c-primary-ring:  rgba(34,211,238,.22);
-  --c-focus-ring:    rgba(34,211,238,.5);
+  --c-focus-ring:    rgba(34,211,238,.5);*/
+
+  --c-primary:        #0D9488;  /* teal-600, más oscuro y con verde, no tan celeste */
+  --c-primary-hover:  #14B8A6;  /* teal-500, un poco más claro para hover en dark mode */
+  --c-primary-ring:   rgba(13,148,136,.22);
+  --c-primary-light:  rgba(13,148,136,.12);
 
   --c-bg:          #161E2A;   /* lighter than before */
   --c-surface:     #1E2C3A;   /* lighter card bg     */
@@ -1182,7 +1198,7 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
 #main {
   display: flex !important;
   flex-direction: row !important;   /* sidebar LEFT, content RIGHT — override Redmine's row-reverse */
-  align-items: flex-start !important;
+  align-items: stretch !important;  /* sidebar column matches the content height */
   min-height: calc(100vh - var(--total-top)) !important;
   margin-top: var(--total-top) !important; /* JS updates this accurately */
 }
@@ -1193,19 +1209,18 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   min-width: var(--sidebar-w) !important;
   background: var(--c-sidebar-bg) !important;
   border-right: 1px solid var(--c-border) !important;
-  position: sticky !important;
-  top: var(--total-top) !important;
-  height: calc(100vh - var(--total-top)) !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
+  /* Scroll with the page instead of being a viewport-height pane with its
+     own scrollbar: the column grows to the content height (align-stretch on
+     #main), so it no longer cuts off on long issue lists. */
+  position: static !important;
+  top: auto !important;
+  align-self: stretch !important;
+  height: auto !important;
+  overflow-x: clip !important;
+  overflow-y: visible !important;
   flex-shrink: 0 !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: var(--c-border) transparent !important;
   transition: width var(--t), min-width var(--t), opacity var(--t) !important;
 }
-
-#sidebar::-webkit-scrollbar { width: 4px; }
-#sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
 
 #sidebar-wrapper { padding: var(--sp-5) var(--sp-2) !important; }
 
@@ -1328,7 +1343,8 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   align-items: center !important;
   justify-content: center !important;
   cursor: pointer !important;
-  z-index: 1002 !important;
+  /* Below #header (999): its project-jump dropdown must paint over this button */
+  z-index: 900 !important;
   font-size: 10px !important;
   color: var(--c-text-subtle) !important;
   padding: 0 !important;
@@ -1415,15 +1431,36 @@ body.nav-open #rm-hamburger span:nth-child(3) { transform: translateY(-7px) rota
 
 #main.nosidebar #content { padding-left: var(--sp-6) !important; }
 
-/* ── Overview two-column layout ─────────────────────────── */
-.splitcontent { align-items: flex-start !important; gap: var(--sp-4) !important; }
+/* ── Overview two-column layout ─────────────────────────────
+   Grid instead of core's flex-wrap: both columns start on the same row,
+   stretch to the same height, and keep an even gap between the cards
+   stacked inside them. `.splitcontenttop` spans the full width (My page). */
+.splitcontent {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: stretch !important;
+  gap: var(--sp-4) !important;
+  margin-bottom: var(--sp-4) !important;
+}
+.splitcontenttop { grid-column: 1 / -1 !important; }
 .splitcontentleft,
 .splitcontentright {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--sp-4) !important;
+  min-width: 0 !important;
+  margin: 0 !important;
   background: var(--c-surface) !important;
   border: 1px solid var(--c-border) !important;
   border-radius: var(--r-md) !important;
   padding: var(--sp-4) !important;
 }
+/* Core gives .box / .mypage-box their own bottom margin; the flex gap
+   already separates them, so cancel it to avoid doubled spacing. */
+.splitcontentleft > .box,
+.splitcontentright > .box,
+.splitcontentleft > .mypage-box,
+.splitcontentright > .mypage-box { margin-bottom: 0 !important; }
 
 /* ── 9. CONTEXTUAL ACTIONS ───────────────────────────────── */
 .contextual {
@@ -1531,6 +1568,10 @@ table.list td.parent {
   text-overflow: ellipsis !important;
 }
 
+/* Priority column: core centres every table.list cell, which makes this
+   one look justified next to the left-aligned header and subject. */
+table.list td.priority { text-align: left !important; }
+
 table.list tbody td a {
   color: var(--c-primary) !important;
   text-decoration: none !important;
@@ -1604,6 +1645,14 @@ table.list tr.group td {
   padding: var(--sp-2) 0 !important;
   border: none !important;
 }
+
+/* Issue detail attributes: keep the theme's soft rounded card for each
+   column, but stop Redmine's floated reaction ("like") / next-prev links
+   from narrowing the grid. Without the clear, the grid is a formatting
+   context and shrinks to avoid the float, so the right card stops short of
+   the page edge and the columns no longer look centred. */
+.issue .attributes { clear: both !important; }
+.issue .attributes .splitcontent { width: 100% !important; }
 
 /* Description section */
 .issue.details .description {
@@ -2040,7 +2089,32 @@ div.flash[style*="display:none"] { display: none !important; }
   flex-wrap: wrap !important;
 }
 
-.pagination a, .pagination span.current, .pagination em.current {
+/* Redmine wraps the pages in <ul class="pages"> and renders previous/next
+   as a disabled <span> on the first/last page. Reset the core li borders so
+   each item is one control instead of a border around another border. */
+.pagination ul.pages {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--sp-1) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+.pagination ul.pages li {
+  display: flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: none !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.pagination a,
+.pagination li.previous > span,
+.pagination li.next > span,
+.pagination ul.pages li.current > span,
+.pagination span.current,
+.pagination em.current {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -2053,8 +2127,8 @@ div.flash[style*="display:none"] { display: none !important; }
   font-weight: 500 !important;
   color: var(--c-text-muted) !important;
   text-decoration: none !important;
-  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast) !important;
   background: var(--c-surface) !important;
+  transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast) !important;
 }
 
 .pagination a:hover {
@@ -2063,10 +2137,56 @@ div.flash[style*="display:none"] { display: none !important; }
   border-color: var(--c-primary) !important;
 }
 
+.pagination ul.pages li.current > span,
 .pagination span.current, .pagination em.current {
   background: var(--c-primary) !important;
   color: var(--c-on-primary) !important;
   border-color: var(--c-primary) !important;
+}
+
+/* Disabled « Anterior / Siguiente » — same box, muted and not clickable */
+.pagination li.previous > span,
+.pagination li.next > span {
+  background: var(--c-surface-2) !important;
+  color: var(--c-text-subtle) !important;
+  opacity: .55 !important;
+  cursor: default !important;
+}
+
+/* Previous/next become arrow-only buttons. The text stays in the DOM for
+   screen readers; font-size:0 only hides it visually. */
+.pagination ul.pages li.previous > a,
+.pagination ul.pages li.previous > span,
+.pagination ul.pages li.next > a,
+.pagination ul.pages li.next > span {
+  width: 32px !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+  font-size: 0 !important;
+}
+.pagination ul.pages li.previous > a::before,
+.pagination ul.pages li.previous > span::before {
+  content: "←";
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+.pagination ul.pages li.next > a::after,
+.pagination ul.pages li.next > span::after {
+  content: "→";
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+.pagination ul.pages li.previous > a::before,
+.pagination ul.pages li.previous > span::before {
+  content: "←";
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+.pagination ul.pages li.next > a::after,
+.pagination ul.pages li.next > span::after {
+  content: "→";
+  font-size: 16px !important;
+  line-height: 1 !important;
 }
 
 /* ── 19. GLOBAL LINKS ────────────────────────────────────── */
@@ -2397,6 +2517,71 @@ hr { border: none !important; border-top: 1px solid var(--c-border) !important; 
 h2 { font-size: var(--text-xl) !important; font-weight: 700 !important; color: var(--c-text) !important; margin: 0 0 var(--sp-4) !important; }
 h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color: var(--c-text) !important; }
 
+/* ── 27b. ADMIN INDEX — cards with icons ─────────────────── */
+#admin-index #admin-menu ul {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important;
+  gap: var(--sp-3) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+#admin-index #admin-menu li {
+  display: flex !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+#admin-index #admin-menu a {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--sp-3) !important;
+  height: auto !important;
+  min-height: 56px !important;
+  padding: var(--sp-3) !important;
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  color: var(--c-text) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  text-decoration: none !important;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast),
+              transform var(--t-fast), background var(--t-fast) !important;
+}
+#admin-index #admin-menu a:hover {
+  border-color: var(--c-primary) !important;
+  box-shadow: var(--shadow-sm) !important;
+  transform: translateY(-1px) !important;
+}
+#admin-index #admin-menu a:focus-visible {
+  outline: 2px solid var(--c-focus-ring) !important;
+  outline-offset: 2px !important;
+}
+/* Icon tile — the SVG is the only child that needs a background box */
+#admin-index #admin-menu a .icon-svg {
+  flex: 0 0 auto !important;
+  width: 20px !important;
+  height: 20px !important;
+  padding: 8px !important;
+  box-sizing: content-box !important;
+  border-radius: var(--r) !important;
+  background: var(--c-primary-light) !important;
+  stroke: var(--c-primary) !important;
+  transition: background var(--t-fast), stroke var(--t-fast) !important;
+}
+#admin-index #admin-menu a:hover .icon-svg {
+  background: var(--c-primary) !important;
+  stroke: var(--c-on-primary) !important;
+}
+#admin-index #admin-menu a .icon-label {
+  display: block !important;
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
 /* ── 26. RESPONSIVE ──────────────────────────────────────── */
 @media (max-width: 899px) {
   /* Sidebar — slides in from left as overlay */
@@ -2614,9 +2799,9 @@ div#sticky-issue-header .subject {
   }
 
   /* Overview two-column → single column */
-  .splitcontent { flex-direction: column !important; }
+  .splitcontent { grid-template-columns: minmax(0, 1fr) !important; }
   .splitcontentleft,
-  .splitcontentright { margin: 0 0 var(--sp-3) 0 !important; width: 100% !important; }
+  .splitcontentright { width: 100% !important; }
 
   /* Tables — allow horizontal scroll */
   .autoscroll { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
@@ -2626,6 +2811,7 @@ div#sticky-issue-header .subject {
 
   /* Issue attributes grid — single column */
   .attributes table td { display: block !important; width: 100% !important; }
+  .issue .attributes .splitcontent { grid-template-columns: minmax(0, 1fr) !important; }
 
   /* Tabular forms — stack label above input so narrow viewports don't
      get forced into a 220px label column that overflows right. */
@@ -2791,14 +2977,20 @@ html.dark-mode #main-menu { background: var(--c-header-bg) !important; border-to
 html.dark-mode #content { background: transparent !important; }
 html.dark-mode #sidebar  { background: var(--c-sidebar-bg) !important; border-right-color: var(--c-border) !important; }
 
-/* Generic white boxes — Redmine uses .box, .splitcontentleft/right, fieldset etc. */
+/* Generic white boxes — Redmine uses .box, fieldset, .tabular etc.
+   No background in dark mode: these keep core's 3px radius (unlike the theme's
+   rounded cards), so a lighter surface reads as a mismatched panel. Letting them
+   sit on the page background matches light mode, where core's #f9fafb is already
+   almost the same as --c-bg. Explicit `transparent` also cancels core's own
+   .box background; .splitcontentleft/right are excluded because they are real
+   cards (base rule below gives them surface + rounded corners). */
 html.dark-mode .box,
 html.dark-mode fieldset,
-html.dark-mode .splitcontentleft,
-html.dark-mode .splitcontentright,
 html.dark-mode .tabular,
 html.dark-mode #query_form_with_buttons,
-html.dark-mode .query-totals { background: var(--c-surface) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+html.dark-mode .query-totals { background-color: transparent !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+html.dark-mode .splitcontentleft,
+html.dark-mode .splitcontentright { color: var(--c-text) !important; border-color: var(--c-border) !important; }
 
 /* Project list cards */
 html.dark-mode ul.projects li div.root,
