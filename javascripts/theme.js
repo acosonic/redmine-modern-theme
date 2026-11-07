@@ -26,6 +26,11 @@
   }
   // Sidebar side (see initSidebarSettings) — desktop only, the CSS ignores it on mobile
   if (localStorage.getItem('rm-sidebar-side') === 'right') document.documentElement.setAttribute('data-sidebar', 'right');
+  // Sidebar width (see initSidebarSettings) — overrides the 240px default
+  var storedWidth = parseInt(localStorage.getItem('rm-sidebar-width'), 10);
+  if (storedWidth && storedWidth >= 180 && storedWidth <= 360) {
+    document.documentElement.style.setProperty('--sidebar-w', storedWidth + 'px');
+  }
 }());
 
 /* ── REST runs after DOM is ready ──────────────────────────── */
@@ -34,6 +39,102 @@
 
   var qs  = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var qsa = function (sel, ctx) { return Array.from((ctx || document).querySelectorAll(sel)); };
+
+  /* ── I18N — labels injected by the theme ─────────────────────
+     Redmine serves pages in the user's language; the theme's own
+     controls should follow it instead of always speaking English. */
+  var I18N = {
+    en: {
+      account: 'Account',
+      profile: 'View profile',
+      subtasks: 'Subtasks',
+      relatedIssues: 'Related Issues',
+      watchers: 'Watchers',
+      search: 'Search',
+      toggleSidebar: 'Toggle sidebar',
+      toggleDarkMode: 'Toggle dark mode',
+      toggleMenu: 'Toggle menu',
+      darkMode: 'Dark mode',
+      lightMode: 'Light mode',
+      colourScheme: 'Colour scheme',
+      recentSchemes: 'Recent colour schemes',
+      allSchemes: 'All colour schemes…',
+      anyGoghScheme: 'Any Gogh scheme',
+      searchGogh: 'Search all Gogh schemes by name…',
+      searchGoghAria: 'Search Gogh colour schemes',
+      matchingGogh: 'Matching Gogh schemes',
+      accentColour: 'Accent colour',
+      accentSuffix: 'accent',
+      loading: 'Loading…',
+      noMatch: 'No scheme matches “{q}”.',
+      showingMatches: 'Showing 24 of {n} matches — type more to narrow it down.',
+      oneMatch: '1 match.',
+      manyMatches: '{n} matches.',
+      goghError: 'Could not load the Gogh palettes.',
+      lowContrast: 'This palette has low contrast, so its colours were changed noticeably',
+      adjusted: 'Adjusted for readability',
+      sidebarPosition: 'Sidebar position',
+      left: 'Left',
+      right: 'Right',
+      sidebarWidth: 'Sidebar width',
+      sidebarWidthHint: 'Drag to change the width of the sidebar. Saved in this browser only.',
+      desktopOnlyHint: 'Desktop only — on small screens the sidebar always opens from the left. Saved in this browser only.',
+      defaultGroup: 'Default',
+      darkGroup: 'Dark',
+      lightGroup: 'Light',
+      schemesGroupAria: '{g} colour schemes',
+      noColorMix: 'This browser does not support colour schemes (needs CSS color-mix()).',
+      schemesHint: 'Applies immediately and is saved in this browser only, separately for dark and light mode. Palettes from Gogh (github.com/Gogh-Co/Gogh).'
+    },
+    es: {
+      account: 'Cuenta',
+      profile: 'Ver perfil',
+      subtasks: 'Subtareas',
+      relatedIssues: 'Incidencias relacionadas',
+      watchers: 'Seguidores',
+      search: 'Buscar',
+      toggleSidebar: 'Mostrar u ocultar barra lateral',
+      toggleDarkMode: 'Cambiar modo oscuro',
+      toggleMenu: 'Mostrar u ocultar menú',
+      darkMode: 'Modo oscuro',
+      lightMode: 'Modo claro',
+      colourScheme: 'Esquema de color',
+      recentSchemes: 'Esquemas recientes',
+      allSchemes: 'Todos los esquemas…',
+      anyGoghScheme: 'Cualquier esquema Gogh',
+      searchGogh: 'Buscar entre los esquemas Gogh…',
+      searchGoghAria: 'Buscar esquemas de color Gogh',
+      matchingGogh: 'Esquemas Gogh coincidentes',
+      accentColour: 'Color de acento',
+      accentSuffix: 'acento',
+      loading: 'Cargando…',
+      noMatch: 'Ningún esquema coincide con «{q}».',
+      showingMatches: 'Mostrando 24 de {n} coincidencias — escribí más para acotar.',
+      oneMatch: '1 coincidencia.',
+      manyMatches: '{n} coincidencias.',
+      goghError: 'No se pudieron cargar las paletas Gogh.',
+      lowContrast: 'Esta paleta tiene poco contraste, así que sus colores cambiaron de forma notoria',
+      adjusted: 'Ajustado para legibilidad',
+      sidebarPosition: 'Posición de la barra lateral',
+      left: 'Izquierda',
+      right: 'Derecha',
+      sidebarWidth: 'Ancho de la barra lateral',
+      sidebarWidthHint: 'Arrastrá para cambiar el ancho de la barra lateral. Se guarda solo en este navegador.',
+      desktopOnlyHint: 'Solo en escritorio — en pantallas chicas la barra lateral siempre se abre desde la izquierda. Se guarda solo en este navegador.',
+      defaultGroup: 'Predeterminados',
+      darkGroup: 'Oscuros',
+      lightGroup: 'Claros',
+      schemesGroupAria: 'Esquemas de color: {g}',
+      noColorMix: 'Este navegador no admite esquemas de color (necesita CSS color-mix()).',
+      schemesHint: 'Se aplica al instante y se guarda solo en este navegador, por separado para modo oscuro y claro. Paletas de Gogh (github.com/Gogh-Co/Gogh).'
+    }
+  };
+  var LANG = (document.documentElement.lang || 'en').slice(0, 2).toLowerCase();
+  function t(key, vars) {
+    var s = (I18N[LANG] && I18N[LANG][key]) || I18N.en[key] || key;
+    if (vars) Object.keys(vars).forEach(function (k) { s = s.replace('{' + k + '}', vars[k]); });
+    return s;
+  }
 
   /* ── LAYOUT: measure fixed headers and push #main down ───── */
   function adjustLayout() {
@@ -84,8 +185,8 @@
     // Inject button at the top of sidebar-wrapper
     var btn = document.createElement('button');
     btn.id = 'rm-sidebar-toggle';
-    btn.setAttribute('aria-label', 'Toggle sidebar');
-    btn.title = 'Toggle sidebar';
+    btn.setAttribute('aria-label', t('toggleSidebar'));
+    btn.title = t('toggleSidebar');
     btn.textContent = '‹';
     document.body.appendChild(btn); // must be outside sidebar so overflow:hidden can't clip it
 
@@ -127,8 +228,8 @@
     var isDark = localStorage.getItem('rm-dark') === '1';
     var btn = document.createElement('button');
     btn.id = 'rm-darkmode-toggle';
-    btn.setAttribute('aria-label', 'Toggle dark mode');
-    btn.title = 'Toggle dark mode';
+    btn.setAttribute('aria-label', t('toggleDarkMode'));
+    btn.title = t('toggleDarkMode');
     btn.textContent = isDark ? '☀️' : '🌙';
     document.body.appendChild(btn);
 
@@ -142,7 +243,7 @@
       // A scheme fixes its own variant, so switch to the one last used in the new mode
       var scheme = modeScheme(nowDark);
       applyScheme(scheme.id);
-      rmToast((nowDark ? 'Dark mode' : 'Light mode') + ' — ' + scheme.name, 'info', 2000);
+      rmToast(t(nowDark ? 'darkMode' : 'lightMode') + ' — ' + scheme.name, 'info', 2000);
     });
   }
 
@@ -424,11 +525,11 @@
     sep.className = 'rm-account-panel-sep';
     var label = document.createElement('div');
     label.className = 'rm-scheme-label';
-    label.textContent = 'Colour scheme';
+    label.textContent = t('colourScheme');
     var row = document.createElement('div');
     row.className = 'rm-scheme-recent';
     row.setAttribute('role', 'radiogroup');
-    row.setAttribute('aria-label', 'Recent colour schemes');
+    row.setAttribute('aria-label', t('recentSchemes'));
     renderRecentSchemes(row);
 
     panel.appendChild(sep);
@@ -438,7 +539,7 @@
       var more = document.createElement('a');
       more.className = 'rm-scheme-more';
       more.href = myAccount.getAttribute('href') + '#rm-schemes';
-      more.textContent = 'All colour schemes…';
+      more.textContent = t('allSchemes');
       panel.appendChild(more);
     }
   }
@@ -468,15 +569,15 @@
     var row = document.createElement('div');
     row.className = 'rm-scheme-recent rm-gogh-accents';
     row.setAttribute('role', 'radiogroup');
-    row.setAttribute('aria-label', 'Accent colour');
+    row.setAttribute('aria-label', t('accentColour'));
     ACCENT_SLOTS.forEach(function (a) {
       var built = buildGoghScheme(g.row, a[0]);
       var dot = document.createElement('button');
       dot.type = 'button';
       dot.className = 'rm-scheme-dot';
-      dot.title = a[1] + ' accent';
+      dot.title = a[1] + ' ' + t('accentSuffix');
       dot.setAttribute('role', 'radio');
-      dot.setAttribute('aria-label', a[1] + ' accent');
+      dot.setAttribute('aria-label', a[1] + ' ' + t('accentSuffix'));
       dot.setAttribute('aria-checked', a[0] === g.accentSlot ? 'true' : 'false');
       dot.style.background = built.vars['--s-accent'];
       dot.addEventListener('click', function () { applyGoghScheme(g.row, a[0]); });
@@ -488,8 +589,7 @@
     if (shown.length) {
       var note = document.createElement('p');
       note.className = 'rm-scheme-hint rm-gogh-note';
-      note.textContent = (g.strong ? 'This palette has low contrast, so its colours were changed noticeably' :
-        'Adjusted for readability') + ' (' + shown.join(', ') + ').';
+      note.textContent = (g.strong ? t('lowContrast') : t('adjusted')) + ' (' + shown.join(', ') + ').';
       el.appendChild(note);
     }
   }
@@ -499,12 +599,12 @@
     wrap.className = 'rm-gogh';
     var head = document.createElement('div');
     head.className = 'rm-scheme-group';
-    head.textContent = 'Any Gogh scheme';
+    head.textContent = t('anyGoghScheme');
     var input = document.createElement('input');
     input.type = 'search';
     input.className = 'rm-gogh-search';
-    input.placeholder = 'Search all Gogh schemes by name…';
-    input.setAttribute('aria-label', 'Search Gogh colour schemes');
+    input.placeholder = t('searchGogh');
+    input.setAttribute('aria-label', t('searchGoghAria'));
     var status = document.createElement('p');
     status.className = 'rm-scheme-hint rm-gogh-status';
     status.setAttribute('aria-live', 'polite');
@@ -513,7 +613,7 @@
     var results = document.createElement('div');
     results.className = 'rm-scheme-grid rm-gogh-results';
     results.setAttribute('role', 'radiogroup');
-    results.setAttribute('aria-label', 'Matching Gogh schemes');
+    results.setAttribute('aria-label', t('matchingGogh'));
     [head, current, input, status, results].forEach(function (n) { wrap.appendChild(n); });
     renderGoghCurrent(current);
 
@@ -523,7 +623,7 @@
       timer = setTimeout(function () {
         var q = input.value.trim().toLowerCase();
         if (!q) { results.innerHTML = ''; status.textContent = ''; return; }
-        if (!goghPalettes) status.textContent = 'Loading…';
+        if (!goghPalettes) status.textContent = t('loading');
         loadGoghPalettes().then(function (rows) {
           if (input.value.trim().toLowerCase() !== q) return; // a newer search is running
           // Swap the old results out only now, so the list does not flash empty per keystroke
@@ -544,11 +644,11 @@
             card.addEventListener('click', function () { applyGoghScheme(r, 5); });
             results.appendChild(card);
           });
-          status.textContent = hits.length === 0 ? 'No scheme matches “' + input.value.trim() + '”.' :
-            hits.length > 24 ? 'Showing 24 of ' + hits.length + ' matches — type more to narrow it down.' :
-            hits.length + (hits.length === 1 ? ' match.' : ' matches.');
+          status.textContent = hits.length === 0 ? t('noMatch', { q: input.value.trim() }) :
+            hits.length > 24 ? t('showingMatches', { n: hits.length }) :
+            t(hits.length === 1 ? 'oneMatch' : 'manyMatches', { n: hits.length });
         }, function () {
-          status.textContent = 'Could not load the Gogh palettes.';
+          status.textContent = t('goghError');
         });
       }, 150);
     });
@@ -568,14 +668,14 @@
     box.className = 'box';
     box.id = 'rm-layout';
     var legend = document.createElement('legend');
-    legend.textContent = 'Sidebar position';
+    legend.textContent = t('sidebarPosition');
     box.appendChild(legend);
     var row = document.createElement('div');
     row.className = 'rm-side-options';
     row.setAttribute('role', 'radiogroup');
-    row.setAttribute('aria-label', 'Sidebar position');
+    row.setAttribute('aria-label', t('sidebarPosition'));
     var current = document.documentElement.getAttribute('data-sidebar') === 'right' ? 'right' : 'left';
-    [['left', 'Left'], ['right', 'Right']].forEach(function (o) {
+    [['left', t('left')], ['right', t('right')]].forEach(function (o) {
       var b = document.createElement('button');
       b.type = 'button';
       b.className = 'rm-side-option';
@@ -597,9 +697,56 @@
       row.appendChild(b);
     });
     box.appendChild(row);
+
+    /* Width: a range input so any value between 180 and 360px works. The
+       stored value is applied synchronously in the early block above, so it
+       does not flash at the default width while the page loads. */
+    var widthWrap = document.createElement('div');
+    widthWrap.className = 'rm-width-block';
+    var widthHead = document.createElement('div');
+    widthHead.className = 'rm-width-head';
+    var widthLabel = document.createElement('label');
+    widthLabel.className = 'rm-width-label';
+    widthLabel.setAttribute('for', 'rm-width-range');
+    widthLabel.textContent = t('sidebarWidth');
+    var widthValue = document.createElement('span');
+    widthValue.className = 'rm-width-value';
+    widthHead.appendChild(widthLabel);
+    widthHead.appendChild(widthValue);
+
+    var sidebarEl = qs('#sidebar');
+    var currentWidth = sidebarEl ? Math.round(sidebarEl.getBoundingClientRect().width) : 240;
+    currentWidth = Math.max(180, Math.min(360, currentWidth || 240));
+
+    var range = document.createElement('input');
+    range.type = 'range';
+    range.id = 'rm-width-range';
+    range.className = 'rm-width-range';
+    range.min = '180';
+    range.max = '360';
+    range.step = '10';
+    range.value = String(currentWidth);
+    range.setAttribute('aria-label', t('sidebarWidth'));
+    widthValue.textContent = currentWidth + 'px';
+
+    range.addEventListener('input', function () {
+      var w = parseInt(range.value, 10);
+      widthValue.textContent = w + 'px';
+      document.documentElement.style.setProperty('--sidebar-w', w + 'px');
+      try { localStorage.setItem('rm-sidebar-width', String(w)); } catch (e) {}
+    });
+
+    var widthHint = document.createElement('p');
+    widthHint.className = 'rm-scheme-hint';
+    widthHint.textContent = t('sidebarWidthHint');
+    widthWrap.appendChild(widthHead);
+    widthWrap.appendChild(range);
+    widthWrap.appendChild(widthHint);
+    box.appendChild(widthWrap);
+
     var hint = document.createElement('p');
     hint.className = 'rm-scheme-hint';
-    hint.textContent = 'Desktop only — on small screens the sidebar always opens from the left. Saved in this browser only.';
+    hint.textContent = t('desktopOnlyHint');
     box.appendChild(hint);
     prefsBox.parentNode.insertBefore(box, prefsBox.nextSibling);
   }
@@ -617,16 +764,16 @@
     box.className = 'box';
     box.id = 'rm-schemes';
     var legend = document.createElement('legend');
-    legend.textContent = 'Colour scheme';
+    legend.textContent = t('colourScheme');
     box.appendChild(legend);
 
     if (!schemesSupported()) {
       var na = document.createElement('p');
       na.className = 'rm-scheme-hint';
-      na.textContent = 'This browser does not support colour schemes (needs CSS color-mix()).';
+      na.textContent = t('noColorMix');
       box.appendChild(na);
     } else {
-      [['Default', null], ['Dark', true], ['Light', false]].forEach(function (g) {
+      [[t('defaultGroup'), null], [t('darkGroup'), true], [t('lightGroup'), false]].forEach(function (g) {
         var list = SCHEMES.filter(function (s) { return g[1] === null ? s.dark === null : s.dark === g[1]; });
         var head = document.createElement('div');
         head.className = 'rm-scheme-group';
@@ -634,7 +781,7 @@
         var grid = document.createElement('div');
         grid.className = 'rm-scheme-grid';
         grid.setAttribute('role', 'radiogroup');
-        grid.setAttribute('aria-label', g[0] + ' colour schemes');
+        grid.setAttribute('aria-label', t('schemesGroupAria', { g: g[0] }));
         list.forEach(function (s) {
           var card = schemeButton(s, 'rm-scheme-card');
           card.appendChild(schemePreview(s.swatch));
@@ -647,7 +794,7 @@
       box.appendChild(goghSearch());
       var hint = document.createElement('p');
       hint.className = 'rm-scheme-hint';
-      hint.textContent = 'Applies immediately and is saved in this browser only, separately for dark and light mode. Palettes from Gogh (github.com/Gogh-Co/Gogh).';
+      hint.textContent = t('schemesHint');
       box.appendChild(hint);
     }
     prefsBox.parentNode.insertBefore(box, prefsBox.nextSibling);
@@ -752,9 +899,9 @@
   }
 
   function initCollapsible() {
-    makeCollapsible('issue_tree', 'Subtasks');
-    makeCollapsible('relations',  'Related Issues');
-    makeCollapsible('watchers',   'Watchers');
+    makeCollapsible('issue_tree', t('subtasks'));
+    makeCollapsible('relations',  t('relatedIssues'));
+    makeCollapsible('watchers',   t('watchers'));
   }
 
   /* ── HIGHLIGHT ACTIVE NAV ────────────────────────────────── */
@@ -815,20 +962,45 @@
     // Logged-out state: show plain login link, nothing else
     if (qs('a.login', account)) return;
 
-    var ul = qs('ul', account);
+    // Redmine 6 renders #account as its own dropdown (trigger + panel); older
+    // versions render a bare <ul>. Support both, and hide Redmine's trigger
+    // once the theme's own button is in place (otherwise the topbar shows two
+    // account buttons).
+    var coreTrigger = qs('a.dropdown-trigger', account);
+    var coreContent = qs('.dropdown-content', account);
+    var ul = (coreContent && qs('ul', coreContent)) || qs('ul', account);
     if (!ul) return;
 
     var loggedas = qs('#loggedas');
-    var userLink = loggedas && qs('a', loggedas);
-    var username = userLink ? userLink.textContent.trim() : 'Account';
-    var profileHref = userLink ? userLink.getAttribute('href') : '#';
+    var userLink = (loggedas && qs('a', loggedas)) || qs('a.user.active', document);
+    var userNameEl = qs('.user-info .user-name', account) || qs('.user-name', account);
+    var userLoginEl = qs('.user-info .user-login', account);
 
-    // Initials: first letters of up to 2 words (e.g. "Aleksandar Pavić" → "AP").
-    // Fall back to first char or first two of a single-word login.
+    var username = userNameEl ? userNameEl.textContent.trim() : '';
+    if (!username && userLink) username = userLink.textContent.trim();
+    if (!username && userLoginEl) username = userLoginEl.textContent.trim().replace(/^@/, '');
+    if (!username) username = t('account');
+
+    var profileLink = qs('a.my-profile', account) || qs('a.my-account', account);
+    var profileHref = profileLink ? profileLink.getAttribute('href')
+                     : (userLink ? userLink.getAttribute('href') : '#');
+    var profileLabel = profileLink ? profileLink.textContent.trim() : t('profile');
+
+    // Redmine assigns every user an avatar colour (avatar-color-0..7).
+    // Copy that class so the theme's avatar matches the rest of the UI.
+    var coreAvatar = qs('.avatar', coreTrigger || account);
+    var colorClass = '';
+    if (coreAvatar) {
+      var cm = String(coreAvatar.className || '').match(/avatar-color-\d+/);
+      if (cm) colorClass = cm[0];
+    }
+
+    // Initials: first + last word ("RM Dev" → "RD"), fallback to the first
+    // two letters of a single word.
     var words = (username.match(/[\p{L}\p{N}]+/gu) || [username]);
     var initials;
     if (words.length >= 2) {
-      initials = (words[0][0] + words[1][0]).toUpperCase();
+      initials = (words[0][0] + words[words.length - 1][0]).toUpperCase();
     } else {
       initials = words[0].slice(0, 2).toUpperCase();
     }
@@ -843,7 +1015,7 @@
     trigger.setAttribute('aria-haspopup', 'menu');
 
     var badge = document.createElement('span');
-    badge.className = 'rm-account-avatar';
+    badge.className = 'rm-account-avatar' + (colorClass ? ' ' + colorClass : '');
     badge.setAttribute('aria-hidden', 'true');
     badge.textContent = initials;
     var nameSpan = document.createElement('span');
@@ -866,9 +1038,21 @@
     head.className = 'rm-account-panel-head';
     head.href = profileHref;
     head.setAttribute('role', 'menuitem');
-    head.innerHTML = '<span class="rm-account-avatar rm-account-avatar-lg" aria-hidden="true">' + initials + '</span>' +
-                    '<span><span class="rm-account-panel-name">' + username + '</span>' +
-                    '<span class="rm-account-panel-view">View profile</span></span>';
+    var headAvatar = document.createElement('span');
+    headAvatar.className = 'rm-account-avatar rm-account-avatar-lg' + (colorClass ? ' ' + colorClass : '');
+    headAvatar.setAttribute('aria-hidden', 'true');
+    headAvatar.textContent = initials;
+    var headText = document.createElement('span');
+    var headName = document.createElement('span');
+    headName.className = 'rm-account-panel-name';
+    headName.textContent = username;
+    var headView = document.createElement('span');
+    headView.className = 'rm-account-panel-view';
+    headView.textContent = profileLabel;
+    headText.appendChild(headName);
+    headText.appendChild(headView);
+    head.appendChild(headAvatar);
+    head.appendChild(headText);
     panel.appendChild(head);
     // Divider
     var sep = document.createElement('div');
@@ -885,6 +1069,10 @@
     // Mount the panel on <body> so it escapes #top-menu's cascade (white
     // text from #top-menu ul li a) and its overflow:hidden clip.
     document.body.appendChild(panel);
+    // Redmine's own trigger/panel: hidden, the theme's button replaces it.
+    if (coreTrigger) coreTrigger.style.display = 'none';
+    if (coreContent) coreContent.style.display = 'none';
+    document.body.classList.add('rm-account-ready');
     if (loggedas) loggedas.style.display = 'none';
 
     function open() {
@@ -917,7 +1105,7 @@
     var input = qs('#quick-search #q');
     if (!form || !input) return;
     if (qs('.rm-search-icon', form)) return; // idempotent
-    input.setAttribute('placeholder', input.getAttribute('placeholder') || 'Search');
+    input.setAttribute('placeholder', input.getAttribute('placeholder') || t('search'));
     // Hide the "Search:" label's visible text but keep the element for a11y.
     // Redmine renders <label for="q">Search:</label> as a stray text node
     // that otherwise collides with the magnifier.
@@ -942,7 +1130,7 @@
 
     var btn = document.createElement('button');
     btn.id = 'rm-hamburger';
-    btn.setAttribute('aria-label', 'Toggle menu');
+    btn.setAttribute('aria-label', t('toggleMenu'));
     btn.setAttribute('aria-expanded', 'false');
     btn.innerHTML = '<span></span><span></span><span></span>';
     topMenu.insertBefore(btn, topMenu.firstChild);
