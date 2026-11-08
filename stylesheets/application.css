@@ -1608,6 +1608,20 @@ table.list tbody td {
   border: none !important;
 }
 
+/* View Customize — reglas deshabilitadas: tachadas + neutras.
+   El theme pinta td de table.list con color sólido (!important), lo que pisa el
+   gris que el plugin aplica al tr.disable. Lo reponemos acá para que una regla
+   deshabilitada se lea como deshabilitada (texto tachado). */
+table.list.view_customize tr.disable td,
+html.dark-mode table.list.view_customize tr.disable td {
+  color: var(--c-text-subtle) !important;
+}
+
+table.list.view_customize tr.disable td,
+table.list.view_customize tr.disable td a {
+  text-decoration: line-through;
+}
+
 /* Long-text columns are kept to a single line with an ellipsis. Without this the
    table squeezes them to their minimum content width and one long value wraps to
    four or five lines, so every row in the list inherits that height — a list with
