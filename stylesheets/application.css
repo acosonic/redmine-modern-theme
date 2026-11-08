@@ -2582,7 +2582,7 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
 /* ── 27b. ADMIN INDEX — cards with icons ─────────────────── */
 #admin-index #admin-menu ul {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important;
+  grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
   gap: var(--sp-3) !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -2596,11 +2596,12 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
 #admin-index #admin-menu a {
   flex: 1 1 auto !important;
   display: flex !important;
+  flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: var(--sp-3) !important;
+  gap: var(--sp-2) !important;
   height: auto !important;
-  min-height: 68px !important;
+  min-height: 96px !important;
   padding: var(--sp-3) !important;
   background: var(--c-surface) !important;
   border: 1px solid var(--c-border) !important;
@@ -2610,6 +2611,7 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
   font-size: var(--text-sm) !important;
   font-weight: 500 !important;
   line-height: 1.35 !important;
+  text-align: center !important;
   text-decoration: none !important;
   transition: border-color var(--t-fast), box-shadow var(--t-fast),
               transform var(--t-fast), background var(--t-fast) !important;
@@ -2626,8 +2628,8 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
 /* Icon tile — the SVG is the only child that needs a background box */
 #admin-index #admin-menu a .icon-svg {
   flex: 0 0 auto !important;
-  width: 40px !important;
-  height: 40px !important;
+  width: 20px !important;
+  height: 20px !important;
   padding: 10px !important;
   box-sizing: content-box !important;
   border-radius: var(--r) !important;
@@ -2685,6 +2687,9 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
     width: 100% !important;
     min-width: 0 !important;
   }
+
+  /* Admin cards — single column on mobile */
+  #admin-index #admin-menu ul { grid-template-columns: minmax(0, 1fr) !important; }
 
   /* Show hamburger button on mobile */
   #rm-hamburger { display: flex !important; }
