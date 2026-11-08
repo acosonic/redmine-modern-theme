@@ -2597,9 +2597,10 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
   flex: 1 1 auto !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: center !important;
   gap: var(--sp-3) !important;
   height: auto !important;
-  min-height: 56px !important;
+  min-height: 68px !important;
   padding: var(--sp-3) !important;
   background: var(--c-surface) !important;
   border: 1px solid var(--c-border) !important;
@@ -2625,9 +2626,9 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
 /* Icon tile — the SVG is the only child that needs a background box */
 #admin-index #admin-menu a .icon-svg {
   flex: 0 0 auto !important;
-  width: 20px !important;
-  height: 20px !important;
-  padding: 8px !important;
+  width: 40px !important;
+  height: 40px !important;
+  padding: 10px !important;
   box-sizing: content-box !important;
   border-radius: var(--r) !important;
   background: var(--c-primary-light) !important;
