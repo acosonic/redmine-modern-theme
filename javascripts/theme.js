@@ -1164,6 +1164,322 @@
     });
   }
 
+(function () {
+  console.log('Vistazo moderno: script cargado');
+  var $ = window.jQuery;
+  if (!$) { console.error('Vistazo moderno: jQuery no disponible'); return; }
+
+  function safe(name, fn) {
+    try { fn(); }
+    catch (e) { console.error('Vistazo moderno [' + name + ']:', e); }
+  }
+
+  /* ---------- Deteccion del color de acento del theme ---------- */
+  var cvs = document.createElement('canvas');
+  cvs.width = cvs.height = 1;
+  var ctx2d = cvs.getContext('2d');
+
+  // Convierte cualquier color CSS (hex, rgb, hsl, oklch...) a {r,g,b,a}
+  function toRgb(str) {
+    if (!str || !ctx2d) return null;
+    try {
+      ctx2d.clearRect(0, 0, 1, 1);
+      ctx2d.fillStyle = 'rgba(0,0,0,0)';
+      ctx2d.fillStyle = String(str).trim();
+      ctx2d.fillRect(0, 0, 1, 1);
+      var d = ctx2d.getImageData(0, 0, 1, 1).data;
+      return { r: d[0], g: d[1], b: d[2], a: d[3] / 255 };
+    } catch (e) { return null; }
+  }
+  function saturated(c) {
+    if (!c || c.a < 0.5) return false;
+    var mx = Math.max(c.r, c.g, c.b), mn = Math.min(c.r, c.g, c.b);
+    return (mx - mn) / 255 > 0.18;
+  }
+
+  function detectAccent() {
+    var cs = getComputedStyle(document.body);
+    var names = ['--c-primary', '--c-accent', '--accent', '--primary', '--color-primary',
+                 '--c-brand', '--brand', '--color-accent', '--theme-color'];
+    var i, c, v;
+    for (i = 0; i < names.length; i++) {
+      v = cs.getPropertyValue(names[i]).trim();
+      if (v) {
+        c = toRgb(v);
+        if (c && c.a > 0.5) return { c: c, src: names[i] };
+      }
+    }
+    // Plan B: muestrear colores reales de la interfaz
+    var $probe = $('<a href="#" class="vz-probe" style="display:none">x</a>').appendTo('#content');
+    var linkColor = getComputedStyle($probe[0]).color;
+    $probe.remove();
+    c = toRgb(linkColor);
+    if (saturated(c)) return { c: c, src: 'color de los links' };
+
+    var $sel = $('#main-menu a.selected').first();
+    if ($sel.length) {
+      var s = getComputedStyle($sel[0]);
+      var tries = [s.color, s.borderBottomColor, s.backgroundColor];
+      for (i = 0; i < tries.length; i++) {
+        c = toRgb(tries[i]);
+        if (saturated(c)) return { c: c, src: 'pestana seleccionada del menu' };
+      }
+    }
+    return null;
+  }
+
+  var lastAccent = '';
+  function applyAccent(logIt) {
+    var found = detectAccent();
+    if (!found) {
+      if (logIt) console.warn('Vistazo moderno: no se pudo detectar el color de acento, se usa el del CSS');
+      return;
+    }
+    var c = found.c;
+    var rgb = 'rgb(' + c.r + ',' + c.g + ',' + c.b + ')';
+    if (rgb === lastAccent) return;
+    lastAccent = rgb;
+    var lum = 0.299 * c.r + 0.587 * c.g + 0.114 * c.b;
+    document.body.style.setProperty('--vz-accent', rgb);
+    document.body.style.setProperty('--vz-on-accent', lum > 160 ? '#111' : '#fff');
+    if (logIt) console.log('Vistazo moderno: acento ' + rgb + ' (origen: ' + found.src + ')');
+  }
+
+  /* ---------- Resto ---------- */
+  function init() {
+    if (!$('body').is('.controller-projects.action-show')) {
+      console.log('Vistazo moderno: la pagina no coincide');
+      return;
+    }
+    if ($('.vz-hero').length) return;
+
+    safe('acento', function () {
+      applyAccent(true);
+      // Si cambia la paleta o el modo claro/oscuro sin recargar, se vuelve a detectar
+      var timer = null;
+      var obs = new MutationObserver(function () {
+        clearTimeout(timer);
+        timer = setTimeout(function () { applyAccent(true); }, 80);
+      });
+      obs.observe(document.documentElement, { attributes: true });
+      obs.observe(document.body, { attributes: true });
+    });
+
+    var ident = location.pathname.split('/')[2];
+    var proj = '/projects/' + ident;
+    var esc = function (s) { return $('<div>').text(s == null ? '' : s).html(); };
+    var svg = function (p) {
+      return '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + p + '</svg>';
+    };
+    var ico = {
+      open: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/>',
+      closed: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+      total: '<path d="M5 7h14M5 12h14M5 17h14"/>',
+      pie: '<path d="M12 3a9 9 0 1 0 9 9h-9z"/>',
+      users: '<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14c2.6 0 4.5 1.8 4.5 4.5"/>',
+      plus: '<path d="M12 5v14M5 12h14"/>'
+    };
+
+    var open = 0, closed = 0, total = 0;
+    var members = $('.members.box a.user').length;
+    var hasIssues = $('table.issue-report').length > 0;
+
+    /* ---------- 1) Columna % cerradas ---------- */
+    safe('tabla', function () {
+      var $table = $('table.issue-report');
+      $table.find('thead tr').append('<th>% cerradas</th>');
+      $table.find('tbody tr').each(function () {
+        var td = $(this).find('td');
+        var o = parseInt($(td[1]).text(), 10) || 0;
+        var c = parseInt($(td[2]).text(), 10) || 0;
+        var t = parseInt($(td[3]).text(), 10) || 0;
+        open += o; closed += c; total += t;
+        var pct = t ? Math.round(c * 100 / t) : 0;
+        var href = $(td[2]).find('a').attr('href') || '#';
+        var label = t ? '<a href="' + href + '">' + pct + '%</a>' : '<span>\u2014</span>';
+        $(this).append(
+          '<td class="vz-prog"><div class="vz-prog-in">' +
+          '<div class="vz-bar" title="' + pct + '% cerradas"><span style="width:' + pct + '%"></span></div>' +
+          label + '</div></td>');
+      });
+    });
+    console.log('Vistazo moderno: tabla ok');
+
+    /* ---------- 2) Hero + KPIs ---------- */
+    safe('hero', function () {
+      var pctAll = total ? Math.round(closed * 100 / total) : 0;
+      var name = $('h1 .current-project').first().text() || ident;
+      var $h2 = $('#content > h2').first();
+
+      var link = function (sel, fb) { return $('#main-menu ' + sel).first().attr('href') || fb; };
+      var btn = function (href, icon, text, primary) {
+        return '<a class="vz-btn' + (primary ? ' is-primary' : '') + '" href="' + href + '">' + svg(ico[icon]) + text + '</a>';
+      };
+
+      // Botones: solo los que existen en el menu del proyecto
+      var actions = '';
+      if ($('#main-menu a.new-issue-sub').length) {
+        actions += btn(link('a.new-issue-sub', proj + '/issues/new'), 'plus', 'Nueva incidencia', true);
+      }
+      if ($('#main-menu a.issues').length) {
+        actions += btn(link('a.issues', proj + '/issues'), 'total', 'Incidencias');
+      }
+
+      var hero =
+        '<div class="vz-hero">' +
+          '<div class="vz-hero-top">' +
+            '<div class="vz-hero-main">' +
+              '<h1>' + esc(name) + '</h1>' +
+            '</div>' +
+            '<div class="vz-actions">' + actions + '</div>' +
+          '</div>' +
+        '</div>';
+
+      var kpi = function (href, icon, label, value) {
+        return '<a class="vz-kpi" href="' + href + '"><span class="vz-ico">' + svg(ico[icon]) + '</span>' +
+          '<span class="vz-txt"><small>' + label + '</small><b>' + value + '</b></span></a>';
+      };
+      var kpis = '<div class="vz-kpis">';
+      if (hasIssues) {
+        kpis +=
+          kpi(proj + '/issues?set_filter=1', 'open', 'Abiertas', open) +
+          kpi(proj + '/issues?set_filter=1&status_id=c', 'closed', 'Cerradas', closed) +
+          kpi(proj + '/issues?set_filter=1&status_id=*', 'total', 'Total', total) +
+          kpi(proj + '/issues/report', 'pie', 'Completado', pctAll + '%');
+      }
+      kpis += kpi('#', 'users', 'Miembros', members) + '</div>';
+
+      $h2.after(hero + kpis);
+
+      // Mover marcador y menu de acciones del proyecto al hero (se mueven los
+      // elementos originales, asi conservan su funcionamiento)
+      var $ctx = $('#content > .contextual').first();
+      var $act = $('.vz-hero .vz-actions');
+      if ($ctx.length && $act.length) {
+        $ctx.find('a.bookmark').first().appendTo($act);
+        $ctx.children('.drdn').first().appendTo($act);
+        if (!$ctx.children().length) $ctx.hide();
+        console.log('Vistazo moderno: marcador y menu movidos al hero');
+      }
+    });
+    console.log('Vistazo moderno: hero ok');
+
+    /* ---------- 3) Cajas con skeleton ---------- */
+    var sk = '<div class="vz-sk"></div><div class="vz-sk w80"></div><div class="vz-sk w60"></div>';
+    var T_ATTN = 'Atenci\u00f3n';
+    var T_LOAD = 'Carga por persona';
+    var T_ACT = 'Actividad reciente';
+
+    safe('cajas', function () {
+      if (hasIssues) {
+        $('.splitcontentright').prepend(
+          '<div class="box" id="vz-attn"><h3>' + T_ATTN + '</h3>' + sk + '</div>' +
+          '<div class="box" id="vz-load"><h3>' + T_LOAD + '</h3>' + sk + '</div>');
+      }
+      $('.splitcontentleft').append(
+        '<div class="box" id="vz-act"><h3>' + T_ACT + '</h3>' + sk + '</div>');
+    });
+
+    /* ---------- 4) Atencion + carga por persona ---------- */
+    safe('atencion', function () {
+      if (!hasIssues) return;
+      var today = new Date(); today.setHours(0, 0, 0, 0);
+      var DAY = 86400000;
+
+      fetch('/issues.json?project_id=' + encodeURIComponent(ident) + '&status_id=open&sort=due_date&limit=100',
+            { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+        .then(function (d) {
+          var issues = d.issues || [], late = [], soon = [], byUser = {};
+          issues.forEach(function (i) {
+            var who = i.assigned_to ? i.assigned_to.name : 'Sin asignar';
+            byUser[who] = (byUser[who] || 0) + 1;
+            if (!i.due_date) return;
+            var days = Math.round((new Date(i.due_date + 'T00:00:00') - today) / DAY);
+            if (days < 0) late.push({ i: i, days: days });
+            else if (days <= 7) soon.push({ i: i, days: days });
+          });
+
+          var row = function (o, cls) {
+            var t = o.days < 0 ? 'hace ' + Math.abs(o.days) + ' d' : o.days === 0 ? 'hoy' : 'en ' + o.days + ' d';
+            var who = o.i.assigned_to ? o.i.assigned_to.name : 'Sin asignar';
+            var prio = o.i.priority ? o.i.priority.name : '';
+            return '<li class="' + cls + '"><a href="/issues/' + o.i.id + '">#' + o.i.id + ' ' + esc(o.i.subject) + '</a>' +
+              '<span>' + esc(who) + ' \u00b7 ' + esc(prio) + '</span><em>' + t + '</em></li>';
+          };
+          var list = function (arr, cls, empty) {
+            return arr.length
+              ? '<ul class="vz-list">' + arr.slice(0, 6).map(function (o) { return row(o, cls); }).join('') + '</ul>'
+              : '<p class="vz-empty">' + empty + '</p>';
+          };
+
+          $('#vz-attn').html(
+            '<h3>Vencidas (' + late.length + ')</h3>' + list(late, 'is-late', 'Nada vencido') +
+            '<h3 class="vz-h3-gap">Vencen en 7 d\u00edas (' + soon.length + ')</h3>' + list(soon, 'is-soon', 'Nada por vencer'));
+
+          var keys = Object.keys(byUser).sort(function (a, b) { return byUser[b] - byUser[a]; });
+          var max = Math.max.apply(null, keys.map(function (k) { return byUser[k]; }).concat([1]));
+          var users = keys.map(function (k) {
+            return '<div class="vz-user"><span>' + esc(k) + '</span>' +
+              '<div class="vz-bar"><span style="width:' + Math.round(byUser[k] * 100 / max) + '%"></span></div>' +
+              '<b>' + byUser[k] + '</b></div>';
+          }).join('') || '<p class="vz-empty">Sin incidencias abiertas</p>';
+          $('#vz-load').html('<h3>' + T_LOAD + '</h3>' + users);
+          console.log('Vistazo moderno: atencion ok');
+        })
+        .catch(function (e) {
+          console.error('Vistazo moderno [issues.json]:', e);
+          $('#vz-attn').html('<h3>' + T_ATTN + '</h3><p class="vz-empty">No se pudo cargar.</p>');
+          $('#vz-load').html('<h3>' + T_LOAD + '</h3><p class="vz-empty">No se pudo cargar.</p>');
+        });
+    });
+
+    /* ---------- 5) Actividad reciente ---------- */
+    safe('actividad', function () {
+      var ago = function (d) {
+        var s = Math.max(0, (Date.now() - d) / 1000);
+        if (s < 60) return 'reci\u00e9n';
+        var m = s / 60; if (m < 60) return 'hace ' + Math.floor(m) + ' min';
+        var h = m / 60; if (h < 24) return 'hace ' + Math.floor(h) + ' h';
+        var dd = h / 24; if (dd < 30) return 'hace ' + Math.floor(dd) + ' d';
+        return d.toLocaleDateString('es-UY');
+      };
+
+      var feed = $('link[type="application/atom+xml"]').first().attr('href') || (proj + '/activity.atom');
+      var fu = new URL(feed, location.href);
+
+      fetch(fu.pathname + fu.search, { credentials: 'same-origin' })
+        .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+        .then(function (txt) {
+          var xml = new DOMParser().parseFromString(txt, 'application/xml');
+          var entries = Array.prototype.slice.call(xml.querySelectorAll('entry')).slice(0, 8);
+          if (!entries.length) {
+            $('#vz-act').html('<h3>' + T_ACT + '</h3><p class="vz-empty">Sin actividad todav\u00eda.</p>');
+            return;
+          }
+          var items = entries.map(function (e) {
+            var title = (e.querySelector('title') || {}).textContent || '';
+            var who = (e.querySelector('author > name') || {}).textContent || '';
+            var upd = (e.querySelector('updated') || {}).textContent || '';
+            var l = e.querySelector('link');
+            var href = '#';
+            if (l) { var u = new URL(l.getAttribute('href'), location.href); href = u.pathname + u.search + u.hash; }
+            return '<li><a href="' + href + '">' + esc(title) + '</a>' +
+                   '<small>' + esc(who) + ' \u00b7 ' + ago(new Date(upd)) + '</small></li>';
+          }).join('');
+          $('#vz-act').html('<h3>' + T_ACT + '</h3><ul class="vz-act">' + items + '</ul>');
+          console.log('Vistazo moderno: actividad ok');
+        })
+        .catch(function (e) {
+          console.error('Vistazo moderno [activity.atom]:', e);
+          $('#vz-act').html('<h3>' + T_ACT + '</h3><p class="vz-empty">No se pudo cargar la actividad.</p>');
+        });
+    });
+  }
+
+  $(init);
+})();
+
   /* ── INIT ─────────────────────────────────────────────────── */
   function init() {
     scheduleLayoutAdjust();

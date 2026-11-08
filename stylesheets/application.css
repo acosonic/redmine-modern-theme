@@ -2647,6 +2647,286 @@ h3 { font-size: var(--text-base) !important; font-weight: 600 !important; color:
   overflow-wrap: anywhere !important;
 }
 
+/* =====================================================
+   VISTAZO MODERNO - CSS completo (v8)
+   El color de acento lo fija el JS (--vz-accent) leyendo el theme.
+   ===================================================== */
+body.controller-projects.action-show {
+  --vz-accent: var(--c-primary, var(--c-text));
+  --vz-on-accent: #fff;
+}
+
+html { scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--c-text) 30%, transparent) transparent; }
+
+/* El h2 original se reemplaza por el hero */
+body.controller-projects.action-show #content > h2 { display: none; }
+
+/* Si quedaba algo en la barra original, que no flote sobre el hero */
+body.controller-projects.action-show #content > .contextual {
+  float: none; display: flex; justify-content: flex-end; gap: 8px; margin: 0 0 10px;
+}
+
+/* ---------- Hero ---------- */
+#content .vz-hero {
+  position: relative; z-index: 5; box-sizing: border-box; clear: both;
+  margin: 0 0 18px; padding: 26px 28px; border-radius: 16px;
+  background-color: transparent !important;
+  background-image: linear-gradient(90deg,
+    color-mix(in srgb, var(--vz-accent) 24%, transparent) 0%,
+    color-mix(in srgb, var(--vz-accent) 9%, transparent) 55%,
+    transparent 100%) !important;
+  border: 1px solid color-mix(in srgb, var(--c-text) 18%, transparent) !important;
+  border-left: 3px solid var(--vz-accent) !important;
+}
+.vz-hero-top {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 18px;
+}
+.vz-hero-main { min-width: 0; flex: 1 1 320px; }
+#content .vz-hero h1 {
+  margin: 0; padding: 0; border: 0; font-size: 1.9rem; font-weight: 700;
+  letter-spacing: -.02em; line-height: 1.15;
+  color: var(--c-text) !important;
+}
+
+/* Fila de acciones: botones + marcador + menu */
+.vz-actions { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+.vz-actions:empty { display: none; }
+
+#content .vz-btn,
+#content .vz-actions a.bookmark,
+#content .vz-actions .drdn-trigger {
+  display: inline-flex !important; align-items: center; justify-content: center; gap: 8px;
+  box-sizing: border-box; min-height: 40px; padding: 9px 16px !important;
+  border-radius: 10px !important;
+  font-size: .88rem; font-weight: 600; line-height: 1.2;
+  text-decoration: none !important; cursor: pointer;
+  color: var(--c-text) !important;
+  background: color-mix(in srgb, var(--c-text) 8%, transparent) !important;
+  background-image: none !important;
+  border: 1px solid color-mix(in srgb, var(--c-text) 22%, transparent) !important;
+  transition: transform .15s, border-color .15s, background .15s;
+}
+#content .vz-btn:hover,
+#content .vz-actions a.bookmark:hover,
+#content .vz-actions .drdn-trigger:hover {
+  transform: translateY(-1px); border-color: var(--vz-accent) !important;
+}
+#content .vz-btn.is-primary {
+  color: var(--vz-on-accent) !important; background: var(--vz-accent) !important;
+  border-color: var(--vz-accent) !important;
+}
+#content .vz-btn.is-primary:hover { filter: brightness(1.08); }
+.vz-btn svg, .vz-actions a.bookmark svg, .vz-actions .drdn-trigger svg { flex: none; width: 18px; height: 18px; }
+
+/* Marcador */
+#content .vz-actions a.bookmark .icon-label { display: inline !important; }
+#content .vz-actions a.bookmark.icon-bookmark-on {
+  color: var(--vz-accent) !important;
+  border-color: color-mix(in srgb, var(--vz-accent) 55%, transparent) !important;
+  background: color-mix(in srgb, var(--vz-accent) 14%, transparent) !important;
+}
+
+/* Menu de tres puntos */
+.vz-actions .drdn { position: relative; display: flex; }
+#content .vz-actions .drdn-trigger { width: 40px; padding: 0 !important; }
+.vz-actions .drdn-trigger .icon-only { display: inline-flex; align-items: center; justify-content: center; }
+.vz-actions .drdn-trigger .icon-label { display: none !important; }
+.vz-actions .drdn-content { left: auto !important; right: 0 !important; z-index: 50; }
+
+/* ---------- KPIs ---------- */
+.vz-kpis {
+  display: grid; gap: 14px; margin: 0 0 18px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+.vz-kpi {
+  display: flex !important; align-items: center; gap: 14px; padding: 16px 18px;
+  text-decoration: none !important;
+  background: color-mix(in srgb, var(--c-text) 7%, var(--c-bg)) !important;
+  border: 1px solid color-mix(in srgb, var(--c-text) 22%, transparent) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,.25) !important;
+  transition: transform .15s, border-color .15s, box-shadow .15s;
+}
+.vz-kpi:hover {
+  transform: translateY(-2px); border-color: var(--vz-accent) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,.2) !important;
+}
+.vz-ico {
+  flex: none; width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center;
+  color: var(--vz-accent);
+  background: color-mix(in srgb, var(--vz-accent) 16%, transparent);
+}
+.vz-txt { display: block; min-width: 0; }
+.vz-kpi small {
+  display: block; color: var(--c-text-muted); font-size: .72rem;
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.vz-kpi b {
+  display: block; margin-top: 6px; font-size: 1.8rem; line-height: 1; font-weight: 700;
+  color: var(--c-text); font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Grilla y cards ---------- */
+body.controller-projects.action-show .splitcontent {
+  display: grid; gap: 16px; align-items: start;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+}
+body.controller-projects.action-show .splitcontentleft,
+body.controller-projects.action-show .splitcontentright {
+  float: none; width: auto; margin: 0; padding: 0;
+}
+@media (max-width: 900px) {
+  body.controller-projects.action-show .splitcontent { grid-template-columns: 1fr; }
+  #content .vz-hero { padding: 20px; }
+}
+body.controller-projects.action-show .splitcontent .box {
+  background: color-mix(in srgb, var(--c-text) 5%, var(--c-bg)) !important;
+  border: 1px solid color-mix(in srgb, var(--c-text) 20%, transparent) !important;
+  border-radius: 12px !important; padding: 16px 18px; margin: 0 0 16px;
+  box-shadow: 0 1px 2px rgba(0,0,0,.12);
+  transition: border-color .2s, box-shadow .2s;
+}
+body.controller-projects.action-show .splitcontent .box:hover {
+  border-color: color-mix(in srgb, var(--vz-accent) 55%, transparent) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.18);
+}
+body.controller-projects.action-show .splitcontent .box h3 {
+  display: flex; align-items: center; gap: 8px; margin: 0 0 12px; padding: 0; border: 0;
+  font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--c-text-muted);
+}
+body.controller-projects.action-show .splitcontent .box h3.vz-h3-gap { margin-top: 18px; }
+body.controller-projects.action-show .splitcontent .box > p:last-child {
+  margin: 14px 0 0; font-size: .85rem; color: var(--c-text-muted);
+}
+
+/* ---------- Tabla de incidencias ---------- */
+table.issue-report { width: 100%; border: 0; border-collapse: separate; border-spacing: 0; }
+table.issue-report th {
+  background: transparent; border: 0; padding: 8px; text-align: right;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-text) 18%, transparent);
+  color: var(--c-text-muted); font-size: .72rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: .05em;
+}
+table.issue-report th:first-child { text-align: left; }
+table.issue-report td {
+  background: transparent; border: 0; padding: 11px 8px; text-align: right;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-text) 14%, transparent);
+  transition: background .12s;
+}
+table.issue-report td.name { text-align: left; }
+table.issue-report tbody tr:last-child td { border-bottom: 0; }
+table.issue-report tbody tr:hover td { background: color-mix(in srgb, var(--vz-accent) 10%, transparent); }
+table.issue-report td.total a { font-weight: 700; }
+table.issue-report td, table.issue-report th { font-variant-numeric: tabular-nums; }
+table.issue-report td.vz-prog { white-space: nowrap; }
+.vz-prog-in { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+.vz-prog-in .vz-bar { flex: none; width: 64px; }
+.vz-prog-in a, .vz-prog-in > span:last-child { min-width: 34px; text-align: right; }
+
+/* Barra de progreso (compartida) */
+.vz-bar {
+  height: 6px; border-radius: 99px; overflow: hidden;
+  background: color-mix(in srgb, var(--c-text) 18%, transparent);
+}
+.vz-bar span { display: block; height: 100%; border-radius: 99px; background: var(--vz-accent); }
+
+/* ---------- Tiempo ---------- */
+.spent_time.box ul { list-style: none; margin: 0; padding: 0; }
+.spent_time.box li {
+  padding: 8px 0; border-bottom: 1px solid color-mix(in srgb, var(--c-text) 14%, transparent);
+}
+.spent_time.box li:last-child { border-bottom: 0; }
+
+/* ---------- Miembros ---------- */
+.members.box p { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; }
+.members.box .label { color: var(--c-text-muted); font-weight: 600; }
+.members.box a.user {
+  padding: 4px 12px; border-radius: 99px; text-decoration: none; font-size: .85rem;
+  color: var(--c-text);
+  background: color-mix(in srgb, var(--c-text) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-text) 20%, transparent);
+  transition: all .15s;
+}
+.members.box a.user:hover { border-color: var(--vz-accent); color: var(--vz-accent); }
+
+/* ---------- Atencion (vencidas / por vencer) ---------- */
+.vz-list { list-style: none; margin: 0; padding: 0; }
+.vz-list li {
+  display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 0 10px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--c-text) 14%, transparent);
+  border-left: 3px solid transparent;
+}
+.vz-list li:last-child { border-bottom: 0; }
+.vz-list li.is-late { border-left-color: #ef4444; }
+.vz-list li.is-soon { border-left-color: #f59e0b; }
+.vz-list li a {
+  grid-column: 1; font-weight: 600; text-decoration: none;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.vz-list li span { grid-column: 1; font-size: .78rem; color: var(--c-text-muted); }
+.vz-list li em {
+  grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal;
+  font-size: .75rem; font-weight: 600; padding: 3px 9px; border-radius: 99px;
+  background: color-mix(in srgb, var(--c-text) 10%, transparent);
+}
+.vz-list li.is-late em { background: rgba(239,68,68,.18); color: #ef4444; }
+.vz-list li.is-soon em { background: rgba(245,158,11,.18); color: #f59e0b; }
+.vz-empty { margin: 0; color: var(--c-text-muted); font-size: .88rem; }
+
+/* ---------- Carga por persona ---------- */
+.vz-user { display: grid; grid-template-columns: 130px 1fr 28px; align-items: center; gap: 10px; padding: 6px 0; font-size: .88rem; }
+.vz-user > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vz-user b { text-align: right; font-variant-numeric: tabular-nums; }
+
+/* ---------- Actividad reciente (timeline) ---------- */
+.vz-act { list-style: none; margin: 0; padding: 0 0 0 14px; position: relative; }
+.vz-act::before {
+  content: ""; position: absolute; left: 4px; top: 8px; bottom: 8px; width: 2px; border-radius: 2px;
+  background: color-mix(in srgb, var(--c-text) 16%, transparent);
+}
+.vz-act li { position: relative; padding: 8px 0 8px 14px; }
+.vz-act li::before {
+  content: ""; position: absolute; left: -14px; top: 15px; width: 10px; height: 10px; border-radius: 50%;
+  background: var(--vz-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vz-accent) 20%, transparent);
+}
+.vz-act a {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  font-weight: 600; font-size: .9rem; text-decoration: none;
+}
+.vz-act small { display: block; margin-top: 2px; color: var(--c-text-muted); font-size: .75rem; }
+
+/* ---------- Skeletons ---------- */
+.vz-sk {
+  height: 12px; margin: 14px 0; border-radius: 6px;
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--c-text) 8%, transparent) 25%,
+    color-mix(in srgb, var(--c-text) 18%, transparent) 50%,
+    color-mix(in srgb, var(--c-text) 8%, transparent) 75%);
+  background-size: 200% 100%; animation: vz-sh 1.3s linear infinite;
+}
+.vz-sk.w60 { width: 60%; } .vz-sk.w80 { width: 80%; }
+@keyframes vz-sh { to { background-position: -200% 0; } }
+
+/* ---------- Animaciones ---------- */
+@keyframes vz-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.vz-hero, .vz-kpi, body.controller-projects.action-show .splitcontent .box { animation: vz-in .35s ease both; }
+.vz-kpi:nth-child(2) { animation-delay: .04s; } .vz-kpi:nth-child(3) { animation-delay: .08s; }
+.vz-kpi:nth-child(4) { animation-delay: .12s; } .vz-kpi:nth-child(5) { animation-delay: .16s; }
+.vz-kpi:focus-visible, .vz-btn:focus-visible, .vz-actions a.bookmark:focus-visible, .vz-actions .drdn-trigger:focus-visible,
+.vz-list a:focus-visible, .vz-act a:focus-visible {
+  outline: 2px solid var(--vz-accent); outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vz-hero, .vz-kpi, body.controller-projects.action-show .splitcontent .box, .vz-sk { animation: none; transition: none; }
+}
+
+/* Corrección (View Customize): botón "new object" del menú principal */
+#main-menu a#new-object {
+  width: 80px !important;
+  margin-bottom: 5px !important;
+}
+
 /* ── 26. RESPONSIVE ──────────────────────────────────────── */
 /* Mid-size desktops/tablets: keep the wider search from crowding the title */
 @media (min-width: 900px) and (max-width: 1200px) {
