@@ -4024,6 +4024,343 @@ html.dark-mode #main .activity_date_heading .date_title { color: var(--c-text); 
 #sidebar #tags-list li.vault-tag:not([style*="background"]) a.vault-tag-link { color: var(--c-text) !important; }
 #sidebar #tags-list li.vault-tag a.vault-tag-link:hover { text-decoration: underline !important; }
 
+/* ============================================================
+   VIEW CUSTOMIZE — Plugin Taskboard / Board (rdb-*)
+   Adaptado al theme Modern Redmine (light / dark)
+   IDs: #rdb, #rdb-wrapper, #rdb-board, #rdb-taskboard
+   ============================================================ */
+
+/* ── Contenedor wrapper: neutro (sin card) ── */
+#rdb-wrapper {
+  clear: both !important;
+  /* margin: 10px 15px !important; */
+  /* padding: 8px 2px 2px !important; */
+}
+
+/* ── Contenedores principales (la board real es la card) ── */
+#rdb,
+#rdb-board,
+#rdb-taskboard {
+  clear: both !important;
+  /* margin: 10px 15px !important; */
+  /* padding: 8px 0 2px !important; */
+  padding: 8px 0 2px !important;
+  background: var(--c-surface) !important;
+  /* border: 1px solid var(--c-border) !important; */
+  /* border-radius: 8px !important; */
+  /* box-sizing: border-box !important; */
+}
+
+#main.nosidebar #content {
+  padding-left: 0 !important;
+}
+
+/* ── Submenús / dropdowns que abren los cards ── */
+#rdb-board .drdn-content,
+#rdb-taskboard .drdn-content,
+#rdb .drdn-content,
+#context-menu {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-md) !important;
+  color: var(--c-text) !important;
+}
+#rdb-board .drdn-items > *,
+#rdb-taskboard .drdn-items > *,
+#rdb .drdn-items > *,
+#context-menu .drdn-items > *,
+#context-menu li {
+  background: transparent !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+#rdb-board .drdn-items > a,
+#rdb-taskboard .drdn-items > a,
+#rdb .drdn-items > a,
+#context-menu li a {
+  color: var(--c-text) !important;
+}
+#rdb-board .drdn-items > a:hover,
+#rdb-taskboard .drdn-items > a:hover,
+#rdb .drdn-items > a:hover,
+#context-menu li:hover {
+  background: var(--c-primary-light) !important;
+}
+
+/* ── Hijos: forzar bordes (quitar blanco de element.style) ── */
+#rdb *,
+#rdb-wrapper *,
+#rdb-board *,
+#rdb-taskboard * {
+  border-color: var(--c-border) !important;
+  border-radius: 12px;
+}
+
+/* ── Header ── */
+#rdb-header,
+#rdb-wrapper .rdb-header,
+#rdb-taskboard .rdb-header,
+#rdb-taskboard > #rdb-header {
+  padding: 7px 30px 7px 11px !important;
+  background: var(--c-surface-2) !important;
+  border-bottom: 1px solid var(--c-border) !important;
+  border-radius: 8px 8px 0 0 !important;
+  border-color: var(--c-border) !important;
+}
+
+/* ── Footer ── */
+#rdb-footer,
+#rdb-wrapper .rdb-footer,
+#rdb-taskboard .rdb-footer,
+#rdb-taskboard > #rdb-footer {
+  padding: 5px 30px 10px !important;
+  margin: 0 !important;
+  font-size: 0.9em !important;
+  background: var(--c-surface-2) !important;
+  border-top: 1px solid var(--c-border) !important;
+  border-radius: 0 0 8px 8px !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text-muted) !important;
+}
+
+/* ── Encabezados de grupo ── */
+.rdb-group-header,
+#rdb-wrapper .rdb-group-header,
+#rdb-taskboard .rdb-group-header,
+#rdb-board .rdb-group-header,
+#rdb .rdb-group-header {
+  overflow: hidden;
+  border: 1px solid var(--c-border) !important;
+  border-radius: calc(var(--r) + 1px) !important;
+  margin: 0 -5px;
+  background: var(--c-primary) !important;
+}
+.rdb-group-header a,
+#rdb-wrapper .rdb-group-header a,
+#rdb-taskboard .rdb-group-header a {
+  position: relative !important;
+  padding: 0 12px 0 20px !important;
+  cursor: pointer !important;
+  display: block !important;
+  background: var(--c-surface-2) !important;
+  color: var(--c-text) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r) !important;
+  text-decoration: none !important;
+}
+
+.rdb-group-header a:hover,
+#rdb-wrapper .rdb-group-header a:hover,
+#rdb-taskboard .rdb-group-header a:hover {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+}
+
+/* ── Enlaces dentro del board / taskboard ── */
+#rdb-board a,
+#rdb-taskboard a,
+#rdb-wrapper a {
+  color: var(--c-primary) !important;
+  text-decoration: underline !important;
+}
+
+#rdb-board a:hover,
+#rdb-taskboard a:hover,
+#rdb-wrapper a:hover {
+  color: var(--c-primary-hover) !important;
+}
+
+/* ── Sobrescribir estilos inline (element.style inyectado por JS) ──
+   Cada grupo usa los MISMOS valores que su regla normal, para que
+   el [style] no pise el fondo/hover correcto. */
+#rdb[style],
+#rdb-wrapper[style],
+#rdb-board[style],
+#rdb-taskboard[style] {
+  background: var(--c-surface) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+
+#rdb-header[style],
+#rdb-wrapper .rdb-header[style],
+#rdb-taskboard .rdb-header[style] {
+  background: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+
+#rdb-footer[style],
+#rdb-wrapper .rdb-footer[style],
+#rdb-taskboard .rdb-footer[style] {
+  background: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text-muted) !important;
+}
+
+.rdb-group-header a[style],
+#rdb-wrapper .rdb-group-header a[style],
+#rdb-taskboard .rdb-group-header a[style] {
+  background: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+
+.rdb-group-header a[style]:hover,
+#rdb-wrapper .rdb-group-header a[style]:hover,
+#rdb-taskboard .rdb-group-header a[style]:hover {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+}
+
+/* ── Dark mode (solo lo que difiere del modo claro) ── */
+html.dark-mode #rdb,
+html.dark-mode #rdb-wrapper,
+html.dark-mode #rdb-board,
+html.dark-mode #rdb-taskboard {
+  background: var(--c-bg) !important;
+}
+
+html.dark-mode #rdb-header,
+html.dark-mode #rdb-wrapper .rdb-header,
+html.dark-mode #rdb-taskboard .rdb-header,
+html.dark-mode #rdb-taskboard > #rdb-header,
+html.dark-mode #rdb-footer,
+html.dark-mode #rdb-wrapper .rdb-footer,
+html.dark-mode #rdb-taskboard .rdb-footer,
+html.dark-mode #rdb-taskboard > #rdb-footer {
+  background: var(--c-surface) !important;
+}
+
+html.dark-mode .rdb-group-header a,
+html.dark-mode #rdb-wrapper .rdb-group-header a,
+html.dark-mode #rdb-taskboard .rdb-group-header a {
+  background: var(--c-surface) !important;
+}
+
+html.dark-mode .rdb-group-header a:hover,
+html.dark-mode #rdb-wrapper .rdb-group-header a:hover,
+html.dark-mode #rdb-taskboard .rdb-group-header a:hover {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+}
+
+/* Dark + estilos inline */
+html.dark-mode #rdb[style],
+html.dark-mode #rdb-wrapper[style],
+html.dark-mode #rdb-board[style],
+html.dark-mode #rdb-taskboard[style] {
+  background: var(--c-bg) !important;
+}
+
+html.dark-mode #rdb-header[style],
+html.dark-mode #rdb-wrapper .rdb-header[style],
+html.dark-mode #rdb-taskboard .rdb-header[style],
+html.dark-mode #rdb-footer[style],
+html.dark-mode #rdb-wrapper .rdb-footer[style],
+html.dark-mode #rdb-taskboard .rdb-footer[style],
+html.dark-mode .rdb-group-header a[style],
+html.dark-mode #rdb-wrapper .rdb-group-header a[style],
+html.dark-mode #rdb-taskboard .rdb-group-header a[style] {
+  background: var(--c-surface) !important;
+}
+
+html.dark-mode .rdb-group-header a[style]:hover,
+html.dark-mode #rdb-wrapper .rdb-group-header a[style]:hover,
+html.dark-mode #rdb-taskboard .rdb-group-header a[style]:hover {
+  background: var(--c-primary-light) !important;
+  color: var(--c-primary) !important;
+}
+
+/* ============================================================
+   VIEW CUSTOMIZE — Tarjetas del taskboard (rdb-priority)
+   Bordes redondeados y fondo con variables del theme
+   ============================================================ */
+
+/* Grid de tarjetas del taskboard */
+.rdb-grid-card {
+  margin: 3px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0;
+}
+
+/* Progreso */
+.rdb-card-progress,
+.rdb-compact-progress {
+  background-color: var(--c-border) !important;
+  margin: 0;
+  clear: both;
+}
+
+/* Submenu del taskboard */
+.rdb-menu-active .rdb-container,
+.rdb-container.rdb-visible {
+  display: block;
+  visibility: visible;
+  left: -3px;
+  background-color: var(--c-border) !important;
+}
+
+/* Tarjetas — clases posibles: .rdb-priority, .rdb-priority-4, etc. */
+.rdb-priority,
+[class*="rdb-priority-"],
+.rdb-card,
+.rdb-taskboard-card {
+  background: var(--c-surface-2) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: 8px !important;
+  box-shadow: var(--shadow-sm) !important;
+  padding: var(--sp-2) var(--sp-3) !important;
+  margin-bottom: calc(var(--sp-3) + 2px) !important;
+  color: var(--c-text) !important;
+  box-sizing: border-box !important;
+}
+
+/* Hover: se destaca un poco al pasar el mouse */
+.rdb-priority:hover,
+[class*="rdb-priority-"]:hover,
+.rdb-card:hover,
+.rdb-taskboard-card:hover {
+  background: var(--c-surface) !important;
+  border-color: var(--c-border-2) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+/* Dark mode — tarjetas más oscuras (el resto hereda del modo claro) */
+html.dark-mode .rdb-priority,
+html.dark-mode [class*="rdb-priority-"],
+html.dark-mode .rdb-card,
+html.dark-mode .rdb-taskboard-card {
+  background: var(--c-surface) !important;
+}
+
+html.dark-mode .rdb-priority:hover,
+html.dark-mode [class*="rdb-priority-"]:hover,
+html.dark-mode .rdb-card:hover,
+html.dark-mode .rdb-taskboard-card:hover {
+  background: var(--c-surface-2) !important;
+}
+
+/* Sobrescribir estilos inline (si el plugin pinta de fondo directamente) */
+.rdb-priority[style],
+[class*="rdb-priority-"][style],
+.rdb-card[style],
+.rdb-taskboard-card[style] {
+  background: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  border-radius: 8px !important;
+  color: var(--c-text) !important;
+}
+
+html.dark-mode .rdb-priority[style],
+html.dark-mode [class*="rdb-priority-"][style],
+html.dark-mode .rdb-card[style],
+html.dark-mode .rdb-taskboard-card[style] {
+  background: var(--c-surface) !important;
+}
+
 /* ── Colour schemes: hardcoded colours that would otherwise leak through ── */
 /* Modern renders these values directly; a scheme re-expresses them from its
    tokens. Scoped to [data-scheme] so the default palette stays pixel-identical. */
