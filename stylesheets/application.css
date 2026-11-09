@@ -4366,12 +4366,12 @@ html.dark-mode .rdb-taskboard-card[style] {
   background: var(--c-surface) !important;
 }
 
-/* Board compact view — background via theme tokens instead of the hardcoded #ffd */
+/* Board compact view — background hardcoded #ffd (diagnóstico) */
 .rdb-compact {
   position: relative !important;
   margin-bottom: 2px !important;
   border: 1px solid var(--c-border) !important;
-  background: var(--c-surface) !important;
+  background: #ffd !important;
   border-radius: var(--r-sm) !important;
 }
 
