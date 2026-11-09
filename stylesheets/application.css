@@ -4467,3 +4467,5 @@ html.dark-mode .rdb-taskboard-card[style] {
   html[data-scheme] input[type=checkbox],
   html[data-scheme] input[type=radio] { accent-color: var(--c-primary); }
 }
+
+/* CSS VERSION: 20261109-03 -- validar que este archivo esta servido */
