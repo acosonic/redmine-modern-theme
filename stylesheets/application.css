@@ -4469,3 +4469,12 @@ html.dark-mode .rdb-taskboard-card[style] {
 }
 
 /* CSS VERSION: 20261109-03 -- validar que este archivo esta servido */
+
+/* Hover en filas de table.list (incluye issues con odd-even) en dark mode.
+   Superpone el tinte sobre el fondo odd/even en vez de reemplazarlo.
+   Mayor especificidad para ganar sobre tr.odd / tr.even. */
+html.dark-mode table.list tbody tr:hover,
+html.dark-mode table.list tbody tr.odd:hover,
+html.dark-mode table.list tbody tr.even:hover {
+  background-image: linear-gradient(var(--c-primary-light), var(--c-primary-light)) !important;
+}
