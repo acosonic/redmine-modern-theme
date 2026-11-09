@@ -1600,6 +1600,15 @@ table.list tbody tr:last-child { border-bottom: none !important; }
 table.list tbody tr.odd  { background: var(--c-surface) !important; }
 table.list tbody tr.even { background: var(--c-surface-2) !important; }
 table.list tbody tr:hover { background: var(--c-primary-light) !important; }
+/* Dark mode hover — restaura el fondo al pasar el mouse en filas de la lista */
+html.dark-mode table.list tbody tr:hover { background: var(--c-primary-light) !important; }
+/* Selected issue rows (row checkbox checked) — visible selección, light + dark */
+table.list tbody tr:has(input[type="checkbox"]:checked) {
+  background: var(--c-primary-light) !important;
+}
+html.dark-mode table.list tbody tr:has(input[type="checkbox"]:checked) {
+  background: var(--c-primary-light) !important;
+}
 
 table.list tbody td {
   padding: var(--sp-2) var(--sp-3) !important;
