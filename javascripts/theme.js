@@ -1367,20 +1367,18 @@
     /* ---------- 3) Cajas con skeleton ---------- */
     var sk = '<div class="vz-sk"></div><div class="vz-sk w80"></div><div class="vz-sk w60"></div>';
     var T_ATTN = 'Atenci\u00f3n';
-    var T_LOAD = 'Carga por persona';
     var T_ACT = 'Actividad reciente';
 
     safe('cajas', function () {
       if (hasIssues) {
         $('.splitcontentright').prepend(
-          '<div class="box" id="vz-attn"><h3>' + T_ATTN + '</h3>' + sk + '</div>' +
-          '<div class="box" id="vz-load"><h3>' + T_LOAD + '</h3>' + sk + '</div>');
+          '<div class="box" id="vz-attn"><h3>' + T_ATTN + '</h3>' + sk + '</div>');
       }
       $('.splitcontentleft').append(
         '<div class="box" id="vz-act"><h3>' + T_ACT + '</h3>' + sk + '</div>');
     });
 
-    /* ---------- 4) Atencion + carga por persona ---------- */
+    /* ---------- 4) Atencion ---------- */
     safe('atencion', function () {
       if (!hasIssues) return;
       var today = new Date(); today.setHours(0, 0, 0, 0);
@@ -1390,10 +1388,8 @@
             { headers: { 'Accept': 'application/json' }, credentials: 'same-origin' })
         .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
         .then(function (d) {
-          var issues = d.issues || [], late = [], soon = [], byUser = {};
+          var issues = d.issues || [], late = [], soon = [];
           issues.forEach(function (i) {
-            var who = i.assigned_to ? i.assigned_to.name : 'Sin asignar';
-            byUser[who] = (byUser[who] || 0) + 1;
             if (!i.due_date) return;
             var days = Math.round((new Date(i.due_date + 'T00:00:00') - today) / DAY);
             if (days < 0) late.push({ i: i, days: days });
@@ -1416,21 +1412,11 @@
           $('#vz-attn').html(
             '<h3>Vencidas (' + late.length + ')</h3>' + list(late, 'is-late', 'Nada vencido') +
             '<h3 class="vz-h3-gap">Vencen en 7 d\u00edas (' + soon.length + ')</h3>' + list(soon, 'is-soon', 'Nada por vencer'));
-
-          var keys = Object.keys(byUser).sort(function (a, b) { return byUser[b] - byUser[a]; });
-          var max = Math.max.apply(null, keys.map(function (k) { return byUser[k]; }).concat([1]));
-          var users = keys.map(function (k) {
-            return '<div class="vz-user"><span>' + esc(k) + '</span>' +
-              '<div class="vz-bar"><span style="width:' + Math.round(byUser[k] * 100 / max) + '%"></span></div>' +
-              '<b>' + byUser[k] + '</b></div>';
-          }).join('') || '<p class="vz-empty">Sin incidencias abiertas</p>';
-          $('#vz-load').html('<h3>' + T_LOAD + '</h3>' + users);
           console.log('Vistazo moderno: atencion ok');
         })
         .catch(function (e) {
           console.error('Vistazo moderno [issues.json]:', e);
           $('#vz-attn').html('<h3>' + T_ATTN + '</h3><p class="vz-empty">No se pudo cargar.</p>');
-          $('#vz-load').html('<h3>' + T_LOAD + '</h3><p class="vz-empty">No se pudo cargar.</p>');
         });
     });
 
