@@ -2155,10 +2155,6 @@ div.flash[style*="display:none"] { display: none !important; }
   color: var(--c-flash-warning-text) !important;
 }
 
-/* Iconos de flash (✓ / ⚠ / ✕): heredan el color del mensaje (ok / error / warning),
-   en vez del --c-icon base del theme. */
-div.flash .icon-svg { stroke: currentColor !important; }
-
 /* ── 18. PAGINATION ──────────────────────────────────────── */
 .pagination {
   display: flex !important;
@@ -2890,6 +2886,11 @@ table.issue-report td.vz-prog { white-space: nowrap; }
 .vz-list li.is-late em { background: rgba(239,68,68,.18); color: #ef4444; }
 .vz-list li.is-soon em { background: rgba(245,158,11,.18); color: #f59e0b; }
 .vz-empty { margin: 0; color: var(--c-text-muted); font-size: .88rem; }
+
+/* ---------- Carga por persona ---------- */
+.vz-user { display: grid; grid-template-columns: 130px 1fr 28px; align-items: center; gap: 10px; padding: 6px 0; font-size: .88rem; }
+.vz-user > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vz-user b { text-align: right; font-variant-numeric: tabular-nums; }
 
 /* ---------- Actividad reciente (timeline) ---------- */
 .vz-act { list-style: none; margin: 0; padding: 0 0 0 14px; position: relative; }
@@ -3784,16 +3785,6 @@ html.dark-mode table.list:not(.odd-even) tbody tr:nth-child(odd):hover,
 html.dark-mode table.list:not(.odd-even) tbody tr:nth-child(even):hover,
 html.dark-mode .odd:hover,
 html.dark-mode .even:hover { background-color: var(--c-primary-light) !important; }
-/* Issue list rows use the odd-even class, so the :not(.odd-even) rules above skip
-   them — restore a hover background for every list row in dark mode. */
-html.dark-mode table.list tbody tr:hover { background: var(--c-primary-light) !important; }
-/* Selected issue rows (row checkbox checked) — visible selection, light + dark */
-table.list tbody tr:has(input[type="checkbox"]:checked {
-  background: var(--c-primary-light) !important;
-}
-html.dark-mode table.list tbody tr:has(input[type="checkbox"]:checked {
-  background: var(--c-primary-light) !important;
-}
 /* #issue-changesets alternating (same pattern) */
 html.dark-mode #issue-changesets div.changeset:nth-child(odd)  { background: var(--c-surface) !important; }
 html.dark-mode #issue-changesets div.changeset:nth-child(even) { background: var(--c-surface-2) !important; }
@@ -4058,6 +4049,10 @@ html.dark-mode #main .activity_date_heading .date_title { color: var(--c-text); 
   /* border: 1px solid var(--c-border) !important; */
   /* border-radius: 8px !important; */
   /* box-sizing: border-box !important; */
+}
+
+#main.nosidebar #content {
+  #padding-left: 0 !important;
 }
 
 /* ── Submenús / dropdowns que abren los cards ── */
@@ -4366,59 +4361,7 @@ html.dark-mode .rdb-taskboard-card[style] {
   background: var(--c-surface) !important;
 }
 
-/* Board compact view — background hardcoded #ffd (diagnóstico) */
-.rdb-compact {
-  position: relative !important;
-  margin-bottom: 2px !important;
-  border: 1px solid var(--c-border) !important;
-  background: #ffd !important;
-  border-radius: var(--r-sm) !important;
-}
-
-/* ── Task Weight plugin (redmine_task_weight) — theme colours ──
-   The plugin ships hand-written Tailwind-ish colours (#ffffff cards, #f8fafc rows,
-   #64748b text, …) inline in its views. Re-express them with the theme tokens so the
-   workload report and the settings follow the theme (light/dark). Inline styles are
-   overridden with !important, as everywhere else in this theme. */
-
-/* Workload report */
-.tw-report-container { color: var(--c-text) !important; }
-.tw-report-container .tw-header-bar h2 { color: var(--c-text) !important; }
-.tw-report-container .tw-header-bar > div[style] { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
-.tw-report-container .tw-header-bar p { color: var(--c-text-muted) !important; }
-.tw-report-container .tw-header-bar select { background: var(--c-surface) !important; border-color: var(--c-border-2) !important; color: var(--c-text) !important; }
-.tw-report-container .tw-kpi-card { background: var(--c-surface) !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-md) !important; padding: var(--sp-4) !important; box-shadow: var(--shadow-sm) !important; }
-.tw-report-container .tw-kpi-grid { gap: var(--sp-4) !important; }
-.tw-report-container .tw-kpi-card .kpi-label { color: var(--c-text-muted) !important; text-transform: uppercase; font-size: var(--text-sm) !important; font-weight: 600 !important; margin-bottom: 6px !important; }
-.tw-report-container .tw-kpi-card .kpi-value { color: var(--c-text) !important; }
-.tw-report-container .tw-kpi-card .kpi-sub { color: var(--c-text-muted) !important; }
-.tw-report-container .tw-report-card { background: var(--c-surface) !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-md) !important; padding: var(--sp-4) !important; box-shadow: var(--shadow-sm) !important; }
-.tw-report-container .tw-report-table { background: var(--c-surface) !important; border: 1px solid var(--c-border) !important; border-radius: 4px !important; overflow: hidden; }
-.tw-report-container .tw-report-table th { background: var(--c-surface-2) !important; color: var(--c-text-muted) !important; border-bottom: 2px solid var(--c-border) !important; }
-.tw-report-container .tw-report-table td { border-bottom: 1px solid var(--c-border) !important; }
-.tw-report-container .tw-report-table tbody tr:hover td { background: var(--c-surface-2) !important; }
-.tw-report-container .tw-report-table tfoot tr td { background: var(--c-surface-2) !important; border-top: 2px solid var(--c-border) !important; font-weight: 700 !important; }
-.tw-report-container .tw-progress-bg { background-color: var(--c-border) !important; }
-
-/* Task Weight settings */
-.tw-container { color: var(--c-text) !important; }
-.tw-container .tw-card { background: var(--c-surface) !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-md) !important; padding: var(--sp-4) !important; margin-bottom: var(--sp-4) !important; box-shadow: var(--shadow-sm) !important; }
-.tw-container .tw-section-title { color: var(--c-text) !important; border-bottom: 2px solid var(--c-border) !important; }
-.tw-container .tw-grid { gap: var(--sp-4) !important; }
-.tw-container .tw-subcard { background: var(--c-surface-2) !important; border: 1px solid var(--c-border) !important; border-radius: var(--r-sm) !important; padding: var(--sp-3) !important; }
-.tw-container .tw-subcard h5 { color: var(--c-text) !important; }
-.tw-container .tw-table { background: var(--c-surface) !important; border: 1px solid var(--c-border) !important; border-radius: 4px !important; overflow: hidden; }
-.tw-container .tw-table th { background: var(--c-surface-2) !important; color: var(--c-text-muted) !important; border-bottom: 1px solid var(--c-border) !important; }
-.tw-container .tw-table td { border-bottom: 1px solid var(--c-border) !important; }
-.tw-container .tw-input-num { background: var(--c-surface) !important; border: 1px solid var(--c-border-2) !important; color: var(--c-text) !important; border-radius: 4px !important; }
-.tw-container select { background: var(--c-surface) !important; border: 1px solid var(--c-border-2) !important; color: var(--c-text) !important; }
-.tw-container .tw-radio-item { background: var(--c-surface) !important; border: 1px solid var(--c-border) !important; }
-.tw-container .tw-radio-item:hover { background: var(--c-surface-2) !important; }
-.tw-container .tw-radio-item input[type="radio"] { accent-color: var(--c-primary) !important; }
-.tw-container .tw-notice { background: var(--c-primary-light) !important; border: 1px solid var(--c-primary-ring) !important; color: var(--c-info) !important; }
-
 /* ── Colour schemes: hardcoded colours that would otherwise leak through ── */
-
 /* Modern renders these values directly; a scheme re-expresses them from its
    tokens. Scoped to [data-scheme] so the default palette stays pixel-identical. */
 @supports (color: color-mix(in srgb, red, white)) {
