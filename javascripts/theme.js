@@ -994,6 +994,16 @@
       var cm = String(coreAvatar.className || '').match(/avatar-color-\d+/);
       if (cm) colorClass = cm[0];
     }
+    // Resolve the real background colour (inline or class-based) so the
+    // initials badge paints the user's own colour even if Redmine's class
+    // naming differs from "avatar-color-N" or the colour is inline-styled.
+    var avatarBg = '';
+    if (coreAvatar) {
+      avatarBg = (coreAvatar.style && coreAvatar.style.background) || '';
+      if (!avatarBg) {
+        try { avatarBg = window.getComputedStyle(coreAvatar).backgroundColor || ''; } catch (e) { avatarBg = ''; }
+      }
+    }
 
     // Initials: first + last word ("RM Dev" → "RD"), fallback to the first
     // two letters of a single word.
@@ -1018,6 +1028,7 @@
     badge.className = 'rm-account-avatar' + (colorClass ? ' ' + colorClass : '');
     badge.setAttribute('aria-hidden', 'true');
     badge.textContent = initials;
+    if (avatarBg) badge.style.background = avatarBg;
     var nameSpan = document.createElement('span');
     nameSpan.className = 'rm-account-name';
     nameSpan.textContent = username;
@@ -1042,6 +1053,7 @@
     headAvatar.className = 'rm-account-avatar rm-account-avatar-lg' + (colorClass ? ' ' + colorClass : '');
     headAvatar.setAttribute('aria-hidden', 'true');
     headAvatar.textContent = initials;
+    if (avatarBg) headAvatar.style.background = avatarBg;
     var headText = document.createElement('span');
     var headName = document.createElement('span');
     headName.className = 'rm-account-panel-name';
