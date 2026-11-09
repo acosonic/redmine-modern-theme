@@ -4478,3 +4478,16 @@ html.dark-mode table.list tbody tr.odd:hover,
 html.dark-mode table.list tbody tr.even:hover {
   background-image: linear-gradient(var(--c-primary-light), var(--c-primary-light)) !important;
 }
+
+/* #########################################Board compact view ################################# */
+.rdb-compact {
+  position: relative !important;
+  margin-bottom: 2px !important;
+  border: 1px solid var(--c-border) !important;
+  background: var(--c-surface-2) !important;
+  border-radius: var(--r-sm) !important;
+}
+
+html.dark-mode .rdb-compact {
+  background: var(--c-surface) !important;
+}
