@@ -2870,6 +2870,8 @@ html.dark-mode input[type=date],
 html.dark-mode select,
 html.dark-mode textarea,
 html.dark-mode .check_box_group { background-color: var(--c-surface-2) !important; color: var(--c-text) !important; border-color: var(--c-border) !important; }
+/* The date picker's calendar icon is drawn by the browser: tell it the field is dark */
+html.dark-mode input[type=date] { color-scheme: dark; }
 
 /* Query form */
 html.dark-mode #query_form { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
@@ -2919,6 +2921,14 @@ html.dark-mode .wiki pre { background: var(--c-surface-2) !important; border-col
 html.dark-mode .pagination a,
 html.dark-mode .pagination span.current { background: var(--c-surface) !important; border-color: var(--c-border) !important; color: var(--c-text-muted) !important; }
 html.dark-mode .pagination span.current { background: var(--c-primary) !important; color: var(--c-on-primary) !important; }
+/* Core puts a light #ddd border on each ul.pages li (around the theme's own link chip) and
+   paints the current page #628DB6 — schemes remap both, plain dark mode never did */
+html.dark-mode .pagination ul.pages li { border-color: var(--c-border) !important; }
+html.dark-mode .pagination ul.pages li.current {
+  background-color: var(--c-primary) !important;
+  border-color: var(--c-primary) !important;
+  color: var(--c-on-primary) !important;
+}
 
 /* Flash messages — text color is driven by --c-flash-*-text tokens, redefined in html.dark-mode */
 
