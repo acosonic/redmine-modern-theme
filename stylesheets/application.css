@@ -1178,6 +1178,13 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
 
 /* ── 6. LAYOUT ───────────────────────────────────────────── */
 #wrapper { background: var(--c-bg) !important; min-height: 100vh !important; }
+/* Core's #wrapper { overflow: hidden } makes it a scroll container, so the sticky sidebar
+   stuck to #wrapper (which never scrolls) and left with the page. clip still cuts off
+   anything wider, without being a scroll container. Browsers without clip keep hidden.
+   Mobile keeps responsive.css's own overflow-x: the sidebar is an overlay there. */
+@media (min-width: 900px) {
+  #wrapper { overflow: clip !important; }
+}
 
 #main {
   display: flex !important;
@@ -2387,6 +2394,17 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
    { width: auto } above turned into ~170px */
 .tabular span.checklist-edit-box input,
 span.checklist-edit-box input[type=text] { width: min(640px, 100%) !important; max-width: 100% !important; }
+/* View Customize plugin: table cells set their own colour, so its tr.disable grey never
+   showed; the code box on the rule page is hard-coded #fafafa, under light text in dark mode */
+table.list.view_customize tbody tr.disable td,
+table.list.view_customize tbody tr.disable td a { color: var(--c-text-subtle) !important; }
+table.view_customize.box td pre {
+  background: var(--c-surface-2) !important;
+  border-color: var(--c-border) !important;
+  color: var(--c-text) !important;
+}
+table.view_customize.box td pre code { background: none !important; border: none !important; padding: 0 !important; }
+textarea#view_customize_code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important; }
 .tabular .description,
 .tabular em { font-size: var(--text-xs) !important; color: var(--c-text-subtle) !important; }
 
@@ -3297,6 +3315,9 @@ html.dark-mode .diff_in span  { background: rgba(16,185,129,.25) !important; }
 
 /* ── Syntax / code highlighting ── */
 html.dark-mode .syntaxhl { background: var(--c-surface-2) !important; color: var(--c-text) !important; }
+/* Core colours ~50 token types for a white background (#0000DD numbers, #333 operators, pink
+   string backgrounds): anything not coloured below reads as plain text */
+html.dark-mode .syntaxhl span { color: var(--c-text) !important; background: transparent !important; }
 html.dark-mode .syntaxhl .hll { background: rgba(245,158,11,.2) !important; }
 html.dark-mode .syntaxhl .k,
 html.dark-mode .syntaxhl .kd,
