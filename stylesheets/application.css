@@ -1438,6 +1438,14 @@ body.nav-open #rm-hamburger span:nth-child(3) { transform: translateY(-7px) rota
   border-radius: var(--r-md) !important;
   padding: var(--sp-4) !important;
 }
+/* Issue page attributes: flex-start left the two cards of a row at different heights
+   and the rows touching (#14). width: 100% stops a row narrowing beside the floated
+   reactions button. Scoped here: other two-column pages keep their own heights. */
+div.issue.details .attributes .splitcontent {
+  align-items: stretch !important;
+  width: 100% !important;
+  margin-bottom: var(--sp-3) !important;
+}
 
 /* ── 9. CONTEXTUAL ACTIONS ───────────────────────────────── */
 .contextual {
