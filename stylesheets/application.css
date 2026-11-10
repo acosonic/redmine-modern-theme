@@ -2354,6 +2354,13 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
 /* Wiki editors in forms (issue description, notes, wiki, news) take the full row: the
    600px cap above is for plain textareas, a description needs the room */
 .tabular textarea.wiki-edit { max-width: none !important; }
+/* Time entry form: the date is not in the 480px-capped list above, so it stretched across
+   the whole row while the comment (up to 1024 characters) stayed at 480px. The other way
+   round makes sense. Mobile keeps its full-width stacked fields. */
+@media (min-width: 900px) {
+  .controller-timelog .tabular input#time_entry_spent_on { width: 180px !important; justify-self: start !important; }
+  .controller-timelog .tabular input#time_entry_comments { width: 100% !important; max-width: none !important; }
+}
 /* RedmineUP Checklists: the new-item field is "width: 40%", which .tabular input[type=text]
    { width: auto } above turned into ~170px */
 .tabular span.checklist-edit-box input,
