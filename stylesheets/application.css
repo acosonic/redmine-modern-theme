@@ -2154,6 +2154,16 @@ div.flash[style*="display:none"] { display: none !important; }
   color: var(--c-flash-error-text) !important;
 }
 
+/* Icono dentro de avisos (flash / errorExplanation / conflict): el core lo mete
+   con margin-inline:-26px 4px asumiendo su propio padding-left; con el padding
+   de este theme ese margen negativo lo saca fuera del recuadro. */
+div.flash svg.icon-svg,
+#errorExplanation svg.icon-svg,
+.conflict svg.icon-svg {
+  margin-inline: 0 !important;
+  flex-shrink: 0 !important;
+}
+
 #flash_warning, div.flash.warning {
   background: rgba(245,158,11,.1) !important;
   border-color: rgba(245,158,11,.3) !important;
