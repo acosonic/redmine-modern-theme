@@ -782,6 +782,30 @@
     if (!src || !dst) return;
     while (src.firstChild) dst.appendChild(src.firstChild);
   }
+  /* ── SIDEBAR FIT: sticky only while it fits ───────────────────
+     The sidebar is sticky and viewport-tall so it stays in view on long lists. When
+     its content is taller than the viewport (many tags, Grafana iframes…) that gave it
+     a second, independent scrollbar (#13) — then it scrolls with the page instead.
+     A ResizeObserver catches content that grows later (iframes loading, AJAX). */
+  function fitSidebar() {
+    var main = qs('#main'), wrap = qs('#sidebar-wrapper');
+    if (!main || !wrap) return;
+    var top = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--total-top')) || 0;
+    var tall = window.innerWidth > 899 && wrap.getBoundingClientRect().height > window.innerHeight - top;
+    main.classList.toggle('rm-sidebar-tall', tall);
+  }
+  var sidebarFitObserver = null;  // kept referenced: an unreferenced observer can be collected
+  function initSidebarFit() {
+    var wrap = qs('#sidebar-wrapper');
+    if (!wrap) return;
+    fitSidebar();
+    window.addEventListener('resize', fitSidebar);
+    if (window.ResizeObserver) {
+      sidebarFitObserver = new ResizeObserver(function () { fitSidebar(); });
+      sidebarFitObserver.observe(wrap);
+    }
+  }
+
   function watchSidebar() {
     var src = qs('.js-sidebar');
     if (!src) return;
@@ -993,6 +1017,7 @@
     initSchemeSettings();
     initSidebarSettings();
     watchSidebar();
+    initSidebarFit();
     window.addEventListener('resize', adjustLayout);
   }
 
