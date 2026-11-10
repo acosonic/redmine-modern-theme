@@ -4327,7 +4327,7 @@ html.dark-mode #rdb-taskboard .rdb-group-header a[style]:hover {
   border: 1px solid var(--c-border) !important;
   border-radius: 8px !important;
   box-shadow: var(--shadow-sm) !important;
-  padding: var(--sp-2) var(--sp-3) !important;
+/* #################  padding: var(--sp-2) var(--sp-3) !important;  ################### */
   margin-bottom: calc(var(--sp-3) + 2px) !important;
   color: var(--c-text) !important;
   box-sizing: border-box !important;
