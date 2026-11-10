@@ -1205,6 +1205,20 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
 }
 
 #sidebar::-webkit-scrollbar { width: 4px; }
+/* Taller than the viewport (theme.js → fitSidebar adds .rm-sidebar-tall): drop the
+   sticky viewport-tall box and its own scrollbar, let the sidebar run with the page so
+   there is one scrollbar (#13). overflow-x: clip keeps wide content (iframes) inside
+   without turning the sidebar back into a scroll container. Desktop only. */
+@media (min-width: 900px) {
+  #main.rm-sidebar-tall #sidebar {
+    position: relative !important;
+    top: auto !important;
+    height: auto !important;
+    align-self: stretch !important;
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+  }
+}
 #sidebar::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 2px; }
 
 #sidebar-wrapper { padding: var(--sp-5) var(--sp-2) !important; }
