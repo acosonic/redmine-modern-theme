@@ -1391,6 +1391,39 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   transition: background var(--t-fast), color var(--t-fast) !important;
 }
 
+/* inplace_issue_editor plugin (rf_inline_editor.css). Its own --rf-* palette is light-only
+   (white editors, #1f2328 text); html:root outranks its :root, so editors, dropdowns and
+   buttons follow dark mode and schemes. Five colours it writes directly are remapped too. */
+html:root {
+  --rf-border: var(--c-border);
+  --rf-focus: var(--c-primary);
+  --rf-focus-ring: var(--c-focus-ring);
+  --rf-error: var(--c-danger);
+  --rf-success: var(--c-success);
+  --rf-warning: var(--c-warning);
+  --rf-text: var(--c-text);
+  --rf-text-muted: var(--c-text-muted);
+  --rf-bg: var(--c-surface);
+  --rf-bg-hover: var(--c-surface-2);
+  --rf-primary: var(--c-primary);
+  --rf-primary-hover: var(--c-primary-hover);
+}
+.rf-edit-icon { color: var(--c-text-muted) !important; }
+.rf-edit-icon:hover { background-color: var(--c-primary-light) !important; border-color: var(--c-border-2) !important; color: var(--c-primary) !important; }
+.rf-ss__option--selected { background-color: var(--c-primary-light) !important; }
+.rf-btn--primary { color: var(--c-on-primary) !important; }
+/* In list cells the pencil (20px + margins, invisible until hover) took part in the
+   centring, so the visible value sat ~13px left of its header. It now floats just right
+   of the value without taking space. */
+table.list td .rf-cell-wrapper { position: relative !important; }
+table.list td .rf-cell-wrapper > .rf-edit-icon {
+  position: absolute !important;
+  left: 100% !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  margin-left: 2px !important;
+}
+
 /* Additionals plugin — "Shared dashboards" in the sidebar: the link is a flex row of its
    own, so the cube marking the system default dashboard (span.icon-cube, title "System
    default") wrapped to a line of its own under it, in the plugin's alert red. It stays
