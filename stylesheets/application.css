@@ -225,6 +225,12 @@
   /* Focus ring — used by :focus-visible across all interactive elements */
   --c-focus-ring: rgba(8,145,178,.55);
   --c-selection:  rgba(8,145,178,.28);
+  /* Desktop gradient bars (idea from the gitmike theme): top bar lighter at the top,
+     project tab bar from the surface to a slightly darker tint */
+  --c-topbar-grad-top:    #1C4353;
+  --c-topbar-grad-bottom: #072B3A;
+  --c-menu-grad-top:      #FFFFFF;
+  --c-menu-grad-bottom:   #EEEFF0;
 
   /* Text on a --c-primary background (buttons, current page, badges) */
   --c-on-primary: white;
@@ -251,6 +257,10 @@
     --c-primary-ring:  color-mix(in srgb, var(--c-primary) 35%, transparent);
     --c-focus-ring:    color-mix(in srgb, var(--c-primary) 55%, transparent);
     --c-selection:     color-mix(in srgb, var(--c-primary) 30%, transparent);
+    --c-topbar-grad-top:    color-mix(in srgb, var(--c-topbar-bg) 92%, white);
+    --c-topbar-grad-bottom: color-mix(in srgb, var(--c-topbar-bg) 85%, black);
+    --c-menu-grad-top:      var(--c-surface);
+    --c-menu-grad-bottom:   color-mix(in srgb, var(--c-surface) 93%, var(--c-text));
   }
 }
 
@@ -261,6 +271,10 @@ html.dark-mode {
   --c-primary-ring:  rgba(34,211,238,.22);
   --c-focus-ring:    rgba(34,211,238,.5);
   --c-selection:     rgba(34,211,238,.38);
+  --c-topbar-grad-top:    #1F303D;
+  --c-topbar-grad-bottom: #0A1A25;
+  --c-menu-grad-top:      #2E3C49;
+  --c-menu-grad-bottom:   #1E2C3A;
 
   --c-bg:          #161E2A;   /* lighter than before */
   --c-surface:     #1E2C3A;   /* lighter card bg     */
@@ -292,6 +306,10 @@ html.dark-mode {
     --c-primary-ring:  color-mix(in srgb, var(--c-primary) 30%, transparent);
     --c-focus-ring:    color-mix(in srgb, var(--c-primary) 50%, transparent);
     --c-selection:     color-mix(in srgb, var(--c-primary) 38%, transparent);
+    --c-topbar-grad-top:    color-mix(in srgb, var(--c-topbar-bg) 92%, white);
+    --c-topbar-grad-bottom: color-mix(in srgb, var(--c-topbar-bg) 85%, black);
+    --c-menu-grad-top:      color-mix(in srgb, var(--c-surface) 92%, var(--c-text));
+    --c-menu-grad-bottom:   var(--c-surface);
   }
 }
 
@@ -1186,6 +1204,28 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   border-bottom-color: var(--c-primary) !important;
   font-weight: 600 !important;
   background: transparent !important; /* override Redmine's hardcoded #fff */
+}
+
+/* Gradient bars on desktop (idea from the gitmike theme, written with our tokens).
+   The project tabs become a rounded bar inset from the header's edges; #header gets
+   var(--sp-2) more bottom padding for it, and adjustLayout() re-measures the header.
+   #header > #main-menu outranks html.dark-mode #main-menu. */
+@media (min-width: 900px) {
+  #top-menu { background: linear-gradient(to bottom, var(--c-topbar-grad-top), var(--c-topbar-grad-bottom)) !important; }
+  #header:has(#main-menu ul li) { padding-bottom: calc(58px + var(--sp-2)) !important; }
+  #header > #main-menu {
+    bottom: var(--sp-2) !important;
+    left: var(--sp-6) !important;
+    right: var(--sp-6) !important;
+    padding: 0 var(--sp-2) !important;
+    background: linear-gradient(to bottom, var(--c-menu-grad-top), var(--c-menu-grad-bottom)) !important;
+    border: 1px solid var(--c-border) !important;
+    border-bottom-color: var(--c-border-2) !important;
+    border-radius: var(--r) !important;
+  }
+  #header > #main-menu > ul > li > a.selected {
+    background: linear-gradient(to bottom, transparent, var(--c-primary-light)) !important;
+  }
 }
 
 .tabs-buttons { display: none !important; }
