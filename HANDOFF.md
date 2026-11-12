@@ -7,7 +7,8 @@ The Redmine 6 history (production hosts, plugin audits, earlier decisions) is in
 
 ## State
 
-Branch `redmine-7`, local only — **not pushed, not deployed anywhere**. Started from
+Branch `redmine-7`, pushed to GitHub on 2026-11-12 and released as the pre-release
+`v2.0.0-beta.1` (`main` keeps `v1.x` for Redmine 6). **Not deployed anywhere.** Started from
 `main` at `346823f`; the first commit removes the Redmine 6 stylesheet and script.
 No production server runs Redmine 7 yet.
 
@@ -80,7 +81,8 @@ repository, search and admin pages were not looked at individually.
 
 ## Open
 
-1. **Push / PR** — nothing is pushed. The user decides when.
+1. **Stable release** — `v2.0.0` once items 2–5 are done; until then tag betas from
+   this branch (`gh release create v2.0.0-beta.N --target redmine-7 --prerelease`).
 2. **Pages not yet reviewed** (see "Not verified"). Expect small gaps: roadmap, news,
    activity, wiki history/diff, repository browser (`scm.css` is only a shim), files,
    documents, search results, admin lists, workflow tables, time report.
@@ -94,8 +96,8 @@ repository, search and admin pages were not looked at individually.
    mechanically (old `--c-*` tokens renamed); looked at once in dark mode, not polished.
 6. **i18n** — every string the theme adds is English ("Colour scheme", "Sidebar
    position", …), as on 6.x.
-7. **README screenshots** — nine regenerated here (`node src/shot.mjs screenshots …`);
-   the 6.x README had 43.
+7. **README screenshots** — twenty, regenerated with `node src/shot.mjs screenshots …`
+   (the 6.x README had 43). Regenerate the affected ones after a visible change.
 8. Core throws nothing new, but watch the console on issue pages after core upgrades:
    `theme.js` reads core ids (`#account .dropdown-content`, `#pref_comments_sorting`,
    `#issue_tree`, `#relations`, `#sidebar-wrapper`).

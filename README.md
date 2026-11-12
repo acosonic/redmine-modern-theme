@@ -10,11 +10,8 @@ A clean, modern UI theme for **Redmine 7** with dark mode, 27 colour schemes (pl
 |---|---|
 | ![Issue list, light](screenshots/light-issues.png) | ![Issue list, dark](screenshots/dark-issues.png) |
 | ![Issue, light](screenshots/light-issue-detail.png) | ![Issue, dark](screenshots/dark-issue-detail.png) |
-| ![Projects](screenshots/light-projects.png) | ![Gantt, dark](screenshots/dark-gantt.png) |
 
-| Dracula | Solarized Light | Phone |
-|---|---|---|
-| ![Dracula](screenshots/scheme-dracula.png) | ![Solarized Light](screenshots/scheme-solarized-light.png) | ![Phone](screenshots/mobile-light-issue.png) |
+More screenshots are in the [gallery](#screenshots) below.
 
 ## How it is built
 
@@ -31,6 +28,14 @@ Redmine 7 changed what a theme can lean on, and this branch is built around that
 - **Core's own components are used, not replaced.** The account menu, the mobile flyout
   menu, the sidebar collapse button and the Gantt chart are Redmine 7's; the theme styles
   them. `theme.js` only adds what core has not got.
+
+## Status
+
+Beta. The core pages are done and contrast-checked (WCAG AA) in light, dark and all 27
+schemes. Plugin-specific styling from the Redmine 6 theme has not been ported yet, and
+some less-used pages (repository browser, roadmap, wiki history, admin tables) have only
+had the general treatment. Reports and screenshots are welcome in the
+[issues](https://github.com/acosonic/redmine-modern-theme/issues).
 
 ## Features
 
@@ -92,6 +97,56 @@ See [CLAUDE.md](CLAUDE.md) and [HANDOFF.md](HANDOFF.md). Tools live in `src/` (R
 does not publish that folder): `gen-schemes.py` builds the scheme blocks from Gogh,
 `shot.mjs` takes screenshots and runs probes, `contrast.mjs` audits WCAG contrast,
 `seed.rb` fills a local development database.
+
+## Screenshots
+
+All taken on Redmine 7.0.3 with the theme's test data.
+
+**Light**
+
+| Projects | Edit issue |
+|---|---|
+| ![Projects](screenshots/light-projects.png) | ![Edit issue](screenshots/light-issue-edit.png) |
+
+| Calendar | My page |
+|---|---|
+| ![Calendar](screenshots/light-calendar.png) | ![My page](screenshots/light-my-page.png) |
+
+**Dark**
+
+| Projects | Project settings |
+|---|---|
+| ![Projects, dark](screenshots/dark-projects.png) | ![Project settings, dark](screenshots/dark-project-settings.png) |
+
+| Gantt | Scheme picker on My account |
+|---|---|
+| ![Gantt, dark](screenshots/dark-gantt.png) | ![Scheme picker](screenshots/dark-scheme-picker.png) |
+
+**Colour schemes**
+
+| Dracula | Nord |
+|---|---|
+| ![Dracula](screenshots/scheme-dracula.png) | ![Nord](screenshots/scheme-nord.png) |
+
+| Solarized Light | Gruvbox Light |
+|---|---|
+| ![Solarized Light](screenshots/scheme-solarized-light.png) | ![Gruvbox Light](screenshots/scheme-gruvbox-light.png) |
+
+The four schemes used last sit in the account menu:
+
+![Account menu with recent colour schemes](screenshots/light-account-menu.png)
+
+**Phone**
+
+| Issue | Issue list, dark | Menu, dark |
+|---|---|---|
+| ![Issue on a phone](screenshots/mobile-light-issue.png) | ![Issue list on a phone](screenshots/mobile-dark-issues.png) | ![Flyout menu on a phone](screenshots/mobile-dark-menu.png) |
+
+## Author
+
+Made by **Aleksandar Pavic**, author of the
+[Redmine Cookbook](https://www.packtpub.com/en-us/product/redmine-cookbook-9781785285264)
+(Packt Publishing).
 
 ## Credits
 
