@@ -1,212 +1,104 @@
-# Modern Redmine Theme
+# Modern Redmine Theme — Redmine 7
 
-A clean, modern UI theme for Redmine 6 with dark mode, 27 colour schemes (plus any of ~1,250 Gogh palettes), collapsible sidebar, and design tokens.
+A clean, modern UI theme for **Redmine 7** with dark mode, 27 colour schemes (plus any of
+~1,250 Gogh palettes), a sidebar on the left or right, and design tokens.
 
-## Performance
+> This is the `redmine-7` branch, written from scratch for Redmine 7.
+> For Redmine 6 use the [`main`](https://github.com/acosonic/redmine-modern-theme/tree/main) branch.
 
-The theme is built for speed — it adds **zero render-blocking resources** and imposes no measurable overhead on Redmine's response times:
+| Light | Dark |
+|---|---|
+| ![Issue list, light](screenshots/light-issues.png) | ![Issue list, dark](screenshots/dark-issues.png) |
+| ![Issue, light](screenshots/light-issue-detail.png) | ![Issue, dark](screenshots/dark-issue-detail.png) |
+| ![Projects](screenshots/light-projects.png) | ![Gantt, dark](screenshots/dark-gantt.png) |
 
-- **No JavaScript frameworks** — theme.js is plain vanilla JS (52 KB raw, ~15 KB gzipped)
-- **No runtime CSS-in-JS** — everything is static CSS delivered in a single file
-- **No external requests** — Inter is self-hosted and split by `unicode-range`, so a Latin-only page downloads one ~48 KB woff2 and never touches a CDN
-- **Dark mode initialised synchronously** before first paint — no flash of unstyled content, no layout shift
-- **CSS custom properties** (design tokens) let the browser resolve the entire palette in one pass — no cascade recalculations at runtime
-- **Transitions use `transform` and `opacity`** wherever possible — GPU-composited, never triggering layout or paint
+| Dracula | Solarized Light | Phone |
+|---|---|---|
+| ![Dracula](screenshots/scheme-dracula.png) | ![Solarized Light](screenshots/scheme-solarized-light.png) | ![Phone](screenshots/mobile-light-issue.png) |
+
+## How it is built
+
+Redmine 7 changed what a theme can lean on, and this branch is built around that:
+
+- **Core's stylesheet sits in a cascade layer.** `application.css` starts with
+  `@import url(/application.css) layer(core)`. Theme rules are unlayered, so they win over
+  core whatever its specificity — the theme has **no `!important`** outside one short block
+  that answers core's own `!important` rules. (The Redmine 6 branch needed 2,195 of them.)
+- **Colours go through core's own variables.** Redmine 7 paints with the Open Color scale
+  (`--oc-*`). The theme sets about a dozen inputs (`--rm-bg`, `--rm-fg`, `--rm-accent`, …)
+  and re-derives that scale from them with `color-mix()`. Dark mode and every colour scheme
+  are just different inputs; core, plugins that use `--oc-*`, and the theme all follow.
+- **Core's own components are used, not replaced.** The account menu, the mobile flyout
+  menu, the sidebar collapse button and the Gantt chart are Redmine 7's; the theme styles
+  them. `theme.js` only adds what core has not got.
 
 ## Features
 
-- Dark / light mode toggle (persisted per browser, no flash on load) — remembers your colour scheme for each mode, so it switches between your dark and your light scheme
-- 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox, Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more, each contrast-checked to WCAG AA. Pick one on **My account**; the four you used last sit in the account menu. Or search **all ~1,250 Gogh palettes** by name and pick an accent; any palette is adjusted in the browser until it passes WCAG AA, and you are told when that changed it noticeably. Saved per browser, needs a browser with CSS `color-mix()`
-- Collapsible sidebar on the left or the right — pick the side on **My account** (desktop; on mobile it opens from the left). Both settings are persisted per browser
-- Gradient top bar and project tab bar on desktop, following the palette
-- Priority arrows (⇈ ↑ = ↓ ⇊) in issue lists and on the issue page, and a colour dot per tracker (the colour is stable per tracker id, it carries no meaning)
-- Redesigned Gantt chart (taller rows, rounded bars, timeline stretched to the card, relations redrawn) and calendar (issue chips in start / end colours)
-- Syntax highlighting coloured from the active scheme, AA-checked in every scheme
-- Project list as a card grid that reads left to right
-- Plugin pages styled for dark mode too: RedmineUP Agile and Checklists, Redmineflux Testcase, DMSF, Vault, View Customize
-- Design tokens — change the entire palette by editing 3 lines
-- Inter font (self-hosted woff2, no CDN), modern card layout, smooth transitions
-- Toast notifications, collapsible issue sections
-- Works on phones — below 899px: hamburger menu, sidebar as an overlay, stacked forms, larger tap targets, no sideways page scrolling (see [Mobile](#mobile))
-- Properly styled jQuery UI modals (watchers, etc.) with full-page overlay
-- **Zero layout changes required** — drop in and select in Admin settings
+- Light / dark mode: follows the operating system until you choose, then remembered per
+  browser, with no flash on load. It also remembers your colour scheme for each mode.
+- 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox,
+  Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more — each
+  contrast-checked to WCAG AA. Pick one on **My account**; the four used last sit in the
+  account menu. Or search **all ~1,250 Gogh palettes** by name and pick an accent.
+- Sidebar on the left (default) or the right — choose on **My account**; collapse it with
+  Redmine's own button.
+- Sticky top bar, header and project tab bar on desktop; sticky sidebar that falls back to
+  scrolling with the page when it is taller than the window.
+- Priority arrows and a colour dot per tracker in issue lists and on the issue page.
+- Syntax highlighting, Gantt bars and the calendar coloured from the active palette.
+- Project list as a card grid that reads left to right.
+- Collapsible Subtasks / Related issues sections, toast notifications
+  (`window.rmToast(message, type, duration)`).
+- Phones (below 900px): Redmine 7's own header and flyout menu in the theme's colours.
+- Written with logical properties throughout, so right-to-left languages mirror as in core.
+- Self-hosted Inter font, no external requests.
 
 ## Install
 
-Copy (or symlink) this directory into your Redmine's `themes/` folder:
-
-```bash
-cp -r modern-redmine-theme /path/to/redmine/themes/
-```
-
-Or clone directly:
-
 ```bash
 cd /path/to/redmine/themes
-git clone https://github.com/acosonic/redmine-modern-theme modern-redmine-theme
+git clone -b redmine-7 https://github.com/acosonic/redmine-modern-theme
 ```
 
-Then restart Redmine and go to **Administration → Settings → Display → Theme**, select **Modern redmine theme**, and save.
+Restart Redmine (in production it recompiles assets on boot), then choose
+**Administration → Settings → Display → Theme → Redmine modern theme**.
 
-## Uninstall
+Updating: `git pull` in the theme folder and restart Redmine.
 
-Select a different theme (or "Default") in Admin settings, then delete the folder:
+## Requirements
 
-```bash
-rm -rf /path/to/redmine/themes/modern-redmine-theme
-```
+- Redmine **7.0** or later.
+- A browser from 2024 or later: the theme relies on cascade layers, `color-mix()`,
+  `light-dark()`, CSS nesting and `:has()` (Chrome/Edge 123+, Firefox 120+, Safari 17.5+).
 
-## Customise colours
+## Customising
 
-Open `stylesheets/application.css` and edit the tokens near the top of `:root`:
+Change the palette by overriding the inputs at the top of `stylesheets/application.css`
+(section 1) — for example in a custom stylesheet loaded after the theme:
 
 ```css
---c-primary:       #0891B2;  /* accent colour (light mode) */
---c-primary-hover: #0E7490;
---c-topbar-bg:     #083344;  /* top navigation bar */
+:root {
+  --rm-accent: light-dark(#7C3AED, #A78BFA);
+  --rm-topbar: light-dark(#2E1065, #1E1B4B);
+}
 ```
 
-Dark-mode overrides live in the `html.dark-mode { … }` block directly below.
+Everything else — hover shades, tints, focus rings, the Open Color scale core uses — is
+derived from those.
 
-## Compatibility
+## Development
 
-Tested on Redmine 6.x with Propshaft asset pipeline.
+See [CLAUDE.md](CLAUDE.md) and [HANDOFF.md](HANDOFF.md). Tools live in `src/` (Redmine
+does not publish that folder): `gen-schemes.py` builds the scheme blocks from Gogh,
+`shot.mjs` takes screenshots and runs probes, `contrast.mjs` audits WCAG contrast,
+`seed.rb` fills a local development database.
 
-## How it works
+## Credits
 
-Redmine's theme system auto-loads:
+- Palettes: [Gogh](https://github.com/Gogh-Co/Gogh) (MIT)
+- Font: [Inter](https://rsms.me/inter/) (OFL)
+- Ideas (no code): priority arrows and tracker dots from Opale, gradient bars from gitmike
 
-| File | How it loads |
-|------|-------------|
-| `stylesheets/application.css` | Replaces default `application.css` via `stylesheet_link_tag` override |
-| `javascripts/theme.js` | Auto-included in `<head>` via `heads_for_theme` helper |
-
-The CSS starts with `@import url('../../application.css')` which pulls in Redmine's default styles before applying overrides, so no Redmine source files are modified.
-
-## Built with / References
-
-| Technology | Purpose |
-|-----------|---------|
-| [Gogh](https://github.com/Gogh-Co/Gogh) | Source palettes for the colour schemes (MIT / Apache-2.0), turned into theme tokens by `src/gen-schemes.py` |
-| [Inter](https://rsms.me/inter/) | UI typeface — self-hosted woff2 in `stylesheets/fonts/`, weights 400/500/600/700, Latin + Cyrillic subsets |
-| [jQuery UI](https://jqueryui.com/) | Dialog/modal system (bundled with Redmine) |
-| [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
-| [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Design token system |
-| [Puppeteer](https://pptr.dev/) | Screenshot automation for README images — `src/screenshots.mjs`, run against a local Redmine with seed data |
-| [Tailwind CSS](https://tailwindcss.com/) | Design token methodology and spacing/colour scale inspiration |
-| [redmine-shadcn-theme](https://github.com/techolve/redmine-shadcn-theme) | Gantt and calendar design and the Gantt row/width script, adapted from it (MIT, © 2026 Techolve), which follows [ReUI](https://reui.io/)'s Gantt and Event Calendar |
-| [Opale](https://github.com/gagnieray/opale), [gitmike](https://github.com/makotokw/redmine-theme-gitmike) | Ideas only — priority icons and tracker colours (Opale), gradient menu bars (gitmike). No code was taken: both are GPL/AGPL |
-
-Design inspired by modern SaaS dashboards (Linear, GitHub, Notion).
-
-## Contributing
-
-Contributions are welcome. Please follow these guidelines:
-
-**Bug reports**
-- Open an issue and include your Redmine version, browser, and a screenshot.
-
-**Pull requests**
-1. Fork the repo and create a branch: `git checkout -b fix/my-fix`
-2. Edit only `stylesheets/application.css` and/or `javascripts/theme.js` — do not modify Redmine core files.
-3. Test in both light and dark mode.
-4. Test at 1280px and 1440px viewport widths, and below 899px (mobile breakpoint).
-5. Keep CSS changes scoped — prefer specific selectors over broad resets.
-6. Open a PR with a short description and before/after screenshots if visual.
-
-**Token / colour changes**
-- New colour variables belong in the `:root { }` block at the top of `application.css`.
-- Dark-mode overrides go in the `html.dark-mode { }` block.
-- Do not use hardcoded hex values outside of those two blocks.
-
-**JS changes**
-- `theme.js` must keep the synchronous dark-mode early-init block at the very top (before `DOMContentLoaded`) to prevent flash of light mode.
-
-## License
+## Licence
 
 MIT
-
----
-
-## Screenshots
-
-### Colour schemes
-
-Pick a scheme on **My account** — 27 curated ones, or search all ~1,250 Gogh palettes. The four you used last sit in the account menu.
-
-| My account | Account menu |
-|-------|------|
-| ![Colour scheme picker on My account](screenshots/light-scheme-picker.png) | ![Recent schemes in the account menu](screenshots/light-account-menu.png) |
-| ![Searching every Gogh palette, with accent choice](screenshots/dark-gogh-search.png) | |
-
-| | | |
-|---|---|---|
-| ![Dracula](screenshots/scheme-dracula.png) | ![Gruvbox Dark](screenshots/scheme-gruvbox-dark.png) | ![Tokyo Night](screenshots/scheme-tokyo-night.png) |
-| Dracula | Gruvbox Dark | Tokyo Night |
-| ![Gruvbox Light](screenshots/scheme-gruvbox-light.png) | ![Solarized Light](screenshots/scheme-solarized-light.png) | ![Rosé Pine Dawn](screenshots/scheme-rose-pine-dawn.png) |
-| Gruvbox Light | Solarized Light | Rosé Pine Dawn |
-
-### Mobile
-
-Below 899px the theme switches to a phone layout. The same theme files are used, with no separate mobile site.
-
-- **Hamburger menu.** The top bar folds into one button that opens Home, My page, Projects, Administration, Help and your account.
-- **Sidebar as an overlay.** The round button at the bottom left slides the sidebar in from the left, over the page, and the same button closes it. Tapping outside it closes it too. The dark/light button sits at the bottom right. The sidebar's left/right position and its collapsed state apply to desktop only.
-- **Nothing scrolls the page sideways.** Project tabs stay in one row and scroll horizontally. Wide tables scroll inside their own card.
-- **Forms are stacked.** Each label sits above a full-width field, and issue attributes are shown in one column.
-- **Larger tap targets.** Icon-only buttons grow to 36×36px, and the wiki toolbar wraps instead of overflowing.
-
-| Issues | Menu | New issue | Sidebar (dark) | Issue (dark) |
-|---|---|---|---|---|
-| <img src="screenshots/mobile-light-issues.png" width="160" alt="Issue list on a phone"> | <img src="screenshots/mobile-light-menu.png" width="160" alt="Hamburger menu open"> | <img src="screenshots/mobile-light-new-issue.png" width="160" alt="New issue form, stacked"> | <img src="screenshots/mobile-dark-sidebar.png" width="160" alt="Sidebar overlay open, dark mode"> | <img src="screenshots/mobile-dark-issue-detail.png" width="160" alt="Issue detail, dark mode"> |
-
-Screenshots are 390×844 (a current iPhone). Desktop screenshots below are 1440×900.
-
-### Gantt & Calendar
-
-| Light | Dark |
-|-------|------|
-| ![Gantt — light](screenshots/light-gantt.png) | ![Gantt — dark](screenshots/dark-gantt.png) |
-| ![Calendar — light](screenshots/light-calendar.png) | ![Calendar — dark](screenshots/dark-calendar.png) |
-
-### Projects & Dashboard
-
-| Light | Dark |
-|-------|------|
-| ![My page — light](screenshots/light-my-page.png) | ![My page — dark](screenshots/dark-my-page.png) |
-| ![Projects list — light](screenshots/light-projects.png) | ![Projects list — dark](screenshots/dark-projects.png) |
-
-### Issues & Filters
-
-| Light | Dark |
-|-------|------|
-| ![Issues list — light](screenshots/light-issues.png) | ![Issues list — dark](screenshots/dark-issues.png) |
-| ![Issues with filters — light](screenshots/light-filters.png) | |
-
-### Issue Detail & Edit
-
-| Light | Dark |
-|-------|------|
-| ![Issue detail — light](screenshots/light-issue-detail.png) | ![Issue detail — dark](screenshots/dark-issue-detail.png) |
-| ![Issue edit — light](screenshots/light-issue-edit.png) | ![Issue edit — dark](screenshots/dark-issue-edit.png) |
-
-### Watchers Modal
-
-| Light | Dark |
-|-------|------|
-| ![Add watchers — light](screenshots/light-watchers-modal.png) | ![Add watchers — dark](screenshots/dark-watchers-modal.png) |
-
-### Activity & News
-
-| Light | Dark |
-|-------|------|
-| ![Activity — light](screenshots/light-activity.png) | ![Activity — dark](screenshots/dark-activity.png) |
-| ![News — light](screenshots/light-news.png) | |
-
-### Project Settings & Administration
-
-| Light | Dark |
-|-------|------|
-| ![Project settings — light](screenshots/light-project-settings.png) | ![Project settings — dark](screenshots/dark-project-settings.png) |
-| ![Administration — light](screenshots/light-admin.png) | ![Administration — dark](screenshots/dark-admin.png) |
-| ![Admin users — light](screenshots/light-admin-users.png) | |

@@ -1,138 +1,115 @@
-# Modern Redmine Theme — project context
+# Modern Redmine Theme — project context (branch `redmine-7`)
 
-Drop-in UI theme for **Redmine 6** (dark mode, colour schemes from Gogh, collapsible sidebar, design tokens).
-Repo: `https://github.com/acosonic/redmine-modern-theme` — branch `main`.
+UI theme for **Redmine 7**, written from scratch on 2026-11-12. The Redmine 6 theme lives
+on `main` and is maintained separately — do not merge between them; port ideas by hand.
+Repo: `https://github.com/acosonic/redmine-modern-theme`.
 
-**Before making a visual change, read [HANDOFF.md](HANDOFF.md).** It carries what this
-file does not: how to measure a layout change so the result is trustworthy (headless
-Chrome cannot see scrollbars — use xvfb), deliberate trade-offs that must not be
-reverted by accident, and what is still open.
+**Before making a visual change, read [HANDOFF.md](HANDOFF.md)** — how to verify, decisions
+that must not be undone by accident, and what is still open.
 
-Only two source files ship behaviour:
+## Files
 
 | File | Notes |
 |---|---|
-| `stylesheets/application.css` | ~4200 lines. Replaces Redmine's `application.css`; first line imports the Redmine default, everything after is override. |
-| `javascripts/theme.js` | ~1130 lines vanilla JS, no deps. Auto-loaded into `<head>` by Redmine's `heads_for_theme`. |
-| `stylesheets/fonts/*.woff2` | Self-hosted Inter (400/500/600/700 × latin/latin-ext/cyrillic/cyrillic-ext). No Google Fonts CDN — GDPR. |
+| `stylesheets/application.css` | Imports core into `@layer core`, then tokens → Open Color map → layout → components. Numbered sections. |
+| `stylesheets/schemes.css` | Maps `--s-*` scheme inputs onto `--rm-*`; the 27 blocks between the markers are **generated**. |
+| `stylesheets/{responsive,dropdown,context_menu,jstoolbar,scm,gantt}.css` | Shims: each replaces the core sheet of the same name and re-imports it into `layer(core)`. `gantt.css` also carries the Gantt palette. |
+| `javascripts/theme.js` | Vanilla JS. Mode, schemes, Gogh search, sidebar side, collapsible sections, toast, badge. |
+| `stylesheets/fonts/*.woff2`, `stylesheets/gogh/palettes.json` | Inter; every Gogh palette (generated). |
+| `src/` | Dev tools only — Redmine publishes every other top-level folder of a theme. |
 
-`screenshots/` feeds the README tables only.
+## The three ideas everything rests on
 
-`src/gen-schemes.py` generates the colour schemes (it does not ship): it reads Gogh's
-`data/themes.json` (https://github.com/Gogh-Co/Gogh — download it, it is not vendored),
-contrast-checks every palette, and rewrites the text between the `@schemes:begin` /
-`@schemes:end` markers in both source files. It also writes `stylesheets/gogh/palettes.json`
-(all ~1250 palettes, ~50 KB gzipped) for the "Any Gogh scheme" search on My account.
-Never hand-edit between the markers or the JSON — change the `SCHEMES` dict and rerun:
+1. **Core is in a cascade layer.** `@layer force, core;` then
+   `@import url(/application.css) layer(core)`. Unlayered theme rules beat core regardless
+   of specificity, so **do not write `!important`**. The exceptions:
+   - core rules that are themselves `!important` (43 of them): answer in `@layer force`
+     (section 21) — among important declarations the *earlier* layer wins;
+   - an inline style from a core view (`.gantt_hdr` background): unlayered `!important`.
+2. **Colours come from inputs.** Section 1 holds the inputs (`--rm-bg`, `--rm-fg`,
+   `--rm-accent`, `--rm-on-accent`, `--rm-red/green/yellow/blue`, `--rm-topbar`,
+   surfaces, borders, `--rm-muted`), written with `light-dark()`. Section 3 re-derives
+   core's `--oc-*` scale and `--color-*` variables from them. No hex colour outside
+   section 1 and `schemes.css` (data-URI icons excepted — they are masks).
+3. **Use what core 7 has.** Account menu = core's Stimulus `dropdown`; phones = core's
+   flyout menu (`responsive.js`); sidebar collapse = core's `#sidebar-switch-button`
+   (`localStorage['redmine-sidebar-state']`); Gantt = core's Stimulus controllers.
+
+## Traps this design has (each one was hit while writing it)
+
+- **A general theme rule also beats core's *exceptions*.** `.tabular label { … }` silently
+  overrode core's `.tabular label.floating { margin: 0 }`; `div.issue { card }` restyled
+  every calendar chip. Write selectors as narrow as the thing you mean
+  (`div.issue.details`, `label:not(.floating, .block, .inline)`), and wrap generic element
+  restyles in `:where()` so component rules still win (see the button rule in section 8).
+- **Anything core changes in `responsive.css` must be desktop-scoped here.** Theme rules
+  beat core's mobile rules too. Header, tab bar, sidebar and the label column are inside
+  `@media (min-width: 900px)`; section 19 only recolours core's mobile layout.
+- **`--oc-white` is core's surface *and* its "text on a colour".** It maps to the surface,
+  so text on the top bar / accent is set explicitly (`--rm-topbar-fg`, `--rm-on-accent`).
+- **`light-dark()` takes colours only.** Icons are CSS masks filled with a token; where a
+  background image is unavoidable (select chevron) it is a mid grey that reads on both.
+- **Do not change when `.js-flyout-menu-toggle-button` is visible** — core's
+  `responsive.js` uses its visibility to decide when to move the menus into the flyout.
+
+## Colour schemes
+
+`src/gen-schemes.py` reads Gogh's `data/themes.json` (download it; not vendored),
+contrast-checks every palette and rewrites the text between `@schemes:begin` /
+`@schemes:end` in `stylesheets/schemes.css` and `javascripts/theme.js`, plus
+`stylesheets/gogh/palettes.json`. Never hand-edit between the markers.
 
 ```bash
 python3 -I src/gen-schemes.py /path/to/themes.json          # --check = report only
 ```
 
-`buildGoghScheme` in `theme.js` is a JS port of the generator's colour logic (same
-surfaces, WCAG targets and nudging; it may also move the background, which the
-generator never needs). Keep the two in step: for the 27 generated schemes, the JS
-must produce the same `--s-*` values (±1/255) as the CSS blocks.
+`buildGoghScheme` in `theme.js` is a JS port of the generator; keep the two in step.
+Storage keys are the same as on the Redmine 6 branch (`rm-dark`, `rm-scheme`,
+`rm-scheme-gogh`, `rm-scheme-recent`, `rm-scheme-dark/-light`, `rm-sidebar-side`,
+`rm-open-<section>`), so a site upgraded from 6 to 7 keeps every user's choices.
+Mode is `html.dark-mode` / `html.light-mode` (sets `color-scheme`); with no stored choice
+the early script follows the OS.
 
-**Redmine serves every top-level directory of a theme as public assets**
-(`Redmine::Themes::Theme#asset_paths`) — except `src/` and dot-directories. Anything
-that must not be published (tools, notes) goes in `src/`.
+## Local setup (verified 2026-11-12)
 
-## Local test setup (verified working)
-
-Local Redmine 6 lives at **`~/rubydev/redmine6`**, and `themes/modern-redmine-theme`
-there is a **symlink to this repo** — so edits here are live, no copying.
-
-```
-~/rubydev/redmine6/themes/modern-redmine-theme -> /home/acop/rubydev/modern-redmine-theme
-```
-
-Start the server:
+Redmine 7.0.3 in `/home/aco/posao/redmine7`, this repo is `themes/redmine-modern-theme`.
 
 ```bash
-cd ~/rubydev/redmine6
-bash -l -c 'rvm use 3.3.5 && bundle exec rails server -b 127.0.0.1 -p 3000'
+cd /home/aco/posao/redmine7
+bash -lc 'rvm use ruby-3.4.12@redmine7 && bundle exec rails server -e development -b 127.0.0.1 -p 3000'
 ```
 
-- Ruby **3.3.5** via rvm (`bash -l -c` is required — rvm is a login-shell function).
-- Rails 7.2.2.2, **development** env, MySQL db **`redmine_development`** (`root` / `root`).
-- Seed data: 30 projects, 95 issues, 20 users.
-- Login: **`admin` / `admin1234`**. Active theme is already set (`Setting.ui_theme = modern-redmine-theme`).
-- Logs: `~/rubydev/redmine6/log/development.log`. Stop with `pkill -f puma`.
+- Ruby 3.4.12 via rvm, gemset `redmine7` (`bash -lc` — rvm is a login-shell function).
+- SQLite: `db/redmine_development.sqlite3` (seeded by `src/seed.rb`: 8 projects, 96 issues,
+  10 users) and `db/redmine.sqlite3` (production, empty). Login **`admin` / `admin1234`**.
+- Reseed: delete the dev database, `rake db:migrate`, `rake redmine:load_default_data`,
+  `rails runner themes/redmine-modern-theme/src/seed.rb` (all with `RAILS_ENV=development`).
+- **`public/assets` must not exist in development** — a precompiled manifest there makes
+  Propshaft serve stale files and 404 the theme. `rake assets:clobber`, then restart.
+- Editing an existing file is live. **A new file or folder needs a server restart**
+  (theme paths and the list of theme stylesheets/scripts are read at boot).
+- Paths in CSS: core files as `/application.css`, theme files relative
+  (`url('fonts/x.woff2')`, `@import url(schemes.css)`) — Propshaft digests both.
 
-### Asset pipeline gotchas (Propshaft)
-
-Redmine 6 serves theme files through Propshaft, not statically:
-
-- CSS is served at `/assets/themes/modern-redmine-theme/application-<digest>.css`.
-- Propshaft **rewrites relative `url()`** — `url('fonts/inter-400-latin.woff2')` in source
-  becomes `/assets/themes/modern-redmine-theme/fonts/inter-400-latin-<digest>.woff2`. Keep
-  font refs relative; do not hand-write `/assets/...` paths.
-- Theme asset paths are registered **at boot** (`config/initializers/30-redmine.rb` →
-  `Redmine::Themes`). **Adding a new file or directory requires a server restart**;
-  editing existing files does not.
-- theme.js cannot know a digested URL. To reach a theme file from JS, reference it from
-  CSS with `url()` (Propshaft rewrites every `url()`, custom properties included) and
-  read it back: see `--rm-gogh-palettes` in `:root`.
-- CSS edits still need a hard reload (digest changes, but browser caches the old link).
-
-### Screenshots (Puppeteer)
-
-Puppeteer is not installed in this repo. Chrome is cached at `~/.cache/puppeteer`;
-borrow an existing install by symlinking its `node_modules` next to the script:
+## Tools
 
 ```bash
-ln -sfn /home/acop/scrapers/jordan-scrapes-secretary-of-states/node_modules ./node_modules
-node shot.mjs   # must be an .mjs in the same dir; NODE_PATH does NOT work for ESM
+cd src && npm install                      # puppeteer-core; uses /usr/bin/google-chrome
+node src/shot.mjs OUT name=/path …         # screenshots; see the header of the file for env
+LS='{"rm-dark":"1","rm-scheme":"dracula"}' node src/shot.mjs out issue=/issues/3
+MOBILE=1 node src/shot.mjs out issues=/issues
+PROBE=src/contrast.mjs node src/shot.mjs out issues=/issues     # WCAG failures, worst first
+HEADFUL=1 xvfb-run -a --server-args="-screen 0 1600x1000x24" node src/shot.mjs out …
 ```
 
-That puppeteer's bundled browser is **Chromium 80** — no `color-mix()`, so it renders
-the fallbacks. Pass `executablePath: '/home/acop/.cache/puppeteer/chrome/linux-147.0.7727.57/chrome-linux64/chrome'`
-(details in HANDOFF.md §0).
-
-Script pattern: goto `/login`, type into `#username` / `#password`, click
-`input[type=submit]`, wait for navigation, then navigate and `page.screenshot`.
-README screenshots are 1440×900; theme is tested at 1280 and 1440.
-
-## Code conventions
-
-- **Colours only via tokens.** 74 custom properties in `:root` (line ~170); dark
-  overrides in `html.dark-mode { }` (line ~242). No hardcoded hex outside those two blocks.
-- A `color-mix()` block (~line 229) derives hover/light/ring shades from `--c-primary`,
-  with static fallbacks above it for older browsers. Changing the accent = changing
-  `--c-primary` + `--c-topbar-bg`.
-- `!important` is used pervasively and deliberately — Redmine's default CSS is imported
-  first and is very specific. Match the surrounding style rather than fighting it.
-- Mobile breakpoint is **`max-width: 899px`** (two blocks, ~line 1871 and ~2045).
-- `theme.js`: the synchronous dark-mode init IIFE at the very top must stay first —
-  it runs before paint to avoid a flash of light mode. Everything else initialises
-  from `init()` on `DOMContentLoaded`.
-- JS features are one function each, all called from `init()`: `initSidebar`,
-  `initDarkMode`, `initCollapsible`, `highlightNav`, `initHamburger`, `initProjectBadge`,
-  `initSearchWidget`, `initAccountDropdown`, `initSchemePicker` (4 recent schemes in the
-  account menu), `initSchemeSettings` (full picker on `/my/account`), `initSidebarSettings`
-  (sidebar left/right on `/my/account`, `html[data-sidebar="right"]`, desktop only), `watchSidebar`,
-  `initSidebarFit` (tall sidebar scrolls with the page, `.rm-sidebar-tall`), `initGantt` (28px rows,
-  timeline fitted to the card, relations redrawn — adapted from redmine-shadcn-theme, MIT).
-  Toasts are exposed as the
-  global `window.rmToast(message, type, duration)`.
-- JS-injected elements are namespaced `rm-*` (`rm-sidebar`, `rm-toast`, `rm-account-panel`, …).
-- **Not everything styled here comes from `theme.js`.** `div#sticky-issue-header`
-  (~line 2030) is a **Redmine 6 core** element — rendered by
-  `app/views/issues/show.html.erb` and toggled by the Stimulus controller
-  `app/javascript/controllers/sticky_issue_header_controller.js`. The theme only
-  restyles it to match the topbar, plus resets Redmine `responsive.css`'s
-  `top: 64px` (that offset is for the project-jump flyout, which this theme hides).
-  Before deleting any rule that `theme.js` does not create, check Redmine's views and
-  Stimulus controllers — grep `~/rubydev/redmine6/app` first.
-- Redmine re-renders parts of the page over AJAX — section wrapping/collapsible code has
-  to be AJAX-safe (re-runnable, idempotent).
+Node 18 via nvm (`source ~/.nvm/nvm.sh`). Set the mode with `LS` (`rm-dark` `1`/`0`), not
+only with `MODE` — the stored choice wins over the emulated OS preference.
 
 ## Testing checklist before committing
 
-1. Light **and** dark mode.
-2. 1280px, 1440px, and mobile (<899px).
-3. Pages that historically broke: issue detail/edit, watchers modal, admin
-   roles/permissions (tabular checkboxes), project settings, activity filters, wiki
-   `.jstTabs` toolbar.
-4. Never modify Redmine core files — only these two source files.
+1. Light and dark, plus at least one dark and one light scheme.
+2. 1280px, 1440px and a phone (`MOBILE=1`); `bodyOverflow` must stay 0 on the phone.
+3. `PROBE=src/contrast.mjs` on the pages you touched (avatars are core's and may fail).
+4. Pages that historically broke: issue show/edit, watchers dialog, roles/permissions,
+   project settings, activity, wiki toolbar, Gantt, calendar.
+5. Never modify Redmine core files.

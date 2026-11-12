@@ -1,2 +1,27 @@
 /* Redmine core gantt.css, pulled into the "core" cascade layer so that theme rules win without !important. */
 @import url(/gantt.css) layer(core);
+
+/* Gantt in the theme's palette. Core 7 draws it with Stimulus controllers, so this is
+   colour only — no row re-spacing, no script. */
+table.gantt-table {
+  background: var(--rm-surface);
+  border: 1px solid var(--rm-border);
+  border-radius: var(--rm-r-md);
+  overflow: hidden;
+}
+/* The header cells carry an inline light grey from the view: the one inline style to beat. */
+.gantt_hdr[style*="background"] { background: var(--rm-surface-2) !important; }
+.gantt_hdr { border-color: var(--rm-border); color: var(--rm-muted); font-weight: 600; }
+.gantt_hdr a { color: inherit; }
+.gantt_hdr.nwday { background-color: color-mix(in srgb, var(--rm-fg) 4%, var(--rm-surface)); }
+.gantt_subjects div.issue-subject:hover { background: var(--rm-accent-soft); }
+/* Flat bars instead of the bitmap patterns */
+.task_late { background: var(--rm-red); }
+.task_done { background: var(--rm-green); }
+.task_todo { background: color-mix(in srgb, var(--rm-fg) 22%, var(--rm-surface)); }
+.task_todo.parent { background: var(--rm-muted); }
+.task { border-radius: 2px; }
+.task.label { color: var(--rm-muted); background: none; }
+.version.task_late, .project.task_late { background: var(--rm-red); }
+.version.task_done, .project.task_done { background: var(--rm-green); }
+.version.task_todo, .project.task_todo { background: var(--rm-surface); border-color: var(--rm-muted); }
