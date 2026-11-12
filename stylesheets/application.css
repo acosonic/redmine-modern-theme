@@ -224,6 +224,7 @@
 
   /* Focus ring — used by :focus-visible across all interactive elements */
   --c-focus-ring: rgba(8,145,178,.55);
+  --c-selection:  rgba(8,145,178,.28);
 
   /* Text on a --c-primary background (buttons, current page, badges) */
   --c-on-primary: white;
@@ -249,6 +250,7 @@
     --c-primary-light: color-mix(in srgb, var(--c-primary) 10%, white);
     --c-primary-ring:  color-mix(in srgb, var(--c-primary) 35%, transparent);
     --c-focus-ring:    color-mix(in srgb, var(--c-primary) 55%, transparent);
+    --c-selection:     color-mix(in srgb, var(--c-primary) 30%, transparent);
   }
 }
 
@@ -258,6 +260,7 @@ html.dark-mode {
   --c-primary-hover: #38BDF8;  /* sky-400 — hand-picked fallback */
   --c-primary-ring:  rgba(34,211,238,.22);
   --c-focus-ring:    rgba(34,211,238,.5);
+  --c-selection:     rgba(34,211,238,.38);
 
   --c-bg:          #161E2A;   /* lighter than before */
   --c-surface:     #1E2C3A;   /* lighter card bg     */
@@ -288,6 +291,7 @@ html.dark-mode {
     --c-primary-light: color-mix(in srgb, var(--c-primary) 14%, transparent);
     --c-primary-ring:  color-mix(in srgb, var(--c-primary) 30%, transparent);
     --c-focus-ring:    color-mix(in srgb, var(--c-primary) 50%, transparent);
+    --c-selection:     color-mix(in srgb, var(--c-primary) 38%, transparent);
   }
 }
 
@@ -535,6 +539,12 @@ body {
   line-height: 1.6 !important;
   -webkit-font-smoothing: antialiased;
 }
+
+/* Selected text and the text cursor. Left to the browser, the selection is its own
+   (or, in Vivaldi, the browser theme's) colour: in dark mode a grey-blue that barely
+   shows on the dark fields. A tint of the accent follows every mode and scheme. */
+::selection { background: var(--c-selection) !important; color: var(--c-text) !important; }
+input, textarea, [contenteditable="true"] { caret-color: var(--c-primary); }
 
 /* ── 3b. FOCUS VISIBLE — keyboard-only ring on all interactive elements.
    Uses :focus-visible so mouse clicks don't show the ring; keyboard
@@ -1360,10 +1370,14 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   transition: left var(--t), background var(--t-fast), color var(--t-fast) !important;
 }
 
-#rm-sidebar-toggle:hover {
-  background: var(--c-primary) !important;
-  color: var(--c-on-primary) !important;
-  border-color: var(--c-primary) !important;
+/* Only where hover is real: a phone keeps :hover after a tap, so the button stayed
+   filled with the accent after the sidebar was closed */
+@media (hover: hover) {
+  #rm-sidebar-toggle:hover {
+    background: var(--c-primary) !important;
+    color: var(--c-on-primary) !important;
+    border-color: var(--c-primary) !important;
+  }
 }
 
 body.sidebar-collapsed #rm-sidebar-toggle {
@@ -2717,6 +2731,50 @@ div#sticky-issue-header .subject {
     min-width: 0 !important;
     box-sizing: border-box !important;
   }
+  /* Filter rows: the value cell is only as wide as its content, so the select's
+     width: 100% above left no room for the multi-select "+" (.toggle-multiselect)
+     and it wrapped under the select. Keep them on one line; the select shrinks if
+     it must. :not([style*=none]) leaves jQuery's hidden spans hidden. */
+  #filters-table .values > span:not([style*="none"]) {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: var(--sp-1) !important;
+    max-width: 100% !important;
+  }
+  #filters-table .values select {
+    width: auto !important;
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+  }
+  #filters-table .values .toggle-multiselect { flex: none !important; margin-right: 0 !important; }
+
+  /* Attachments (issue, wiki, news…): four table cells side by side squeezed name, size,
+     author and date into ~80px columns. One block per file instead: name, size and
+     download on the first line with delete at the right, description and author/date
+     below at full width. */
+  div.attachments > .contextual {
+    float: none !important;
+    display: flex !important;
+    justify-content: flex-end !important;
+    margin: 0 !important;
+  }
+  div.attachments table,
+  div.attachments tbody { display: block !important; width: 100% !important; }
+  div.attachments tr {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    column-gap: var(--sp-2) !important;
+    align-items: start !important;
+    padding: var(--sp-2) 0 !important;
+    border-bottom: 1px solid var(--c-border) !important;
+  }
+  div.attachments tr:last-child { border-bottom: none !important; }
+  div.attachments td { display: block !important; width: auto !important; padding: 0 !important; }
+  div.attachments td:nth-child(1) { grid-column: 1 !important; grid-row: 1 !important; overflow-wrap: anywhere !important; }
+  div.attachments td:nth-child(4) { grid-column: 2 !important; grid-row: 1 !important; }
+  div.attachments td:nth-child(2) { grid-column: 1 / -1 !important; grid-row: 2 !important; }
+  div.attachments td:nth-child(3) { grid-column: 1 / -1 !important; grid-row: 3 !important; }
+  div.attachments td:empty { display: none !important; }
 
   /* Larger tap targets for icon-only buttons (36x36 hits 32px min) */
   a.icon-only,
