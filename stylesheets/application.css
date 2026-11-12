@@ -1236,8 +1236,8 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  width: 41px !important;
-  height: 41px !important;
+  width: 32px !important;
+  height: 32px !important;
   padding: 0 !important;
   margin: auto var(--sp-3) auto 0 !important;
   background: var(--c-primary) !important;
@@ -1245,8 +1245,8 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   border: none !important;
   border-bottom: none !important;
   border-radius: var(--r-md) !important;
-  font-size: 22px !important;
-  font-weight: 400 !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
   line-height: 1 !important;
   cursor: pointer !important;
   flex-shrink: 0 !important;
@@ -3196,9 +3196,9 @@ div#sticky-issue-header .subject {
 
   /* New-object + button */
   #main-menu a#new-object {
-    width: 34px !important;
-    height: 34px !important;
-    font-size: 18px !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 24px !important;
     flex-shrink: 0 !important;
   }
 

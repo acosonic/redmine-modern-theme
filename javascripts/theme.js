@@ -911,6 +911,36 @@
     }
   }
 
+  /* ── LIST HEADERS ALIGNED WITH THEIR COLUMNS ─────────────────
+     The theme left-aligns every table.list header, while core centres most cells (and
+     right-aligns hours), so "Open / Closed / Total", "#", "Status"… sat left of their
+     numbers. Many headers carry no class saying how their column is aligned, so each
+     header copies the alignment of the first full row's cell below it. Re-run after AJAX
+     (My page blocks, etc.). */
+  function alignListHeaders() {
+    qsa('table.list').forEach(function (table) {
+      var head = table.tHead && table.tHead.rows[table.tHead.rows.length - 1];
+      if (!head) return;
+      var ths = head.cells, row = null;
+      for (var i = 0; i < table.tBodies.length && !row; i++) {
+        var rows = table.tBodies[i].rows;
+        for (var j = 0; j < rows.length; j++) {
+          if (rows[j].cells.length === ths.length && !rows[j].classList.contains('group')) { row = rows[j]; break; }
+        }
+      }
+      if (!row) return;
+      for (var k = 0; k < ths.length; k++) {
+        var a = getComputedStyle(row.cells[k]).textAlign;
+        a = a === 'start' ? 'left' : a === 'end' ? 'right' : a.replace('-webkit-', '');
+        ths[k].style.setProperty('text-align', a, 'important');
+      }
+    });
+  }
+  function initListHeaders() {
+    alignListHeaders();
+    if (window.jQuery) window.jQuery(document).ajaxComplete(function () { setTimeout(alignListHeaders, 0); });
+  }
+
   /* ── SELECTION CARET ───────────────────────────────────────
      While text is selected in a field, browsers draw no caret, so you cannot tell which
      end of the selection Shift+arrows will move. A thin blinking line in the accent
@@ -1195,6 +1225,7 @@
     initSidebarFit();
     initGantt();
     initSelectionCaret();
+    initListHeaders();
     window.addEventListener('resize', adjustLayout);
   }
 
