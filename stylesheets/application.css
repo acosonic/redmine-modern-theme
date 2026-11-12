@@ -2284,6 +2284,19 @@ table.list tr.issue td.tracker::before,
 #content :is(.version-overdue, .issue-overdue, .project-overdue) a { color: var(--c-syn-tag); }
 #content.gantt_content table.gantt-table { margin-bottom: .75rem; }
 
+/* Core gives dashboard blocks (My page, the project overview of the dashboard plugin),
+   issue tooltips and the wiki text diff a fixed #505050 text (and #fff / #f6f6f6
+   backgrounds): in dark mode and dark schemes "Manager:" and other plain text in those
+   blocks was dark grey on a dark card. */
+.mypage-box { color: var(--c-text) !important; }
+div.tooltip span.tip {
+  background: var(--c-surface) !important;
+  color: var(--c-text) !important;
+  border-color: var(--c-border-2) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+.text-diff { background: var(--c-surface-2) !important; color: var(--c-text) !important; }
+
 /* ── 15. BUTTONS ─────────────────────────────────────────── */
 a.icon.new-issue,
 a.icon.icon-add,
