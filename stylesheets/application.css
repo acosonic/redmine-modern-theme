@@ -1803,9 +1803,20 @@ table.list tr.idnt-6 td:is(.subject, .name) { padding-left: 112px !important; ba
 table.list tr.idnt-7 td:is(.subject, .name) { padding-left: 128px !important; background-position: 108px 50% !important; }
 table.list tr.idnt-8 td:is(.subject, .name) { padding-left: 144px !important; background-position: 124px 50% !important; }
 table.list tr.idnt-9 td:is(.subject, .name) { padding-left: 160px !important; background-position: 140px 50% !important; }
-/* People and status read as text: left-aligned like the subject (the headers follow,
-   theme.js → alignListHeaders) */
-table.list td:is(.assigned_to, .author, .user, .last_updated_by, .status) { text-align: left !important; }
+/* One alignment rule for every list (issues, My page, time entries, users, admin…), the
+   headers follow (theme.js → alignListHeaders):
+   - text left: subject and names (core), people, status, project, tracker, priority,
+     category, version, login, email, identifier, activity, text-like custom fields;
+   - id, dates, yes/no and counters (open / closed / total) stay centred (core);
+   - hours and numeric custom fields right, like core's time entry hours. */
+table.list td:is(.assigned_to, .author, .user, .last_updated_by, .status, .project, .tracker,
+  .priority, .category, .fixed_version, .login, .mail, .identifier, .firstname, .lastname,
+  .activity, .issue, .parent, .string, .list, .text, .link, .enumeration, .version) { text-align: left !important; }
+/* two admin columns without a class: tracker → default status, custom field → format */
+table.list.trackers td.name + td,
+table.list.custom_fields td.name + td { text-align: left !important; }
+table.list td:is(.hours, .spent_hours, .estimated_hours, .total_estimated_hours,
+  .total_spent_hours, .estimated_remaining_hours, .int, .float) { text-align: right !important; }
 
 table.list td.subject {
   max-width: 320px !important;
@@ -2364,6 +2375,23 @@ table.list tr.issue td.tracker::before,
   animation: rm-sel-blink 1.06s steps(1) infinite;
 }
 @keyframes rm-sel-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+
+/* My page (and the dashboard plugin's project overview, same markup): the three block
+   columns are .splitcontent* layout columns, which the theme otherwise draws as cards — a
+   card around the cards, and an empty card for an empty column. Plain columns here; they
+   show a dashed outline only while a block is being dragged (core adds .dragging). The
+   blocks' floated actions (.contextual) had a 12px bottom margin that reached below the
+   heading, so the table's .autoscroll (a new formatting context) shrank beside it by
+   ~100px and its last columns scrolled. */
+#my-page .block-receiver {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.dragging #my-page .block-receiver { border: 1px dashed var(--c-border-2) !important; }
+#my-page .mypage-box > .contextual { margin-bottom: 0 !important; }
 
 /* Core gives dashboard blocks (My page, the project overview of the dashboard plugin),
    issue tooltips and the wiki text diff a fixed #505050 text (and #fff / #f6f6f6
