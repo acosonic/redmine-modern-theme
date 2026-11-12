@@ -1,24 +1,38 @@
 # Handoff — Modern Redmine Theme
 
-Written 2026-09-03. Read `CLAUDE.md` first — it holds the durable project context
+Written 2026-09-03, last updated 2026-11-12. Read `CLAUDE.md` first — it holds the durable project context
 (local server, Propshaft gotchas, code conventions). **This file holds what that one
 does not: how to actually verify a visual change, decisions that must not be
 silently undone, and what is still open.**
 
 ## State at handoff
 
-`main` is clean and pushed to `origin/main`. Last commits:
+`main` is clean, pushed to `origin/main` and deployed to `redmine.inctime.com` at
+`03f210b`. Work of 2026-11-12, newest first (every commit was deployed on its own,
+after a control run; rollback = check out the commit below it):
 
 | Commit | What |
 |---|---|
-| `4d5a4e2` | Merged PR #8 (evfool) — dark-mode `legend` text + legend chevron stroke; closes #1. `d9ecaed` (pushed to the contributor's branch before merging) narrowed its site-wide `svg.icon-svg` rule to `legend svg.icon-svg`, which had greyed the accent icons on the issue page |
-| `b8b504c` | Merged PR #7 (evfool) — `.check_box_group` (multi-select custom field, check-box style) themed in light + dark; closes #6 |
-| `e589c7b` | Merged PR #5 (evfool) — `input[type=date]` added to the shared input rules (border, radius, padding, focus, dark bg); closes #4 |
-| `9dd65b2` | Journal header (`.journals h4.journal-header`, "Updated by X" strip) re-expressed with tokens — Redmine core hardcodes `#f6f7f8` / `#DDEEFF` (`:target`) / `#666` (`.update-info`), so it stayed white in dark mode. Light mode visually unchanged; dark now `#243040` with `#E8F0F8` text. Added after this file was first written. |
-| `372ef7d` | Added this `HANDOFF.md` |
-| `2ba6c50` | Issue-list subject / parent-subject / parent columns forced to one line + ellipsis; `.autoscroll` scrollbar themed |
-| `72076b2` | Fixed a wrong claim in `CLAUDE.md` about `#sticky-issue-header` |
-| `c32c948` | Added `CLAUDE.md`; corrected stale README claims (fonts, JS size, mobile) |
+| `03f210b` | Header: a top-level project has no `.breadcrumbs`, so its name sat in the empty second row of the h1 grid, ~9px below the badge's middle. `#header h1:not(:has(> .breadcrumbs)) > .current-project` spans both rows |
+| `392503f` | Vault: `#keys_table th, td { text-align: left }`. The centring is core's `table.list td { text-align: center }`, not the plugin's |
+| `44fd47a` | Project board (`/projects` cards): CSS grid `repeat(auto-fill, minmax(min(100%, 340px), 1fr))` instead of core's CSS columns, rows stretched to one height, rounded themed cards, descriptions clamped (3 lines root, 2 child), subprojects as a list with thin dividers. See "Decisions" |
+| `7515c77` | Issue edit: Log time's `.splitcontentleft/right` were cards nested in the fieldset — flattened (`fieldset#log_time`). Mobile: "Hours" after Spent time inline; RedmineUP Checklists new-item `+` beside its field |
+| `b8523d7` | `.tabular input[type=checkbox|radio] { width: auto; justify-self: start }`. Core responsive.css gives every `.tabular input` `width: 100%` on phones (exempts checkboxes, not radios), so bool custom-field radios were 57px wide with their labels pushed out; a lone checkbox (Public, Private, Inherit members, Administrator) was stretched by the `.tabular p` grid on every width and drawn mid-column. Checkboxes are now native size (they looked bigger before because they were stretched) |
+| `ea43686` | Mobile issue form: a select followed by `a.icon-only` / `span.icon-only` / `a.assign-to-me-link` keeps it on the same row (`:has()`), "Hours" after Estimated time inline. Desktop: status with help (i) **and** transition warning gets a 4th grid column |
+| `b9f9193` | Mobile issue page: `« Previous \| n of m \| Next »` on its own centred row (it floated and squeezed the subject); attribute label/value 2:3 grid instead of core's fixed 170px label |
+| `a2dee2f` | Mobile: filter value select + multi-select `+` on one line (`#filters-table .values` — **divs in Redmine 6, not td**); attachments as one block per file; sidebar toggle hover only under `@media (hover: hover)`. All widths: `::selection` uses new token `--c-selection` (accent tint, fallback rgba + color-mix), `caret-color: var(--c-primary)` |
+| `4156ef8` | Mobile sidebar toggle → round floating button bottom-left (pair of the dark-mode button), `sidebarToggleArrow()` gives the arrow for the real state, `no-tooltip` class (core jQuery UI tooltip stuck after a tap), collapsed-sidebar rules scoped to `min-width: 900px` (a sidebar collapsed on desktop opened empty on phones). README "Mobile" section + 5 screenshots; `src/screenshots.mjs` has `ONLY=mobile` |
+
+Earlier, not recorded here before (2026-11-05 … 11-10): `a940137` sticky sidebar works
+(`#wrapper { overflow: clip }` on desktop — core's `overflow: hidden` made `#wrapper` the
+scroll container) + View Customize pages + dark `.syntaxhl` fallback; `a25375b` dark
+pagination / date-picker icon; `9f23d04` issue attribute cards equal height (#14);
+`06b6f9d` one scrollbar for a tall sidebar (`fitSidebar`, `.rm-sidebar-tall`, #13);
+`44f2100` time entry form; `7e50930` clear-query × (#12); `c1f5dda` sidebar left/right
+option (#11); `1f8197e` select chevron on every select. Release `v1.0.0` is on `45537ec`.
+
+GitHub: no open issues or PRs. PR #15 (matbott, 35 commits, Spanish comments, features
+for his own setup) was closed with a request for small focused PRs.
 
 Working tree has one untracked file, `Screenshot From 2026-09-02 15-51-15.png`, in the
 repo root. It is the user's, not build output — leave it alone unless asked.
@@ -157,6 +171,17 @@ To reproduce the wide-list case the last change addressed:
   cue that more columns exist off-screen; the previous complaint was precisely that
   people could not find the horizontal scroll.
 - **`div#sticky-issue-header` is Redmine core**, not theme code — see `CLAUDE.md`.
+- **Project board is a grid, not core's CSS columns.** Columns read top to bottom per
+  column (alphabetical order looked shuffled) and left the last column empty with a few
+  tall cards. Rows are stretched to one height on purpose (empty space inside cards, not
+  between them). Descriptions are clamped; the full text is on the project page.
+- **Sticky sidebar relies on `#wrapper { overflow: clip }` (desktop only).** Putting
+  `hidden` back silently breaks sticky again. A sidebar taller than the viewport switches
+  to `.rm-sidebar-tall` (scrolls with the page, one scrollbar) — #13.
+- **Mobile sidebar toggle is bottom-left and round** (user's choice over "in the top
+  bar"). The desktop collapsed state does not apply on phones.
+- **Checkboxes/radios in `.tabular` are native size, left.** Do not reintroduce a width
+  on them; the old big centred checkbox was a stretched input, not a design.
 
 ## Known, pre-existing, not regressions
 
@@ -227,6 +252,30 @@ To reproduce the wide-list case the last change addressed:
    renders on `/issues/21/edit`; three News items in project `schimmel13` for the README
    news screenshot. Delete them if pristine seed data is wanted.
 
+7. **Still open (none requested yet):** light-mode pagination has the same double border
+   / core blue current page that dark mode had; the plugin-macro (puzzle) icon is dark in
+   dark mode; the redmine.org Theme_List entry is the user's to submit (text was given).
+8. **`redmine.nsinfo.co.rs`** (JKP Informatika) runs this theme too, but we have no
+   access. It is updated by the user / another AI instance with `git pull` + restart.
+   It has a temporary View Customize rule #1 (`/keys`, CSS) doing what `392503f` now
+   does — to be deleted there once the theme is pulled.
+
+## Testing without the plugins installed locally
+
+Local Redmine has no plugins. For plugin pages (Vault, RedmineUP Checklists, View
+Customize, custom-field radios, status help/warning icons) the tests inject the plugin's
+real markup — copied from the plugin's views or read from production — into a local page,
+plus the plugin CSS where it matters, and measure that. Say so when reporting.
+
+Reading production markup: the user is logged in to `redmine.inctime.com` in their own
+Chrome; with their permission the Claude-in-Chrome extension can open a page and read
+DOM/computed styles (`javascript_tool`). Read only — never click Save, never open the
+Vault key table, close the tab afterwards. Do not resize the user's window.
+
+Phone checks: `setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true })`
+and `page.tap()` instead of `click()` — a mouse click leaves `:hover` and Redmine's jQuery
+UI tooltips on screen and makes screenshots lie.
+
 ## Production — redmine.inctime.com
 
 - Host `15.204.154.156`. SSH `ubuntu@redmine.inctime.com` (key auth, passwordless sudo),
@@ -235,13 +284,17 @@ To reproduce the wide-list case the last change addressed:
 - Redmine 6.1.0 in `/home/redmine/redmine`, `RAILS_ENV=production`, Apache → puma socket
   `/run/redmine/puma.sock`, service `redmine.service`. A second, unrelated instance runs as
   `support` (`support-redmine.service`) — leave it alone.
+- `bin/rails runner` as `redmine` fails (`gitolite-rugged` bundler path). Use the
+  service's wrapper: `RAILS_ENV=production /home/redmine/.rvm/wrappers/ruby-3.3.5@redmine/bundle exec rails runner file.rb`.
+- View Customize (2026-11-10): 5 rules, all JavaScript for `/issues/new` (auto-select
+  issue template / tracker per project). None styles anything; nothing to adapt.
 - Theme: `themes/redmine-modern-theme` is a git clone of this repo on `main`.
   `themes/redmine-modern-theme-dev` is a plain copy (not git), used by one user.
 - Apache serves `/assets/` from `public/`, i.e. **precompiled** assets.
   `config.assets.redmine_detect_update = true` recompiles on boot, so a deploy is:
   `git -C ~/redmine/themes/redmine-modern-theme pull --ff-only` then
-  `sudo systemctl restart redmine` (~20–60 s downtime), then check
-  `public/assets/.manifest.json` points at a new `application-*.css`.
+  `sudo systemctl restart redmine` (login returns 200 again after ~8–15 s), then check
+  the login page links a new `application-*.css` and that file contains the new rule.
   Rollback: `git checkout <previous sha>` + restart.
 - Plugin `redmine_user_specific_theme`: users pick a theme per account. Since
   2026-10-29 the global default (`Setting.ui_theme`) is `redmine-modern-theme`
@@ -254,7 +307,7 @@ To reproduce the wide-list case the last change addressed:
   git-ignored); the account has TOTP 2FA, so the user has to type a code. Read-only
   audits only — never submit forms there.
 
-## Two mistakes made this session, and the rules from them
+## Mistakes made, and the rules from them
 
 - **Declared `#sticky-issue-header` dead code and deleted 61 lines of working CSS.**
   The grep was scoped to this repo only; the element comes from Redmine core. It was
@@ -268,3 +321,10 @@ To reproduce the wide-list case the last change addressed:
   puppeteer's bundled browser ignores every `color-mix()` block. Caught only when a
   new feature gated on `color-mix()` silently did not appear.
   → Check `await browser.version()` once per session; see section 0 above.
+- **(2026-11-12) Wrote `#filters-table td.values` for Redmine 6.** The filters are
+  `div`s now; the rule matched nothing and the first "after" screenshot looked unchanged.
+  → Read the live DOM (or the view) before writing a selector, then confirm the
+  computed value changed.
+- **(2026-11-12) A sidebar test failed once under xvfb and passed on rerun** with no
+  change (a previous run had been killed by `timeout`). → Rerun before debugging; run
+  the control if it fails twice.
