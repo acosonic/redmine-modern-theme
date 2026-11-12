@@ -2284,6 +2284,21 @@ table.list tr.issue td.tracker::before,
 #content :is(.version-overdue, .issue-overdue, .project-overdue) a { color: var(--c-syn-tag); }
 #content.gantt_content table.gantt-table { margin-bottom: .75rem; }
 
+/* Selection caret (theme.js → initSelectionCaret): browsers draw no caret while text is
+   selected; this line marks the end that Shift+arrows move. Under reduced motion the
+   global rule stops the animation and, without a fill mode, the line stays visible. */
+#rm-sel-caret {
+  position: absolute;
+  display: none;
+  width: 2px;
+  background: var(--c-primary);
+  border-radius: 1px;
+  pointer-events: none;
+  z-index: 10000;
+  animation: rm-sel-blink 1.06s steps(1) infinite;
+}
+@keyframes rm-sel-blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: 0; } }
+
 /* Core gives dashboard blocks (My page, the project overview of the dashboard plugin),
    issue tooltips and the wiki text diff a fixed #505050 text (and #fff / #f6f6f6
    backgrounds): in dark mode and dark schemes "Manager:" and other plain text in those

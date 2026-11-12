@@ -911,6 +911,83 @@
     }
   }
 
+  /* ── SELECTION CARET ───────────────────────────────────────
+     While text is selected in a field, browsers draw no caret, so you cannot tell which
+     end of the selection Shift+arrows will move. A thin blinking line in the accent
+     colour marks that end (selectionDirection 'backward' → start, else end), placed with
+     a hidden mirror of the field (same font, padding, width and wrapping). Removed as
+     soon as the selection collapses, so the browser's own caret takes over again. */
+  var SEL_CARET_TYPES = /^(text|search|email|url|tel|number)$/;
+  var SEL_MIRROR_PROPS = ['boxSizing', 'width', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth',
+    'borderLeftWidth', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'fontStyle', 'fontVariant',
+    'fontWeight', 'fontStretch', 'fontSize', 'lineHeight', 'fontFamily', 'textAlign', 'textTransform',
+    'textIndent', 'letterSpacing', 'wordSpacing', 'tabSize', 'overflowWrap', 'wordBreak'];
+  var selCaret = null, selMirror = null;
+  function selCaretField(el) {
+    if (!el) return null;
+    if (el.tagName === 'TEXTAREA') return el;
+    if (el.tagName === 'INPUT' && SEL_CARET_TYPES.test(el.type || 'text')) return el;
+    return null;
+  }
+  function hideSelCaret() { if (selCaret) selCaret.style.display = 'none'; }
+  function updateSelCaret() {
+    var el = selCaretField(document.activeElement);
+    var start, end;
+    try { start = el && el.selectionStart; end = el && el.selectionEnd; } catch (e) { start = end = null; }
+    if (!el || start == null || start === end) { hideSelCaret(); return; }
+    var pos = el.selectionDirection === 'backward' ? start : end;
+    var cs = getComputedStyle(el), isArea = el.tagName === 'TEXTAREA';
+    if (!selMirror) {
+      selMirror = document.createElement('div');
+      selMirror.setAttribute('aria-hidden', 'true');
+      selMirror.style.cssText = 'position:absolute;top:0;left:-9999px;visibility:hidden;overflow:hidden;';
+      document.body.appendChild(selMirror);
+    }
+    SEL_MIRROR_PROPS.forEach(function (prop) { selMirror.style[prop] = cs[prop]; });
+    selMirror.style.whiteSpace = isArea ? 'pre-wrap' : 'pre';
+    if (!isArea) selMirror.style.width = 'auto';
+    // text before the caret, a one-character marker, then the rest (it decides the wrapping)
+    selMirror.textContent = el.value.substring(0, pos);
+    var mark = document.createElement('span');
+    mark.textContent = el.value.charAt(pos) && el.value.charAt(pos) !== '\n' ? el.value.charAt(pos) : '.';
+    selMirror.appendChild(mark);
+    selMirror.appendChild(document.createTextNode(el.value.substring(pos + 1)));
+    var lineH = mark.getBoundingClientRect().height || parseFloat(cs.fontSize) * 1.3;
+    var r = el.getBoundingClientRect();
+    // offsetLeft/Top are measured from the mirror's padding edge; the field's rect is its border box
+    var x = mark.offsetLeft + parseFloat(cs.borderLeftWidth) - el.scrollLeft;
+    var y = mark.offsetTop + parseFloat(cs.borderTopWidth) - el.scrollTop;
+    // only while the caret's spot is inside the field's visible box
+    var inside = x >= 0 && x <= r.width && y + lineH > 0 && y < r.height;
+    if (!selCaret) {
+      selCaret = document.createElement('div');
+      selCaret.id = 'rm-sel-caret';
+      selCaret.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(selCaret);
+    }
+    if (!inside) { hideSelCaret(); return; }
+    selCaret.style.display = 'block';
+    selCaret.style.left = (r.left + window.scrollX + x - 1) + 'px';
+    selCaret.style.top = (r.top + window.scrollY + y) + 'px';
+    selCaret.style.height = Math.round(lineH) + 'px';
+    // restart the blink so the line is visible right after every move
+    selCaret.style.animation = 'none'; void selCaret.offsetWidth; selCaret.style.animation = '';
+  }
+  function initSelectionCaret() {
+    var queued = false;
+    function schedule() {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(function () { queued = false; updateSelCaret(); });
+    }
+    // for inputs and textareas selectionchange is fired at the field itself: listen in capture
+    document.addEventListener('selectionchange', schedule, true);
+    ['select', 'keyup', 'mouseup', 'input', 'focusin'].forEach(function (t) { document.addEventListener(t, schedule, true); });
+    document.addEventListener('scroll', schedule, true);   // the page or the field itself
+    document.addEventListener('focusout', hideSelCaret, true);
+    window.addEventListener('resize', schedule);
+  }
+
   /* ── PROJECT HEADER BADGE ───────────────────────────────── */
   function initProjectBadge() {
     var h1 = qs('#header h1');
@@ -1117,6 +1194,7 @@
     watchSidebar();
     initSidebarFit();
     initGantt();
+    initSelectionCaret();
     window.addEventListener('resize', adjustLayout);
   }
 
