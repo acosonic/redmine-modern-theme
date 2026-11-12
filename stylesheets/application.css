@@ -2048,6 +2048,242 @@ table.list tr.issue td.tracker::before,
 }
 #content:has(> div.issue.details) > h2::before { width: 10px; height: 10px; margin-right: 8px; vertical-align: 2px; }
 
+/* ── CALENDAR & GANTT ────────────────────────────────────────
+   Adapted from redmine-shadcn-theme (MIT, © 2026 Techolve), whose designs follow ReUI's
+   Event Calendar and Gantt; translated from Tailwind to plain CSS and to our tokens, so
+   light, dark and every scheme follow. #content outranks the older dark-mode and scheme
+   rules, and core's inline styles (header background, marker widths) need !important. */
+
+/* Calendar: Redmine 6's ul.cal is a CSS grid (week number + 7 days). Rounded corners on
+   the four corner cells only — overflow: hidden would cut the issue tooltips. */
+#content ul.cal, #content p.cal.legend {
+  --cal-start: var(--c-info);
+  --cal-end: var(--c-warning);
+  --cal-both: color-mix(in srgb, var(--c-danger) 50%, var(--c-info));
+}
+#content ul.cal {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  grid-template-columns: 2.5rem repeat(7, 1fr) !important;
+}
+#content ul.cal > li { border: 0 !important; }
+#content ul.cal > li:first-child { border-top-left-radius: var(--r-md); }
+#content ul.cal > li.calhead:nth-child(8) { border-top-right-radius: var(--r-md); }
+#content ul.cal > li.week-number:nth-last-child(8) { border-bottom-left-radius: var(--r-md); }
+#content ul.cal > li:last-child { border-bottom-right-radius: var(--r-md); }
+#content .cal .calhead {
+  background: transparent !important;
+  color: var(--c-text-muted) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 500 !important;
+  text-align: left !important;
+  padding: .5rem .625rem !important;
+}
+#content .cal .week-number {
+  background: transparent !important;
+  color: var(--c-text-muted) !important;
+  font-size: var(--text-xs) !important;
+  text-align: center !important;
+  padding: .5rem .25rem !important;
+}
+#content .cal .week-number:not(.calhead) { border-top: 1px solid var(--c-border) !important; }
+#content .cal .calbody {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: .25rem !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-left: 1px solid var(--c-border) !important;
+  border-top: 1px solid var(--c-border) !important;
+  box-shadow: none !important;
+  min-height: 6.5rem !important;
+  padding: .375rem !important;
+  line-height: 1.35 !important;
+  color: var(--c-text) !important;
+}
+#content .cal .calbody.other-month { background: color-mix(in srgb, var(--c-surface-2) 60%, transparent) !important; }
+#content .cal .calbody.nwday:not(.other-month),
+#content .cal .calbody.today { background: transparent !important; }
+#content .cal .calbody p.day-num {
+  order: 99;
+  margin: auto 0 0 !important;
+  align-self: flex-end;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5rem;
+  height: 1.5rem;
+  padding: 0 .25rem !important;
+  border-radius: 999px;
+  font-size: var(--text-xs) !important;
+  font-weight: 500 !important;
+  color: var(--c-text-muted) !important;
+}
+#content .cal .calbody.other-month p.day-num { color: var(--c-text-subtle) !important; opacity: .7; }
+#content .cal .calbody.today p.day-num { background: var(--c-text) !important; color: var(--c-surface) !important; font-weight: 600 !important; opacity: 1; }
+/* Issue chips: tint and left stripe in the start / end / start-and-end colour; the link
+   keeps the text colour (the chip colour as text would miss 4.5:1 in light mode). */
+#content .cal .calbody div.issue {
+  --chip: var(--cal-start);
+  display: block !important;
+  margin: 0 !important;
+  padding: .25rem .375rem !important;
+  border: 0 !important;
+  border-radius: var(--r-sm) !important;
+  box-shadow: inset 3px 0 0 var(--chip) !important;
+  background: color-mix(in srgb, var(--chip) 12%, var(--c-surface)) !important;
+  color: var(--c-text) !important;
+  font-size: var(--text-xs) !important;
+  word-break: break-word;
+}
+#content .cal .calbody div.issue.ending { --chip: var(--cal-end); }
+#content .cal .calbody div.issue.starting.ending { --chip: var(--cal-both); }
+#content .cal .calbody div.issue:hover { background: color-mix(in srgb, var(--chip) 22%, var(--c-surface)) !important; }
+#content .cal .calbody div.issue > svg.icon-svg { stroke: var(--chip) !important; width: .875rem; height: .875rem; vertical-align: -.1875rem; margin-right: .125rem; }
+#content .cal .calbody div.issue > a.issue { color: var(--c-text) !important; font-weight: 500 !important; }
+#content .cal .calbody div.issue:has(> a.issue.closed) { opacity: .6; }
+/* Tooltips in the last two columns open to the left (8 cells per row: week + 7 days) */
+#content .cal .calbody:nth-child(8n+7) div.tooltip:hover span.tip,
+#content .cal .calbody:nth-child(8n) div.tooltip:hover span.tip { left: auto !important; right: 0 !important; }
+#content .cal .calbody > span.icon {
+  display: flex !important;
+  align-items: center;
+  gap: .25rem;
+  padding: .25rem .375rem !important;
+  border-radius: var(--r-sm);
+  background: var(--c-surface-2) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 500 !important;
+}
+#content .cal .calbody > span.icon a { color: var(--c-text) !important; }
+#content p.cal.legend {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: .25rem 1rem;
+  margin-top: .75rem !important;
+  font-size: var(--text-xs) !important;
+  color: var(--c-text-muted) !important;
+}
+#content p.cal.legend > span { --chip: var(--cal-start); align-items: center; gap: .375rem; }
+#content p.cal.legend > span.ending { --chip: var(--cal-end); }
+#content p.cal.legend > span.starting.ending { --chip: var(--cal-both); }
+#content p.cal.legend > span > svg.icon-svg { stroke: var(--chip) !important; width: .875rem; height: .875rem; }
+
+/* Gantt: positions are inline, in 20px rows (16px content + 4px). theme.js → initGantt
+   widens rows to 28px and stores the first row's top in --gantt-row-start and the row
+   height in --gantt-row-height (without JS the rows stay 20px). */
+#content table.gantt-table {
+  --gantt-row-start: 44px;
+  --gantt-row-height: 20px;
+  --gantt-row-padding: 2px;
+  --gantt-bar: var(--c-primary);
+  --gantt-bar-todo: color-mix(in srgb, var(--gantt-bar) 22%, var(--c-surface));
+  --gantt-bar-late: color-mix(in srgb, var(--c-danger) 75%, var(--c-surface));
+  --gantt-summary: color-mix(in srgb, var(--c-text-muted) 30%, var(--c-surface));
+  --gantt-summary-done: var(--c-text-muted);
+  --gantt-row-line: color-mix(in srgb, var(--c-border) 70%, transparent);
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  overflow: hidden;
+  border-collapse: separate !important;
+  border-spacing: 0;
+}
+#content table.gantt-table td { border-color: var(--c-border) !important; }
+#content .gantt_hdr[style*="background"] { background: color-mix(in srgb, var(--c-surface-2) 50%, var(--c-surface)) !important; }
+#content .gantt_hdr,
+#content #gantt_area .gantt_hdr,
+#content .gantt_subjects_container:not(.draw_selected_columns) .gantt_hdr,
+#content .last_gantt_selected_column .gantt_hdr { border-color: var(--c-border) !important; }
+#content .gantt_hdr {
+  color: var(--c-text-muted) !important;
+  font-size: var(--text-xs) !important;
+  font-weight: 500 !important;
+  border-top: 0 !important;
+}
+#content #gantt_area .gantt_hdr a { color: var(--c-text) !important; font-weight: 600 !important; }
+#content #gantt_area .gantt_hdr a:hover { text-decoration: none !important; color: var(--c-primary) !important; }
+#content .gantt_hdr.nwday { background: color-mix(in srgb, var(--c-surface-2) 60%, transparent) !important; color: var(--c-text-muted) !important; }
+#content .gantt_hdr_selected_column_name { color: var(--c-text-muted) !important; font-size: var(--text-xs) !important; font-weight: 500 !important; }
+#content #gantt_area { background-color: var(--c-surface) !important; }
+/* Row lines: one per row height from the first row down, none in the header */
+#content #gantt_area,
+#content .gantt_subjects,
+#content .gantt_selected_column_content {
+  background-image: repeating-linear-gradient(to bottom,
+    transparent 0 calc(var(--gantt-row-height) - 1px),
+    var(--gantt-row-line) calc(var(--gantt-row-height) - 1px) var(--gantt-row-height));
+  background-position: 0 calc(var(--gantt-row-start) - var(--gantt-row-padding) + 1px - var(--gantt-row-height));
+  background-clip: content-box;
+  padding-top: calc(var(--gantt-row-start) - var(--gantt-row-padding) + 1px);
+  box-sizing: border-box;
+}
+#content .gantt_subjects,
+#content .gantt_selected_column_content { height: 100%; }
+#content .gantt_subjects div,
+#content .gantt_selected_column_content div { color: var(--c-text); }
+#content .gantt_subjects { font-size: .8125rem; }
+/* Long subjects end in "…" inside the column: core sets an inline width that ignores the
+   padding, so width: auto and the right edge from `right` (follows column resizing) */
+#content .gantt_subjects form > div { width: auto !important; right: .75rem; margin-left: .5rem; text-overflow: ellipsis; }
+#content .gantt_subjects form > div > span.icon { display: inline !important; }
+#content .gantt_subjects form > div > span.icon > svg.icon-svg { vertical-align: middle; margin-right: .125rem; }
+#content .gantt_selected_column_content > div { padding-left: .5rem; padding-right: .25rem; text-overflow: ellipsis; color: var(--c-text-muted); }
+#content .gantt_subjects :is(div.issue-subject, div.version-name, div.project-name) { border-radius: var(--r-sm); }
+#content .gantt_subjects div.issue-subject:hover { background: var(--c-surface-2); }
+#content .gantt_subjects :is(div.version-name, div.project-name) { font-weight: 600; }
+#content .gantt_subjects .expander { color: var(--c-text-muted); }
+/* Bars */
+#content .task { color: var(--c-text-muted); }
+#content .task.label { font-size: var(--text-xs); padding-left: .5rem; }
+#content .task.label:is(.project, .version) { color: var(--c-text); font-weight: 600; }
+#content .task.leaf:is(.task_todo, .task_late, .task_done) { height: 14px; margin-top: 1px; border: 0; border-radius: 4px; box-sizing: border-box; }
+#content .task.leaf.task_todo { background: var(--gantt-bar-todo); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gantt-bar) 35%, transparent); }
+#content .task.leaf.task_late { background: var(--gantt-bar-late); border-radius: 4px 0 0 4px; }
+#content .task.leaf.task_done { background: var(--gantt-bar); border-radius: 4px 0 0 4px; }
+#content .task.parent:is(.task_todo, .task_late, .task_done) { height: 4px; margin-top: 6px; border: 0; border-radius: 999px; }
+#content .task.parent.task_todo { background: var(--gantt-summary); }
+#content .task.parent.task_late { background: var(--c-danger); }
+#content .task.parent.task_done { background: var(--gantt-summary-done); }
+#content .task.parent.marker:is(.starting, .ending) {
+  background: var(--gantt-summary-done);
+  width: 3px !important;
+  height: 12px;
+  margin-left: -1px;
+  top: 2px;
+  border-radius: 2px;
+}
+#content .task:is(.version, .project):is(.task_todo, .task_late, .task_done) { height: 4px; margin-top: 6px; border: 0; border-radius: 999px; background-image: none; }
+#content .task:is(.version, .project).task_todo { background-color: var(--gantt-summary); }
+#content .task:is(.version, .project).task_late { background-color: var(--c-danger); }
+#content .task:is(.version, .project).task_done { background-color: var(--gantt-summary-done); }
+#content .task:is(.version, .project).marker {
+  background: var(--c-text);
+  width: 8px !important;
+  height: 8px;
+  margin-top: 4px;
+  margin-left: -4px;
+  border-radius: 1px;
+  transform: rotate(45deg);
+}
+#content .task.project.marker { background: var(--gantt-bar); }
+#content #today_line { border-left: 1.5px solid var(--c-danger) !important; z-index: 5; }
+#content #today_line::before {
+  content: "";
+  position: absolute;
+  top: -3px;
+  left: -4.25px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--c-danger);
+}
+#content :is(.version-behind-schedule, .issue-behind-schedule) a { color: var(--c-syn-number); }
+#content :is(.version-overdue, .issue-overdue, .project-overdue) a { color: var(--c-syn-tag); }
+#content.gantt_content table.gantt-table { margin-bottom: .75rem; }
+
 /* ── 15. BUTTONS ─────────────────────────────────────────── */
 a.icon.new-issue,
 a.icon.icon-add,
@@ -3675,15 +3911,6 @@ html.dark-mode #context-menu li:hover a { color: var(--c-primary) !important; }
 html.dark-mode #context-menu li a.disabled { color: var(--c-text-subtle) !important; }
 
 /* ── Calendar ── */
-html.dark-mode .cal table { background: var(--c-surface) !important; border-color: var(--c-border) !important; }
-html.dark-mode .cal .calhead,
-html.dark-mode .cal .week-number { background: var(--c-surface-2) !important; color: var(--c-text-muted) !important; border-color: var(--c-border) !important; }
-html.dark-mode .cal td,
-html.dark-mode .cal .calbody { background: var(--c-surface) !important; border-color: var(--c-border) !important; color: var(--c-text) !important; }
-html.dark-mode .cal .calbody.other-month { background: var(--c-surface-2) !important; }
-html.dark-mode .cal .calbody.nwday:not(.other-month) { background: rgba(8,145,178,.06) !important; }
-html.dark-mode .cal .calbody.today { background: rgba(34,211,238,.12) !important; }
-html.dark-mode .cal .calbody.other-month p.day-num { color: var(--c-text-subtle) !important; }
 
 /* ── Diff highlighting ── */
 html.dark-mode .diff_out { background: rgba(239,68,68,.15) !important; }
@@ -3753,8 +3980,6 @@ html.dark-mode div.wiki a:target + h2,
 html.dark-mode div.wiki a:target + h3 { background: var(--c-primary-light) !important; }
 
 /* ── Gantt & SCM areas ── */
-html.dark-mode div#gantt_area { background: var(--c-surface) !important; }
-html.dark-mode .gantt_hdr { background: var(--c-surface-2) !important; border-color: var(--c-border) !important; color: var(--c-text-muted) !important; }
 
 /* ── Generic missing borders ── */
 html.dark-mode .box,

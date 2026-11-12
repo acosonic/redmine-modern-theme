@@ -821,6 +821,96 @@
     reconsolidateSidebar();
   }
 
+  /* ── GANTT: taller rows, timeline fitted to the card ───────────
+     Adapted from redmine-shadcn-theme (MIT, © 2026 Techolve). Redmine places every
+     gantt element with an inline top/left in 20px rows and px-per-day widths. Rows are
+     re-spaced to GANTT_ROW px (collapse/expand reads top_increment from
+     data-collapse-expand, so that is rewritten too), and when the timeline is narrower
+     than the card it is stretched to fill it; relations and progress lines are redrawn
+     with core's drawGanttHandler(). Idempotent; a no-op without a gantt. */
+  var GANTT_ROW = 28, GANTT_CORE_ROW = 20, GANTT_PAD = (GANTT_ROW - 16) / 2;
+  function ganttPos(el, prop) { return parseFloat(el.style.getPropertyValue(prop)); }
+  function expandGanttRows() {
+    var table = qs('table.gantt-table');
+    if (!table || table.getAttribute('data-rm-rows')) return;
+    var rows = table.querySelectorAll('[data-collapse-expand]');
+    var subjects = table.querySelectorAll('.gantt_subjects form > div');
+    var start = Infinity, i;
+    for (i = 0; i < subjects.length; i++) {
+      var v = ganttPos(subjects[i], 'top');
+      if (!isNaN(v) && v < start) start = v;
+    }
+    if (start === Infinity) return;
+    var scale = GANTT_ROW / GANTT_CORE_ROW;
+    for (i = 0; i < rows.length; i++) {
+      var el = rows[i], top = ganttPos(el, 'top');
+      if (!isNaN(top) && top >= start) el.style.top = (start + (top - start) * scale) + 'px';
+      var json = el.getAttribute('data-collapse-expand');
+      if (json && json.indexOf('top_increment') !== -1) {
+        el.setAttribute('data-collapse-expand', json.replace(/"top_increment":\s*\d+/, '"top_increment":' + GANTT_ROW));
+        if (window.jQuery) window.jQuery.removeData(el);   // jQuery caches data-* on first read
+      }
+    }
+    var delta = subjects.length * (GANTT_ROW - GANTT_CORE_ROW);
+    var tall = table.querySelectorAll('[style*="height"]');
+    for (i = 0; i < tall.length; i++) {
+      var h = parseFloat(tall[i].style.height);
+      if (h > 100) tall[i].style.height = (h + delta) + 'px';
+    }
+    table.style.setProperty('--gantt-row-start', start + 'px');
+    table.style.setProperty('--gantt-row-height', GANTT_ROW + 'px');
+    table.style.setProperty('--gantt-row-padding', GANTT_PAD + 'px');
+    table.setAttribute('data-rm-rows', '1');
+  }
+  function fitGanttWidth() {
+    var area = qs('#gantt_area'), draw = qs('#gantt_draw_area');
+    if (!area || !draw) return;
+    var items = area.querySelectorAll('[style*="left"], [style*="width"]'), i, el;
+    for (i = 0; i < items.length; i++) {
+      el = items[i];
+      if (el.hasAttribute('data-rm-left')) continue;
+      el.setAttribute('data-rm-left', ganttPos(el, 'left'));
+      el.setAttribute('data-rm-width', el.style.width);
+    }
+    var contentWidth = parseFloat(draw.getAttribute('data-rm-width'));
+    if (!contentWidth) return;
+    var scale = Math.max(1, (area.clientWidth - 1) / contentWidth);
+    for (i = 0; i < items.length; i++) {
+      el = items[i];
+      var left = parseFloat(el.getAttribute('data-rm-left')), width = parseFloat(el.getAttribute('data-rm-width'));
+      if (!isNaN(left)) el.style.left = (left * scale) + 'px';
+      if (!isNaN(width)) el.style.width = (width * scale) + 'px';
+    }
+  }
+  function redrawGantt() {
+    var draw = qs('#gantt_draw_area');
+    if (!draw || typeof window.drawGanttHandler !== 'function') return;
+    if (window.draw_gantt) window.draw_gantt.setSize(draw.offsetWidth, draw.offsetHeight);
+    window.drawGanttHandler();
+  }
+  var ganttFittedWidth = null, ganttObserver = null;
+  function refitGantt() {
+    var area = qs('#gantt_area');
+    if (!area || area.clientWidth === ganttFittedWidth) return;
+    ganttFittedWidth = area.clientWidth;
+    fitGanttWidth();
+    redrawGantt();
+  }
+  function initGantt() {
+    var area = qs('#gantt_area');
+    if (!area) return;
+    expandGanttRows();
+    refitGantt();
+    // core's gantt.js draws relations on load; the sidebar toggle and window resizes
+    // change the area's width, so refit then (debounced)
+    window.addEventListener('load', function () { refitGantt(); redrawGantt(); });
+    if (window.ResizeObserver) {
+      var timer = null;
+      ganttObserver = new ResizeObserver(function () { clearTimeout(timer); timer = setTimeout(refitGantt, 100); });
+      ganttObserver.observe(area);
+    }
+  }
+
   /* ── PROJECT HEADER BADGE ───────────────────────────────── */
   function initProjectBadge() {
     var h1 = qs('#header h1');
@@ -1026,6 +1116,7 @@
     initSidebarSettings();
     watchSidebar();
     initSidebarFit();
+    initGantt();
     window.addEventListener('resize', adjustLayout);
   }
 
