@@ -967,6 +967,10 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   line-height: 1.2 !important;
 }
 
+/* A top-level project has no breadcrumbs: the name sat in the empty grid's second row,
+   ~9px below the middle of the badge and the search box. It takes both rows then. */
+#header h1:not(:has(> .breadcrumbs)) > .current-project { grid-row: 1 / 3 !important; }
+
 #quick-search {
   float: right !important;
   display: flex !important;
