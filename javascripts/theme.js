@@ -75,6 +75,12 @@
   function sidebarArrow(collapsed) {
     return (collapsed !== sidebarOnRight()) ? '›' : '‹';
   }
+  // The arrow for the current state: on mobile the overlay is open or not (the desktop
+  // collapsed setting does not apply there), on desktop the sidebar is collapsed or not.
+  function sidebarToggleArrow() {
+    if (window.innerWidth <= 899) return document.body.classList.contains('sidebar-open') ? '‹' : '›';
+    return sidebarArrow(document.body.classList.contains('sidebar-collapsed'));
+  }
 
   function initSidebar() {
     var main    = qs('#main');
@@ -86,6 +92,7 @@
     btn.id = 'rm-sidebar-toggle';
     btn.setAttribute('aria-label', 'Toggle sidebar');
     btn.title = 'Toggle sidebar';
+    btn.className = 'no-tooltip';  // Redmine's jQuery UI tooltip opened on tap and stayed over the page on phones
     btn.textContent = '‹';
     document.body.appendChild(btn); // must be outside sidebar so overflow:hidden can't clip it
 
@@ -94,18 +101,19 @@
       main.classList.add('sidebar-collapsed');
       document.body.classList.add('sidebar-collapsed');
     }
-    btn.textContent = sidebarArrow(collapsed);
+    btn.textContent = sidebarToggleArrow();
+    window.addEventListener('resize', function () { btn.textContent = sidebarToggleArrow(); });
 
     btn.addEventListener('click', function () {
       if (window.innerWidth <= 899) {
         // Mobile: overlay mode — toggle body.sidebar-open
-        var isOpen = document.body.classList.toggle('sidebar-open');
-        btn.textContent = isOpen ? '‹' : '›';
+        document.body.classList.toggle('sidebar-open');
+        btn.textContent = sidebarToggleArrow();
       } else {
         // Desktop: collapse mode
         var isCollapsed = main.classList.toggle('sidebar-collapsed');
         document.body.classList.toggle('sidebar-collapsed', isCollapsed);
-        btn.textContent = sidebarArrow(isCollapsed);
+        btn.textContent = sidebarToggleArrow();
         localStorage.setItem('rm-sidebar', isCollapsed ? '0' : '1');
       }
     });
@@ -116,7 +124,7 @@
         var sidebar = qs('#sidebar');
         if (sidebar && !sidebar.contains(e.target) && e.target !== btn) {
           document.body.classList.remove('sidebar-open');
-          btn.textContent = '›';
+          btn.textContent = sidebarToggleArrow();
         }
       }
     });
@@ -592,7 +600,7 @@
           x.setAttribute('aria-checked', x.getAttribute('data-side') === o[0] ? 'true' : 'false');
         });
         var toggle = qs('#rm-sidebar-toggle');
-        if (toggle) toggle.textContent = sidebarArrow(document.body.classList.contains('sidebar-collapsed'));
+        if (toggle) toggle.textContent = sidebarToggleArrow();
       });
       row.appendChild(b);
     });

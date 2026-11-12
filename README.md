@@ -22,7 +22,7 @@ The theme is built for speed — it adds **zero render-blocking resources** and 
 - Design tokens — change the entire palette by editing 3 lines
 - Inter font (self-hosted woff2, no CDN), modern card layout, smooth transitions
 - Toast notifications, collapsible issue sections
-- Responsive down to mobile — hamburger menu, stacked forms, larger tap targets (breakpoint at 899px)
+- Works on phones — below 899px: hamburger menu, sidebar as an overlay, stacked forms, larger tap targets, no sideways page scrolling (see [Mobile](#mobile))
 - Properly styled jQuery UI modals (watchers, etc.) with full-page overlay
 - **Zero layout changes required** — drop in and select in Admin settings
 
@@ -138,6 +138,22 @@ Pick a scheme on **My account** — 27 curated ones, or search all ~1,250 Gogh p
 | Dracula | Gruvbox Dark | Tokyo Night |
 | ![Gruvbox Light](screenshots/scheme-gruvbox-light.png) | ![Solarized Light](screenshots/scheme-solarized-light.png) | ![Rosé Pine Dawn](screenshots/scheme-rose-pine-dawn.png) |
 | Gruvbox Light | Solarized Light | Rosé Pine Dawn |
+
+### Mobile
+
+Below 899px the theme switches to a phone layout. The same theme files are used, with no separate mobile site.
+
+- **Hamburger menu.** The top bar folds into one button that opens Home, My page, Projects, Administration, Help and your account.
+- **Sidebar as an overlay.** The round button at the bottom left slides the sidebar in from the left, over the page, and the same button closes it. Tapping outside it closes it too. The dark/light button sits at the bottom right. The sidebar's left/right position and its collapsed state apply to desktop only.
+- **Nothing scrolls the page sideways.** Project tabs stay in one row and scroll horizontally. Wide tables scroll inside their own card.
+- **Forms are stacked.** Each label sits above a full-width field, and issue attributes are shown in one column.
+- **Larger tap targets.** Icon-only buttons grow to 36×36px, and the wiki toolbar wraps instead of overflowing.
+
+| Issues | Menu | New issue | Sidebar (dark) | Issue (dark) |
+|---|---|---|---|---|
+| <img src="screenshots/mobile-light-issues.png" width="160" alt="Issue list on a phone"> | <img src="screenshots/mobile-light-menu.png" width="160" alt="Hamburger menu open"> | <img src="screenshots/mobile-light-new-issue.png" width="160" alt="New issue form, stacked"> | <img src="screenshots/mobile-dark-sidebar.png" width="160" alt="Sidebar overlay open, dark mode"> | <img src="screenshots/mobile-dark-issue-detail.png" width="160" alt="Issue detail, dark mode"> |
+
+Screenshots are 390×844 (a current iPhone). Desktop screenshots below are 1440×900.
 
 ### Projects & Dashboard
 

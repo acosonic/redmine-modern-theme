@@ -1230,17 +1230,20 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
 
 #sidebar-wrapper { padding: var(--sp-5) var(--sp-2) !important; }
 
-/* collapsed — do NOT use opacity:0, it also hides position:fixed children */
-#main.collapsiblesidebar.sidebar-collapsed #sidebar {
-  width: 0 !important;
-  min-width: 0 !important;
-  border-right: none !important;
-  overflow: hidden !important;
-}
-/* Clip floated/absolute children (e.g. #watchers .contextual > Add) that
-   would otherwise escape width:0 + overflow:hidden. */
-#main.collapsiblesidebar.sidebar-collapsed #sidebar > * {
-  visibility: hidden !important;
+/* collapsed — do NOT use opacity:0, it also hides position:fixed children.
+   Desktop only: the mobile overlay ignores the collapsed setting, or it opened empty. */
+@media (min-width: 900px) {
+  #main.collapsiblesidebar.sidebar-collapsed #sidebar {
+    width: 0 !important;
+    min-width: 0 !important;
+    border-right: none !important;
+    overflow: hidden !important;
+  }
+  /* Clip floated/absolute children (e.g. #watchers .contextual > Add) that
+     would otherwise escape width:0 + overflow:hidden. */
+  #main.collapsiblesidebar.sidebar-collapsed #sidebar > * {
+    visibility: hidden !important;
+  }
 }
 
 /* hide Redmine's own sidebar toggle — replaced by our button */
@@ -2653,11 +2656,25 @@ div#sticky-issue-header .subject {
     flex-shrink: 0 !important;
   }
 
-  /* Sidebar toggle — keep it visible and accessible */
-  #rm-sidebar-toggle {
-    left: 0 !important;
-    border-radius: 0 var(--r) var(--r) 0 !important;
-    z-index: 1048 !important;
+  /* Sidebar toggle — a round floating button bottom-left, the pair of the dark-mode
+     toggle bottom-right. As a tab on the left edge under the menu it covered the
+     page's first button (New issue, Edit). Above the open overlay (1049) so the same
+     button closes it. */
+  #rm-sidebar-toggle,
+  body.sidebar-collapsed #rm-sidebar-toggle {
+    top: auto !important;
+    bottom: var(--sp-6) !important;
+    left: var(--sp-6) !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    border: 1px solid var(--c-border) !important;
+    border-radius: 50% !important;
+    box-shadow: var(--shadow-md) !important;
+    font-size: 22px !important;
+    line-height: 1 !important;
+    color: var(--c-text) !important;
+    z-index: 1050 !important;
   }
 
   /* Overview two-column → single column */
@@ -2715,14 +2732,6 @@ div#sticky-issue-header .subject {
   #sidebar a.icon-only > svg {
     width: 18px !important;
     height: 18px !important;
-  }
-
-  /* Sidebar toggle — wider, taller */
-  #rm-sidebar-toggle {
-    width: 36px !important;
-    min-width: 36px !important;
-    height: 48px !important;
-    font-size: 20px !important;
   }
 
   /* JSToolbar — let buttons wrap instead of overflowing right.
