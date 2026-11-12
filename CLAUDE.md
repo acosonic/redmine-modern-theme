@@ -12,8 +12,8 @@ Only two source files ship behaviour:
 
 | File | Notes |
 |---|---|
-| `stylesheets/application.css` | ~2750 lines. Replaces Redmine's `application.css`; first line imports the Redmine default, everything after is override. |
-| `javascripts/theme.js` | ~460 lines vanilla JS, no deps. Auto-loaded into `<head>` by Redmine's `heads_for_theme`. |
+| `stylesheets/application.css` | ~4200 lines. Replaces Redmine's `application.css`; first line imports the Redmine default, everything after is override. |
+| `javascripts/theme.js` | ~1130 lines vanilla JS, no deps. Auto-loaded into `<head>` by Redmine's `heads_for_theme`. |
 | `stylesheets/fonts/*.woff2` | Self-hosted Inter (400/500/600/700 × latin/latin-ext/cyrillic/cyrillic-ext). No Google Fonts CDN — GDPR. |
 
 `screenshots/` feeds the README tables only.
@@ -111,7 +111,9 @@ README screenshots are 1440×900; theme is tested at 1280 and 1440.
   `initDarkMode`, `initCollapsible`, `highlightNav`, `initHamburger`, `initProjectBadge`,
   `initSearchWidget`, `initAccountDropdown`, `initSchemePicker` (4 recent schemes in the
   account menu), `initSchemeSettings` (full picker on `/my/account`), `initSidebarSettings`
-  (sidebar left/right on `/my/account`, `html[data-sidebar="right"]`, desktop only), `watchSidebar`.
+  (sidebar left/right on `/my/account`, `html[data-sidebar="right"]`, desktop only), `watchSidebar`,
+  `initSidebarFit` (tall sidebar scrolls with the page, `.rm-sidebar-tall`), `initGantt` (28px rows,
+  timeline fitted to the card, relations redrawn — adapted from redmine-shadcn-theme, MIT).
   Toasts are exposed as the
   global `window.rmToast(message, type, duration)`.
 - JS-injected elements are namespaced `rm-*` (`rm-sidebar`, `rm-toast`, `rm-account-panel`, …).

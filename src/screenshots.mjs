@@ -14,6 +14,9 @@ const BASE = process.env.BASE || 'http://127.0.0.1:3000';
 const OUT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'screenshots');
 const ISSUE = process.env.ISSUE || '21';
 const PROJECT = process.env.PROJECT || 'schimmel13';
+// Gantt / calendar: a project whose issues have dates (and, locally, three "blocks" relations)
+const PLAN_PROJECT = process.env.PLAN_PROJECT || 'turcotte9';
+const PLAN_MONTH = process.env.PLAN_MONTH || 'year=2025&month=1';
 const ONLY = process.env.ONLY || '';   // '' = all, 'mobile' = phone screenshots only
 
 const b = await puppeteer.launch({ executablePath: process.env.CHROME, headless: true, args: ['--no-sandbox'], defaultViewport: { width: 1440, height: 900 } });
@@ -53,6 +56,9 @@ const pages = {
   'admin': `/admin`,
 };
 const lightOnly = { 'news': `/news`, 'admin-users': `/users` };
+const toChart = sel => async () => {
+  await p.evaluate(s => { const e = document.querySelector(s), top = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--total-top')) || 70; if (e) window.scrollTo(0, window.scrollY + e.getBoundingClientRect().top - top - 12); }, sel);
+};
 
 if (ONLY !== 'mobile') {
   for (const dark of [false, true]) {
@@ -63,6 +69,8 @@ if (ONLY !== 'mobile') {
     if (!dark) await shot(`${m}-filters`, `/issues`, async () => {
       await p.evaluate(() => { const o = document.querySelector('#options.collapsed legend'); o && o.click(); });
     });
+    await shot(`${m}-gantt`, `/projects/${PLAN_PROJECT}/issues/gantt?${PLAN_MONTH}&months=4`, toChart('table.gantt-table'));
+    await shot(`${m}-calendar`, `/projects/${PLAN_PROJECT}/issues/calendar?${PLAN_MONTH.replace('month=1', 'month=2')}`, toChart('ul.cal'));
     await shot(`${m}-watchers-modal`, `/issues/${ISSUE}`, async () => {
       await p.click('#watchers a[href$="/watchers/new"], a[href*="watchers/new"]');
       await p.waitForSelector('.ui-dialog', { visible: true });

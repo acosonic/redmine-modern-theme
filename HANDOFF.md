@@ -7,9 +7,33 @@ silently undone, and what is still open.**
 
 ## State at handoff
 
-`main` is clean, pushed to `origin/main` and deployed to `redmine.inctime.com` at
-`03f210b`. Work of 2026-11-12, newest first (every commit was deployed on its own,
-after a control run; rollback = check out the commit below it):
+Later on 2026-11-12, ideas from three other themes (plan approved by the user; each a
+separate commit). Steps 1–4 are on `main` and deployed (`1a0c26e`, rollback `03f210b`);
+step 5 + docs are on branch `feature/gantt-calendar` until the user approves the deploy.
+
+| Commit | What |
+|---|---|
+| `5e968df` | Gantt + calendar adapted from **redmine-shadcn-theme (MIT, © 2026 Techolve)** — CSS translated from Tailwind to our tokens; `initGantt()` re-spaces rows 20→28px (rewrites inline `top`, `data-collapse-expand` `top_increment`, container heights; `jQuery.removeData` because jQuery caches `data-*`), stretches a narrow timeline to the card and redraws relations via core `drawGanttHandler()`, again on area resize. Calendar chip links keep the text colour (chip colour as text missed AA). Old dark-only `.cal`/`.gantt_hdr` rules removed; the grouped `html[data-scheme]` ones stay and are outranked by `#content` |
+| `7b6ee71` | Syntax colours from the palette: `--c-syn-*` tokens, every Rouge span starts as plain text, 7 groups coloured; AA 4.5 on `--c-surface-2` in Modern + 27 schemes |
+| `073c955` | Tracker dot (`--c-trk-1..6`, cycled over `tracker-1…24`) in lists and before the issue title. **Idea from Opale (AGPL) — no code copied.** A tint behind `#id` was dropped (text < 4.5:1 in light schemes) |
+| `d4ddd65` | Priority arrows as CSS masks (`--rm-icon-*`, `--c-prio-*`, ≥3:1). Old `.priority-low/-urgent…` rules deleted — they never matched (`priority-<position_name>`: highest, high2, default, low2, lowest…). **Idea from Opale** |
+| `2cab8db` | Desktop gradient top bar + rounded project tab bar (`--c-topbar-grad-*`, `--c-menu-grad-*`); header +8px bottom padding, `adjustLayout()` re-measures. **Idea from gitmike (GPL) — no code copied** |
+
+Licences: this theme is MIT. Opale (AGPL-3.0) and gitmike (GPL-2.0) may inspire but never
+supply code; shadcn (MIT) code may be adapted with the attribution kept (CSS/JS comments,
+README "Built with").
+
+Previewing on production without affecting others: `redmine_user_specific_theme` lets a
+user pick a theme in My account. Copy the commit into a new folder
+(`git archive <sha> stylesheets javascripts | ssh … tar -x -C themes/redmine-modern-theme-preview`),
+restart, the user selects "Redmine modern theme preview". Delete the folder afterwards —
+the plugin falls back to `Setting.ui_theme` when a user's theme is missing.
+
+Local test data added: three `blocks` relations in project `turcotte9` (issues 80→10,
+56→39, 38→43) for the Gantt relation lines; README Gantt/calendar shots use
+`turcotte9`, January/February 2025.
+
+Earlier on 2026-11-12, newest first (every commit deployed on its own after a control run):
 
 | Commit | What |
 |---|---|
@@ -325,6 +349,8 @@ UI tooltips on screen and makes screenshots lie.
   `div`s now; the rule matched nothing and the first "after" screenshot looked unchanged.
   → Read the live DOM (or the view) before writing a selector, then confirm the
   computed value changed.
-- **(2026-11-12) A sidebar test failed once under xvfb and passed on rerun** with no
-  change (a previous run had been killed by `timeout`). → Rerun before debugging; run
-  the control if it fails twice.
+- **(2026-11-12) The tall-sidebar test (`fit.mjs`) fails intermittently, with and
+  without changes.** A focused probe (same injection, 24 page loads, left/right, light/
+  dark) saw `.rm-sidebar-tall` applied every time within ~50 ms, so the flakiness is in
+  the test harness, not the theme. → Rerun; if it fails, run it on the control too
+  before blaming a change.
