@@ -1462,6 +1462,18 @@ body.nav-open #rm-hamburger span:nth-child(3) { transform: translateY(-7px) rota
   border-radius: var(--r-md) !important;
   padding: var(--sp-4) !important;
 }
+/* Log time on the issue edit form: its two columns are plain rows of the fieldset, not
+   cards — nested in the fieldset they boxed one field each and pushed Spent time and
+   Activity out of line with Comment below. */
+fieldset#log_time .splitcontentleft,
+fieldset#log_time .splitcontentright {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+fieldset#log_time .splitcontent { row-gap: 0 !important; }
 /* Issue page attributes: flex-start left the two cards of a row at different heights
    and the rows touching (#14). width: 100% stops a row narrowing beside the floated
    reactions button. Scoped here: other two-column pages keep their own heights. */
@@ -2742,12 +2754,24 @@ div#sticky-issue-header .subject {
   }
   /* Estimated time: "Hours" is a bare text node after the input, so it can only be
      placed by the columns: label across, then input and text side by side. */
-  .tabular p:has(> #issue_estimated_hours) {
+  .tabular p:has(> #issue_estimated_hours),
+  .tabular p:has(> #time_entry_hours) {
     grid-template-columns: minmax(0, 1fr) auto !important;
     column-gap: var(--sp-2) !important;
     align-items: center !important;
   }
-  .tabular p:has(> #issue_estimated_hours) > label { grid-column: 1 / -1 !important; }
+  /* RedmineUP Checklists: the new-item field fills the line, so its + (save) wrapped
+     under it. Field and + share the line; the field shrinks. */
+  #checklist_form_items .checklist-item.new {
+    display: flex !important;
+    align-items: center !important;
+    gap: var(--sp-2) !important;
+  }
+  #checklist_form_items .checklist-item.new .checklist-edit-box { flex: 1 1 auto !important; min-width: 0 !important; }
+  #checklist_form_items .checklist-item.new .checklist-edit-box input[type=text] { width: 100% !important; }
+  #checklist_form_items .checklist-item.new .save-new-by-button { flex: none !important; }
+  .tabular p:has(> #issue_estimated_hours) > label,
+  .tabular p:has(> #time_entry_hours) > label { grid-column: 1 / -1 !important; }
   .tabular label {
     text-align: left !important;
     padding-right: 0 !important;
