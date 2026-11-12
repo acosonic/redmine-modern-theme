@@ -238,6 +238,10 @@
   /* Tracker marker palette, cycled by tracker id (stable per tracker, arbitrary hue) */
   --c-trk-1: #0E7490; --c-trk-2: #DC2626; --c-trk-3: #047857;
   --c-trk-4: #C2410C; --c-trk-5: #2563EB; --c-trk-6: #9333EA;
+  /* Syntax highlighting (Rouge) — AA (4.5:1) on --c-surface-2, the code block background */
+  --c-syn-keyword:  #1D4ED8; --c-syn-type:     #7E22CE; --c-syn-function: #0E7490;
+  --c-syn-string:   #047857; --c-syn-number:   #B45309; --c-syn-tag:      #B91C1C;
+  --c-syn-comment:  #5A6A7A; --c-syn-highlight: rgba(245,158,11,.22);
   /* Desktop gradient bars (idea from the gitmike theme): top bar lighter at the top,
      project tab bar from the surface to a slightly darker tint */
   --c-topbar-grad-top:    #1C4353;
@@ -284,6 +288,14 @@
     --c-trk-4: color-mix(in srgb, var(--c-warning) 60%, var(--c-text));
     --c-trk-5: color-mix(in srgb, var(--c-info) 85%, var(--c-text));
     --c-trk-6: color-mix(in srgb, color-mix(in srgb, var(--c-danger) 50%, var(--c-info)) 85%, var(--c-text));
+    --c-syn-keyword:  color-mix(in srgb, var(--c-info) 55%, var(--c-text));
+    --c-syn-type:     color-mix(in srgb, color-mix(in srgb, var(--c-danger) 50%, var(--c-info)) 70%, var(--c-text));
+    --c-syn-function: color-mix(in srgb, var(--c-primary) 70%, var(--c-text));
+    --c-syn-string:   color-mix(in srgb, var(--c-success) 35%, var(--c-text));
+    --c-syn-number:   color-mix(in srgb, var(--c-warning) 35%, var(--c-text));
+    --c-syn-tag:      color-mix(in srgb, var(--c-danger) 70%, var(--c-text));
+    --c-syn-comment:  var(--c-text-subtle);
+    --c-syn-highlight: color-mix(in srgb, var(--c-warning) 22%, transparent);
   }
 }
 
@@ -304,6 +316,9 @@ html.dark-mode {
   --c-prio-lowest:  #94A3B8;
   --c-trk-1: #22D3EE; --c-trk-2: #F87171; --c-trk-3: #34D399;
   --c-trk-4: #FBBF24; --c-trk-5: #60A5FA; --c-trk-6: #C084FC;
+  --c-syn-keyword:  #93C5FD; --c-syn-type:     #D8B4FE; --c-syn-function: #67E8F9;
+  --c-syn-string:   #86EFAC; --c-syn-number:   #FCD34D; --c-syn-tag:      #FCA5A5;
+  --c-syn-comment:  #7B9AB0; --c-syn-highlight: rgba(245,158,11,.2);
 
   --c-bg:          #161E2A;   /* lighter than before */
   --c-surface:     #1E2C3A;   /* lighter card bg     */
@@ -349,6 +364,14 @@ html.dark-mode {
     --c-trk-4: color-mix(in srgb, var(--c-warning) 85%, var(--c-text));
     --c-trk-5: color-mix(in srgb, var(--c-info) 80%, var(--c-text));
     --c-trk-6: color-mix(in srgb, color-mix(in srgb, var(--c-danger) 50%, var(--c-info)) 80%, var(--c-text));
+    --c-syn-keyword:  color-mix(in srgb, var(--c-info) 50%, var(--c-text));
+    --c-syn-type:     color-mix(in srgb, color-mix(in srgb, var(--c-danger) 50%, var(--c-info)) 65%, var(--c-text));
+    --c-syn-function: color-mix(in srgb, var(--c-primary) 75%, var(--c-text));
+    --c-syn-string:   color-mix(in srgb, var(--c-success) 55%, var(--c-text));
+    --c-syn-number:   color-mix(in srgb, var(--c-warning) 75%, var(--c-text));
+    --c-syn-tag:      color-mix(in srgb, var(--c-danger) 70%, var(--c-text));
+    --c-syn-comment:  var(--c-text-subtle);
+    --c-syn-highlight: color-mix(in srgb, var(--c-warning) 20%, transparent);
   }
 }
 
@@ -3670,21 +3693,22 @@ html.dark-mode .diff_in span  { background: rgba(16,185,129,.25) !important; }
 
 /* ── Syntax / code highlighting ── */
 html.dark-mode .syntaxhl { background: var(--c-surface-2) !important; color: var(--c-text) !important; }
-/* Core colours ~50 token types for a white background (#0000DD numbers, #333 operators, pink
-   string backgrounds): anything not coloured below reads as plain text */
-html.dark-mode .syntaxhl span { color: var(--c-text) !important; background: transparent !important; }
-html.dark-mode .syntaxhl .hll { background: rgba(245,158,11,.2) !important; }
-html.dark-mode .syntaxhl .k,
-html.dark-mode .syntaxhl .kd,
-html.dark-mode .syntaxhl .kn { color: #93C5FD !important; }
-html.dark-mode .syntaxhl .s,
-html.dark-mode .syntaxhl .s1,
-html.dark-mode .syntaxhl .s2 { color: #86EFAC !important; background: transparent !important; }
-html.dark-mode .syntaxhl .c,
-html.dark-mode .syntaxhl .cm,
-html.dark-mode .syntaxhl .c1 { color: var(--c-text-subtle) !important; }
-html.dark-mode .syntaxhl .n,
-html.dark-mode .syntaxhl .na { color: var(--c-text) !important; }
+/* Syntax colours from the active palette, both modes. Core colours ~50 Rouge token types
+   for a white background (#0000DD numbers, #333 operators, pink string backgrounds); here
+   every token starts as plain text, and the groups below take --c-syn-* colours, which
+   follow dark mode and the scheme (keyword ← info, string ← success, number ← warning,
+   type ← magenta, function ← accent, tag ← danger). */
+.syntaxhl span { color: var(--c-text) !important; background: transparent !important; }
+.syntaxhl .hll { background: var(--c-syn-highlight) !important; }
+.syntaxhl :is(.k, .kc, .kd, .kn, .kp, .kr, .ow, .nb, .bp) { color: var(--c-syn-keyword) !important; }
+.syntaxhl :is(.kt, .nc, .nn, .no, .nd, .ne, .na) { color: var(--c-syn-type) !important; }
+.syntaxhl :is(.nf, .fm) { color: var(--c-syn-function) !important; }
+.syntaxhl :is(.s, .s1, .s2, .sa, .sb, .sc, .dl, .sd, .se, .sh, .si, .sx, .sr, .ss) { color: var(--c-syn-string) !important; }
+.syntaxhl :is(.m, .mb, .mf, .mh, .mi, .mo, .il) { color: var(--c-syn-number) !important; }
+.syntaxhl :is(.nt, .err, .gd, .gr, .gt) { color: var(--c-syn-tag) !important; }
+.syntaxhl .gi { color: var(--c-syn-string) !important; }
+.syntaxhl :is(.gh, .gu) { color: var(--c-syn-keyword) !important; font-weight: 600 !important; }
+.syntaxhl :is(.c, .c1, .cm, .ch, .cs, .cp, .cpf, .gp, .go) { color: var(--c-syn-comment) !important; font-style: italic; }
 
 /* ── Search/text highlight ── */
 html.dark-mode .highlight { background: rgba(245,158,11,.3) !important; color: var(--c-text) !important; }
