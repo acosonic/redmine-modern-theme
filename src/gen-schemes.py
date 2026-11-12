@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
-"""Generate the colour-scheme blocks in application.css and theme.js from Gogh.
+"""Generate the colour-scheme blocks in schemes.css and theme.js from Gogh.
 
 Usage:
     python3 src/gen-schemes.py path/to/gogh/data/themes.json [--check]
 
 Gogh (https://github.com/Gogh-Co/Gogh, MIT/Apache-2.0) publishes every terminal
 palette in data/themes.json. For each scheme listed in SCHEMES below this script
-picks the raw --s-* inputs that section 2b of application.css derives all tokens
-from, checks contrast the way the CSS will render it, nudges colours that fail,
+picks the raw --s-* inputs that schemes.css maps onto the theme's tokens,
+checks contrast the way the CSS will render it, nudges colours that fail,
 and rewrites the text between the @schemes markers in both files. --check only
 prints the report.
 """
@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-CSS = ROOT / 'stylesheets' / 'application.css'
+CSS = ROOT / 'stylesheets' / 'schemes.css'
 JS = ROOT / 'javascripts' / 'theme.js'
 # Every Gogh palette, slimmed down, for the "any Gogh scheme" search on My account.
 # Lives under stylesheets/ so application.css can reference it with url() and Propshaft
@@ -95,7 +95,7 @@ def slug(name):
     return re.sub(r'[^a-z0-9]+', '-', name.lower()).strip('-')
 
 
-# ── per-scheme derivation, mirrors section 2b of application.css ────────────
+# ── per-scheme derivation, mirrors the first block of schemes.css ────────────
 def build(t, accent_slot):
     dark = t['variant'] == 'dark'
     bg, fg0 = rgb(t['background']), rgb(t['foreground'])
@@ -154,12 +154,12 @@ def build(t, accent_slot):
 
 
 def css_block(s):
-    return (f'  /* Gogh: {s["gogh"]} */\n'
-            f'  html[data-scheme="{s["id"]}"] {{\n'
-            f'    --s-bg: {s["bg"]};  --s-fg: {s["fg"]};  --s-muted: {s["muted"]};\n'
-            f'    --s-accent: {s["accent"]};  --s-on-accent: {s["on"]};\n'
-            f'    --s-red: {s["red"]};  --s-green: {s["green"]};  --s-yellow: {s["yellow"]};  --s-blue: {s["blue"]};\n'
-            f'  }}\n')
+    return (f'/* Gogh: {s["gogh"]} */\n'
+            f'html[data-scheme="{s["id"]}"] {{\n'
+            f'  --s-bg: {s["bg"]};  --s-fg: {s["fg"]};  --s-muted: {s["muted"]};\n'
+            f'  --s-accent: {s["accent"]};  --s-on-accent: {s["on"]};\n'
+            f'  --s-red: {s["red"]};  --s-green: {s["green"]};  --s-yellow: {s["yellow"]};  --s-blue: {s["blue"]};\n'
+            f'}}\n')
 
 
 def js_line(s):
