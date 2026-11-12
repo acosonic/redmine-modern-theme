@@ -2358,6 +2358,16 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   line-height: 1.5 !important;
   padding-right: var(--sp-1) !important;
 }
+/* Checkboxes and radios keep their own size, at the left. Core's responsive.css gives
+   every .tabular input width: 100% on phones (it exempts checkboxes, not radios), and a
+   checkbox that is itself a grid item in .tabular p is stretched across the column on
+   every width — either way the box or circle was drawn in the middle of a wide input,
+   with its text pushed out of the custom-field radio group (QA required). */
+.tabular input[type=checkbox],
+.tabular input[type=radio] {
+  width: auto !important;
+  justify-self: start !important;
+}
 /* Bare checkbox/radio labels (inside <p>, not .floating/.block) — left-align,
    shrink to content. Excluding .floating/.block so their explicit rules below
    win the width war (otherwise :has() specificity 0,3,1 beats 0,2,1). */
