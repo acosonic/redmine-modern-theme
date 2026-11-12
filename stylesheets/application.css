@@ -2336,6 +2336,11 @@ p.percent { font-size: 86% !important; margin: 0 !important; }
   margin: 0 !important;
 }
 .tabular p:last-of-type { border-bottom: none !important; }
+/* Status with both the help (i) and the transition warning: the third column holds one
+   icon, so the warning wrapped under the label. A fourth column for the second one. */
+@media (min-width: 900px) {
+  .tabular p:has(> select + .icon-only + .icon-only) { grid-template-columns: 220px 1fr auto auto !important; }
+}
 .tabular p em.info, .tabular p span.description, .tabular p .description {
   grid-column: 2 !important;
   font-size: var(--text-xs) !important;
@@ -2712,6 +2717,27 @@ div#sticky-issue-header .subject {
     row-gap: var(--sp-1) !important;
     padding: var(--sp-3) 0 !important;
   }
+  /* A select followed by a small control — status/tracker help (i), transition warning,
+     New category/version +, Assign to me — got a line of its own in the one column.
+     Keep it beside the select; the label stays above. */
+  .tabular p:has(> select + :is(a.icon-only, span.icon-only, a.assign-to-me-link)) {
+    grid-auto-columns: auto !important;
+    column-gap: var(--sp-2) !important;
+    align-items: center !important;
+  }
+  .tabular p:has(> select + :is(a.icon-only, span.icon-only, a.assign-to-me-link)) > select { grid-row: 2 !important; grid-column: 1 !important; }
+  .tabular p:has(> select + :is(a.icon-only, span.icon-only, a.assign-to-me-link)) > :is(a.icon-only, span.icon-only, a.assign-to-me-link) {
+    grid-row: 2 !important;
+    white-space: nowrap !important;
+  }
+  /* Estimated time: "Hours" is a bare text node after the input, so it can only be
+     placed by the columns: label across, then input and text side by side. */
+  .tabular p:has(> #issue_estimated_hours) {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    column-gap: var(--sp-2) !important;
+    align-items: center !important;
+  }
+  .tabular p:has(> #issue_estimated_hours) > label { grid-column: 1 / -1 !important; }
   .tabular label {
     text-align: left !important;
     padding-right: 0 !important;
