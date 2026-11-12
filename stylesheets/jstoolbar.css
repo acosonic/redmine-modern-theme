@@ -1,2 +1,53 @@
 /* Redmine core jstoolbar.css, pulled into the "core" cascade layer so that theme rules win without !important. */
 @import url(/jstoolbar.css) layer(core);
+
+/* Toolbar icons. Core sets each one as a dark SVG background image, which disappears on
+   a dark surface. The same files are used here as masks, so the icon takes the text
+   colour in every mode and scheme. The list mirrors core's jstoolbar.css. */
+.jstb_strong { --rm-jst: url(/jstoolbar/bold.svg); }
+.jstb_em { --rm-jst: url(/jstoolbar/italic.svg); }
+.jstb_ins { --rm-jst: url(/jstoolbar/underline.svg); }
+.jstb_del { --rm-jst: url(/jstoolbar/strikethrough.svg); }
+.jstb_code { --rm-jst: url(/jstoolbar/letter-c.svg); }
+.jstb_h1 { --rm-jst: url(/jstoolbar/h1.svg); }
+.jstb_h2 { --rm-jst: url(/jstoolbar/h2.svg); }
+.jstb_h3 { --rm-jst: url(/jstoolbar/h3.svg); }
+.jstb_ul { --rm-jst: url(/jstoolbar/list.svg); }
+.jstb_ol { --rm-jst: url(/jstoolbar/list-numbers.svg); }
+.jstb_tl { --rm-jst: url(/jstoolbar/list-check.svg); }
+.jstb_bq { --rm-jst: url(/jstoolbar/indent-increase.svg); }
+.jstb_unbq { --rm-jst: url(/jstoolbar/indent-decrease.svg); }
+.jstb_precode { --rm-jst: url(/jstoolbar/code.svg); }
+.jstb_link { --rm-jst: url(/jstoolbar/wiki_link.svg); }
+.jstb_img { --rm-jst: url(/jstoolbar/image.svg); }
+.jstb_table { --rm-jst: url(/jstoolbar/table.svg); }
+.jstb_help { --rm-jst: url(/jstoolbar/help.svg); }
+.jstElements button[class^="jstb_"] {
+  position: relative;
+  background-image: none;
+  background-color: transparent;
+  border-color: transparent;
+  border-radius: var(--rm-r-sm);
+  color: color-mix(in srgb, var(--rm-muted) 55%, var(--rm-fg));
+  opacity: 1;                 /* core dims the buttons to 70% */
+}
+.jstElements button[class^="jstb_"]::before {
+  content: '';
+  position: absolute;
+  inset: 3px;
+  background: currentColor;
+  mask: var(--rm-jst) center / 18px no-repeat;
+}
+.jstElements button[class^="jstb_"]:hover {
+  background-color: color-mix(in srgb, var(--rm-fg) 10%, transparent);
+  border-color: transparent;
+  color: var(--rm-fg);
+}
+/* "pre" is the one button core draws as text rather than an image. */
+.jstElements button.jstb_pre::before {
+  content: 'pre';
+  position: static;
+  background: none;
+  mask: none;
+  color: inherit;
+}
