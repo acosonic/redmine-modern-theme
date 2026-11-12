@@ -2,6 +2,12 @@
 
 A clean, modern UI theme for Redmine 6 with dark mode, 27 colour schemes (plus any of ~1,250 Gogh palettes), collapsible sidebar, and design tokens.
 
+> **Redmine 7?** Use the [`redmine-7`](https://github.com/acosonic/redmine-modern-theme/tree/redmine-7) branch — a rewrite for Redmine 7, currently in beta ([v2.0.0-beta.1](https://github.com/acosonic/redmine-modern-theme/releases/tag/v2.0.0-beta.1)):
+> `git clone -b redmine-7 https://github.com/acosonic/redmine-modern-theme`
+> This branch (`main`, v1.x) is for **Redmine 6**.
+
+Made by **Aleksandar Pavic**, author of the [Redmine Cookbook](https://www.packtpub.com/en-us/product/redmine-cookbook-9781785285264) (Packt Publishing).
+
 ## Performance
 
 The theme is built for speed — it adds **zero render-blocking resources** and imposes no measurable overhead on Redmine's response times:
