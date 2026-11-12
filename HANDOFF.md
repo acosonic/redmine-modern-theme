@@ -7,12 +7,17 @@ silently undone, and what is still open.**
 
 ## State at handoff
 
+`main` is clean, pushed and deployed to `redmine.inctime.com` at `8fc89e0`
+(rollback `1a0c26e`; before the theme-ideas work `03f210b`). No open branches, issues or PRs.
+
 Later on 2026-11-12, ideas from three other themes (plan approved by the user; each a
-separate commit). Steps 1–4 are on `main` and deployed (`1a0c26e`, rollback `03f210b`);
-step 5 + docs are on branch `feature/gantt-calendar` until the user approves the deploy.
+separate commit), deployed in two batches: steps 1–4 (`1a0c26e`), then step 5, docs and
+the dashboard text fix (`8fc89e0`).
 
 | Commit | What |
 |---|---|
+| `8fc89e0` | Core gives `.mypage-box` (My page and the dashboard plugin's project overview — production renders the overview as `#my-page.dashboard` with `#block-projectmembers.mypage-box`), `div.tooltip span.tip` and `.text-diff` a fixed `#505050` text; dark mode only recoloured their backgrounds, so "Manager:" in Members was dark grey on a dark card (Dracula report). Now `--c-text` on themed surfaces, ≥7:1 everywhere |
+| `c3f049f` | Docs: README features/credits, Gantt & Calendar section, all README screenshots regenerated (`src/screenshots.mjs` has `PLAN_PROJECT`/`PLAN_MONTH`), CLAUDE.md sizes + `initSidebarFit`/`initGantt` |
 | `5e968df` | Gantt + calendar adapted from **redmine-shadcn-theme (MIT, © 2026 Techolve)** — CSS translated from Tailwind to our tokens; `initGantt()` re-spaces rows 20→28px (rewrites inline `top`, `data-collapse-expand` `top_increment`, container heights; `jQuery.removeData` because jQuery caches `data-*`), stretches a narrow timeline to the card and redraws relations via core `drawGanttHandler()`, again on area resize. Calendar chip links keep the text colour (chip colour as text missed AA). Old dark-only `.cal`/`.gantt_hdr` rules removed; the grouped `html[data-scheme]` ones stay and are outranked by `#content` |
 | `7b6ee71` | Syntax colours from the palette: `--c-syn-*` tokens, every Rouge span starts as plain text, 7 groups coloured; AA 4.5 on `--c-surface-2` in Modern + 27 schemes |
 | `073c955` | Tracker dot (`--c-trk-1..6`, cycled over `tracker-1…24`) in lists and before the issue title. **Idea from Opale (AGPL) — no code copied.** A tint behind `#id` was dropped (text < 4.5:1 in light schemes) |
@@ -279,6 +284,9 @@ To reproduce the wide-list case the last change addressed:
 7. **Still open (none requested yet):** light-mode pagination has the same double border
    / core blue current page that dark mode had; the plugin-macro (puzzle) icon is dark in
    dark mode; the redmine.org Theme_List entry is the user's to submit (text was given).
+   Gantt on production: relation lines after collapsing/expanding a branch were only
+   verified locally (three test relations) — check on a real project if anyone reports
+   misplaced arrows.
 8. **`redmine.nsinfo.co.rs`** (JKP Informatika) runs this theme too, but we have no
    access. It is updated by the user / another AI instance with `git pull` + restart.
    It has a temporary View Customize rule #1 (`/keys`, CSS) doing what `392503f` now
