@@ -3731,6 +3731,10 @@ html.dark-mode #main .activity_date_heading .date_title { color: var(--c-text); 
 }
 #sidebar #tags-list li.vault-tag:not([style*="background"]) a.vault-tag-link { color: var(--c-text) !important; }
 #sidebar #tags-list li.vault-tag a.vault-tag-link:hover { text-decoration: underline !important; }
+/* Vault — key list (/keys/all, /projects/:id/keys, a key's page): core centres every
+   table.list cell; names, logins and URLs read better from the left. */
+#keys_table th,
+#keys_table td { text-align: left !important; }
 
 /* ── Colour schemes: hardcoded colours that would otherwise leak through ── */
 /* Modern renders these values directly; a scheme re-expresses them from its
