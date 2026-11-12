@@ -1391,6 +1391,22 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
   transition: background var(--t-fast), color var(--t-fast) !important;
 }
 
+/* Additionals plugin — "Shared dashboards" in the sidebar: the link is a flex row of its
+   own, so the cube marking the system default dashboard (span.icon-cube, title "System
+   default") wrapped to a line of its own under it, in the plugin's alert red. It stays
+   beside the name, in a quiet colour; the tooltip keeps its meaning. */
+#sidebar ul.dashboards li { display: flex !important; align-items: center !important; gap: var(--sp-1) !important; }
+#sidebar ul.dashboards li > a { flex: 1 1 auto !important; min-width: 0 !important; }
+#sidebar ul.dashboards li > span.icon { flex: none !important; display: inline-flex !important; padding: 0 var(--sp-1) !important; }
+#sidebar ul.dashboards svg.dashboard-system-default { stroke: var(--c-text-subtle) !important; margin: 0 !important; }
+/* Its dashboard blocks colour heading icons and the lock with --a-color-dark (#555):
+   dark grey on a dark card. Not remapped globally — the plugin's top-menu dropdown pairs
+   the same variable with a white background. */
+#content .dashboard-block h3 svg,
+#content #page-title svg,
+#content span.dashboard-locked,
+#content span.dashboard-locked svg { stroke: var(--c-text-muted) !important; }
+
 /* Watchers list — keep avatar, name, and delete icon on one row.
    Default #sidebar ul li a { display: flex } would otherwise make each
    <a> occupy a full row, stacking them 3 high. */
