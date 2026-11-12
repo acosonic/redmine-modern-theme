@@ -2776,6 +2776,32 @@ div#sticky-issue-header .subject {
   div.attachments td:nth-child(3) { grid-column: 1 / -1 !important; grid-row: 3 !important; }
   div.attachments td:empty { display: none !important; }
 
+  /* Issue page: the floated « Previous | 5 of 6 | Next » took ~195px of a ~316px card
+     and squeezed the subject into a narrow column beside it. Own row, centred, above
+     the avatar; the subject then wraps beside the avatar and under it. */
+  div.issue.details > .next-prev-links {
+    float: none !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    gap: 0 var(--sp-2) !important;
+    width: 100% !important;
+    margin: 0 0 var(--sp-3) !important;
+  }
+  /* Attribute cards: core gives the label a fixed 170px (+10px gap), which left ~100px
+     for the value, so names and dates broke over two or three lines. 2 : 3 instead. */
+  div.issue .attributes .attribute {
+    display: grid !important;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr) !important;
+    column-gap: var(--sp-2) !important;
+    padding-left: 0 !important;
+  }
+  div.issue .attributes .attribute .label {
+    float: none !important;
+    width: auto !important;
+    margin-left: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
   /* Larger tap targets for icon-only buttons (36x36 hits 32px min) */
   a.icon-only,
   #sidebar a.icon-only,
