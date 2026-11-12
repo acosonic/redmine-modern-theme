@@ -225,6 +225,16 @@
   /* Focus ring — used by :focus-visible across all interactive elements */
   --c-focus-ring: rgba(8,145,178,.55);
   --c-selection:  rgba(8,145,178,.28);
+  /* Priority arrow shapes (masks — only the alpha is used) and their colours */
+  --rm-icon-up2:   url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 7l4-4 4 4M3 12l4-4 4 4'/%3E%3C/svg%3E");
+  --rm-icon-up:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 9l4-4 4 4'/%3E%3C/svg%3E");
+  --rm-icon-eq:    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M3 5.5h8M3 9h8'/%3E%3C/svg%3E");
+  --rm-icon-down:  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 5l4 4 4-4'/%3E%3C/svg%3E");
+  --rm-icon-down2: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 2l4 4 4-4M3 7l4 4 4-4'/%3E%3C/svg%3E");
+  --c-prio-highest: #DC2626;
+  --c-prio-high:    #C2410C;
+  --c-prio-low:     #2563EB;
+  --c-prio-lowest:  #64748B;
   /* Desktop gradient bars (idea from the gitmike theme): top bar lighter at the top,
      project tab bar from the surface to a slightly darker tint */
   --c-topbar-grad-top:    #1C4353;
@@ -261,6 +271,10 @@
     --c-topbar-grad-bottom: color-mix(in srgb, var(--c-topbar-bg) 85%, black);
     --c-menu-grad-top:      var(--c-surface);
     --c-menu-grad-bottom:   color-mix(in srgb, var(--c-surface) 93%, var(--c-text));
+    --c-prio-highest: color-mix(in srgb, var(--c-danger) 85%, var(--c-text));
+    --c-prio-high:    color-mix(in srgb, var(--c-warning) 60%, var(--c-text));
+    --c-prio-low:     color-mix(in srgb, var(--c-info) 85%, var(--c-text));
+    --c-prio-lowest:  color-mix(in srgb, var(--c-info) 45%, var(--c-text-subtle));
   }
 }
 
@@ -275,6 +289,10 @@ html.dark-mode {
   --c-topbar-grad-bottom: #0A1A25;
   --c-menu-grad-top:      #2E3C49;
   --c-menu-grad-bottom:   #1E2C3A;
+  --c-prio-highest: #F87171;
+  --c-prio-high:    #FBBF24;
+  --c-prio-low:     #60A5FA;
+  --c-prio-lowest:  #94A3B8;
 
   --c-bg:          #161E2A;   /* lighter than before */
   --c-surface:     #1E2C3A;   /* lighter card bg     */
@@ -310,6 +328,10 @@ html.dark-mode {
     --c-topbar-grad-bottom: color-mix(in srgb, var(--c-topbar-bg) 85%, black);
     --c-menu-grad-top:      color-mix(in srgb, var(--c-surface) 92%, var(--c-text));
     --c-menu-grad-bottom:   var(--c-surface);
+    --c-prio-highest: color-mix(in srgb, var(--c-danger) 85%, var(--c-text));
+    --c-prio-high:    color-mix(in srgb, var(--c-warning) 85%, var(--c-text));
+    --c-prio-low:     color-mix(in srgb, var(--c-info) 80%, var(--c-text));
+    --c-prio-lowest:  color-mix(in srgb, var(--c-info) 45%, var(--c-text-subtle));
   }
 }
 
@@ -1921,11 +1943,28 @@ a.icon-only > svg,
 a.icon-only .icon-label { display: none !important; }
 
 
-.priority-low    { color: var(--c-text-muted) !important; }
-.priority-normal { color: var(--c-info)    !important; }
-.priority-high   { color: var(--c-warning) !important; font-weight: 600 !important; }
-.priority-urgent,
-.priority-immediate { color: var(--c-danger) !important; font-weight: 700 !important; }
+/* Priority icons (idea from the Opale theme, own code): a Jira-like arrow before the
+   priority in issue lists and on the issue page. Redmine marks rows and the issue with
+   priority-<position_name>: highest, high2, high3 … default … low3, low2, lowest
+   (IssuePriority#css_classes). Shapes are masks, colours come from tokens, so dark mode
+   and schemes follow. Icon colours reach at least 3:1 on the surface (WCAG 1.4.11). */
+.priority-highest { --rm-prio-color: var(--c-prio-highest); --rm-prio-icon: var(--rm-icon-up2); }
+[class*="priority-high"]:not(.priority-highest) { --rm-prio-color: var(--c-prio-high); --rm-prio-icon: var(--rm-icon-up); }
+.priority-default { --rm-prio-color: var(--c-text-subtle); --rm-prio-icon: var(--rm-icon-eq); }
+[class*="priority-low"]:not(.priority-lowest) { --rm-prio-color: var(--c-prio-low); --rm-prio-icon: var(--rm-icon-down); }
+.priority-lowest { --rm-prio-color: var(--c-prio-lowest); --rm-prio-icon: var(--rm-icon-down2); }
+table.list tr.issue td.priority::before,
+div.issue.details .attribute.priority .value::before {
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
+  vertical-align: -2px;
+  background-color: var(--rm-prio-color, var(--c-text-subtle));
+  -webkit-mask: var(--rm-prio-icon, var(--rm-icon-eq)) center / contain no-repeat;
+  mask: var(--rm-prio-icon, var(--rm-icon-eq)) center / contain no-repeat;
+}
 
 /* ── 15. BUTTONS ─────────────────────────────────────────── */
 a.icon.new-issue,
