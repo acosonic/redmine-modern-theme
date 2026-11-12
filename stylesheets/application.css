@@ -1462,6 +1462,66 @@ body.nav-open #rm-hamburger span:nth-child(3) { transform: translateY(-7px) rota
   border-radius: var(--r-md) !important;
   padding: var(--sp-4) !important;
 }
+/* Project board (/projects as cards). Core lays the cards out in CSS columns, so they
+   read top to bottom through the first column before the second (an alphabetical list
+   reads oddly) and, with a few tall cards, the last column stays empty. A grid reads
+   left to right and fills the width. Cards get the theme's radius and colours; long
+   descriptions (bullet lists) are cut to a few lines, and subprojects become a compact
+   list with thin dividers instead of a thick grey rule per level. */
+#projects-index { columns: auto !important; }
+#projects-index > ul.projects.root {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)) !important;
+  gap: var(--sp-4) !important;
+  align-items: stretch !important;   /* one height per row: no gaps under short cards */
+}
+#projects-index ul.projects li.root {
+  margin: 0 !important;
+  padding: var(--sp-4) var(--sp-5) !important;
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-border) !important;
+  border-radius: var(--r-md) !important;
+  box-shadow: var(--shadow-xs) !important;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast) !important;
+}
+#projects-index ul.projects li.root:hover { border-color: var(--c-border-2) !important; box-shadow: var(--shadow-sm) !important; }
+#projects-index ul.projects div.root a.project { font-size: var(--text-base) !important; margin: 0 !important; }
+#projects-index ul.projects div.child a.project { font-weight: 500 !important; }
+#projects-index ul.projects span.my-project,
+#projects-index ul.projects span.icon-bookmarked-project { color: var(--c-text-subtle) !important; }
+#projects-index ul.projects div.root .my-project svg,
+#projects-index ul.projects div.root .icon-bookmarked-project svg { margin-bottom: 0 !important; }
+#projects-index ul.projects div.description {
+  padding-top: var(--sp-1) !important;
+  color: var(--c-text-muted) !important;
+  font-size: var(--text-sm) !important;
+  line-height: 1.5 !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 3 !important;
+  line-clamp: 3;
+  overflow: hidden !important;
+}
+#projects-index ul.projects div.child div.description { -webkit-line-clamp: 2 !important; line-clamp: 2; font-size: var(--text-xs) !important; }
+#projects-index ul.projects div.description p,
+#projects-index ul.projects div.description ul { margin: 0 !important; }
+#projects-index li.root ul.projects {
+  border-left: none !important;
+  padding: 0 !important;
+  margin: var(--sp-3) 0 0 !important;
+  border-top: 1px solid var(--c-border) !important;
+}
+#projects-index ul.projects li.child { margin: 0 !important; padding: var(--sp-2) 0 !important; border-bottom: 1px solid var(--c-border) !important; }
+#projects-index ul.projects li.child:last-child { border-bottom: none !important; padding-bottom: 0 !important; }
+/* deeper levels: indented under their parent, one thin guide line */
+#projects-index li.child ul.projects {
+  margin: var(--sp-2) 0 0 var(--sp-1) !important;
+  padding-left: var(--sp-3) !important;
+  border-top: none !important;
+  border-left: 1px solid var(--c-border) !important;
+}
+#projects-index li.child li.child { padding: var(--sp-1) 0 !important; border-bottom: none !important; }
+
 /* Log time on the issue edit form: its two columns are plain rows of the fieldset, not
    cards — nested in the fieldset they boxed one field each and pushed Spent time and
    Activity out of line with Comment below. */
