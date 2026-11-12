@@ -1,0 +1,2 @@
+/* Redmine core gantt.css, pulled into the "core" cascade layer so that theme rules win without !important. */
+@import url(/gantt.css) layer(core);

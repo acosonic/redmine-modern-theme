@@ -1,0 +1,2 @@
+/* Redmine core context_menu.css, pulled into the "core" cascade layer so that theme rules win without !important. */
+@import url(/context_menu.css) layer(core);

@@ -1,0 +1,2 @@
+/* Redmine core dropdown.css, pulled into the "core" cascade layer so that theme rules win without !important. */
+@import url(/dropdown.css) layer(core);

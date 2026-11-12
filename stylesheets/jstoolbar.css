@@ -1,0 +1,2 @@
+/* Redmine core jstoolbar.css, pulled into the "core" cascade layer so that theme rules win without !important. */
+@import url(/jstoolbar.css) layer(core);

@@ -1,0 +1,2 @@
+/* Redmine core scm.css, pulled into the "core" cascade layer so that theme rules win without !important. */
+@import url(/scm.css) layer(core);

@@ -1,0 +1,2 @@
+/* Redmine core responsive.css, pulled into the "core" cascade layer so that theme rules win without !important. */
+@import url(/responsive.css) layer(core);
