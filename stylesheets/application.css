@@ -235,6 +235,9 @@
   --c-prio-high:    #C2410C;
   --c-prio-low:     #2563EB;
   --c-prio-lowest:  #64748B;
+  /* Tracker marker palette, cycled by tracker id (stable per tracker, arbitrary hue) */
+  --c-trk-1: #0E7490; --c-trk-2: #DC2626; --c-trk-3: #047857;
+  --c-trk-4: #C2410C; --c-trk-5: #2563EB; --c-trk-6: #9333EA;
   /* Desktop gradient bars (idea from the gitmike theme): top bar lighter at the top,
      project tab bar from the surface to a slightly darker tint */
   --c-topbar-grad-top:    #1C4353;
@@ -275,6 +278,12 @@
     --c-prio-high:    color-mix(in srgb, var(--c-warning) 60%, var(--c-text));
     --c-prio-low:     color-mix(in srgb, var(--c-info) 85%, var(--c-text));
     --c-prio-lowest:  color-mix(in srgb, var(--c-info) 45%, var(--c-text-subtle));
+    --c-trk-1: color-mix(in srgb, var(--c-primary) 85%, var(--c-text));
+    --c-trk-2: color-mix(in srgb, var(--c-danger) 85%, var(--c-text));
+    --c-trk-3: color-mix(in srgb, var(--c-success) 65%, var(--c-text));
+    --c-trk-4: color-mix(in srgb, var(--c-warning) 60%, var(--c-text));
+    --c-trk-5: color-mix(in srgb, var(--c-info) 85%, var(--c-text));
+    --c-trk-6: color-mix(in srgb, color-mix(in srgb, var(--c-danger) 50%, var(--c-info)) 85%, var(--c-text));
   }
 }
 
@@ -293,6 +302,8 @@ html.dark-mode {
   --c-prio-high:    #FBBF24;
   --c-prio-low:     #60A5FA;
   --c-prio-lowest:  #94A3B8;
+  --c-trk-1: #22D3EE; --c-trk-2: #F87171; --c-trk-3: #34D399;
+  --c-trk-4: #FBBF24; --c-trk-5: #60A5FA; --c-trk-6: #C084FC;
 
   --c-bg:          #161E2A;   /* lighter than before */
   --c-surface:     #1E2C3A;   /* lighter card bg     */
@@ -332,6 +343,12 @@ html.dark-mode {
     --c-prio-high:    color-mix(in srgb, var(--c-warning) 85%, var(--c-text));
     --c-prio-low:     color-mix(in srgb, var(--c-info) 80%, var(--c-text));
     --c-prio-lowest:  color-mix(in srgb, var(--c-info) 45%, var(--c-text-subtle));
+    --c-trk-1: var(--c-primary);
+    --c-trk-2: color-mix(in srgb, var(--c-danger) 85%, var(--c-text));
+    --c-trk-3: color-mix(in srgb, var(--c-success) 85%, var(--c-text));
+    --c-trk-4: color-mix(in srgb, var(--c-warning) 85%, var(--c-text));
+    --c-trk-5: color-mix(in srgb, var(--c-info) 80%, var(--c-text));
+    --c-trk-6: color-mix(in srgb, color-mix(in srgb, var(--c-danger) 50%, var(--c-info)) 80%, var(--c-text));
   }
 }
 
@@ -1965,6 +1982,48 @@ div.issue.details .attribute.priority .value::before {
   -webkit-mask: var(--rm-prio-icon, var(--rm-icon-eq)) center / contain no-repeat;
   mask: var(--rm-prio-icon, var(--rm-icon-eq)) center / contain no-repeat;
 }
+
+/* Tracker markers (idea from the Opale theme, own code): a dot in the tracker colour
+   before the tracker name in issue lists and before the issue page title (a tint behind
+   the #id was tried and dropped: it took the id text below 4.5:1 in light schemes).
+   Colours cycle a 6-colour palette by tracker id (tracker-1 …
+   tracker-24), so they are stable per tracker but not tied to a meaning. */
+.tracker-1, #content:has(> div.issue.tracker-1) { --rm-trk: var(--c-trk-1); }
+.tracker-2, #content:has(> div.issue.tracker-2) { --rm-trk: var(--c-trk-2); }
+.tracker-3, #content:has(> div.issue.tracker-3) { --rm-trk: var(--c-trk-3); }
+.tracker-4, #content:has(> div.issue.tracker-4) { --rm-trk: var(--c-trk-4); }
+.tracker-5, #content:has(> div.issue.tracker-5) { --rm-trk: var(--c-trk-5); }
+.tracker-6, #content:has(> div.issue.tracker-6) { --rm-trk: var(--c-trk-6); }
+.tracker-7, #content:has(> div.issue.tracker-7) { --rm-trk: var(--c-trk-1); }
+.tracker-8, #content:has(> div.issue.tracker-8) { --rm-trk: var(--c-trk-2); }
+.tracker-9, #content:has(> div.issue.tracker-9) { --rm-trk: var(--c-trk-3); }
+.tracker-10, #content:has(> div.issue.tracker-10) { --rm-trk: var(--c-trk-4); }
+.tracker-11, #content:has(> div.issue.tracker-11) { --rm-trk: var(--c-trk-5); }
+.tracker-12, #content:has(> div.issue.tracker-12) { --rm-trk: var(--c-trk-6); }
+.tracker-13, #content:has(> div.issue.tracker-13) { --rm-trk: var(--c-trk-1); }
+.tracker-14, #content:has(> div.issue.tracker-14) { --rm-trk: var(--c-trk-2); }
+.tracker-15, #content:has(> div.issue.tracker-15) { --rm-trk: var(--c-trk-3); }
+.tracker-16, #content:has(> div.issue.tracker-16) { --rm-trk: var(--c-trk-4); }
+.tracker-17, #content:has(> div.issue.tracker-17) { --rm-trk: var(--c-trk-5); }
+.tracker-18, #content:has(> div.issue.tracker-18) { --rm-trk: var(--c-trk-6); }
+.tracker-19, #content:has(> div.issue.tracker-19) { --rm-trk: var(--c-trk-1); }
+.tracker-20, #content:has(> div.issue.tracker-20) { --rm-trk: var(--c-trk-2); }
+.tracker-21, #content:has(> div.issue.tracker-21) { --rm-trk: var(--c-trk-3); }
+.tracker-22, #content:has(> div.issue.tracker-22) { --rm-trk: var(--c-trk-4); }
+.tracker-23, #content:has(> div.issue.tracker-23) { --rm-trk: var(--c-trk-5); }
+.tracker-24, #content:has(> div.issue.tracker-24) { --rm-trk: var(--c-trk-6); }
+table.list tr.issue td.tracker::before,
+#content:has(> div.issue.details) > h2::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: 1px;
+  background: var(--rm-trk, var(--c-text-subtle));
+}
+#content:has(> div.issue.details) > h2::before { width: 10px; height: 10px; margin-right: 8px; vertical-align: 2px; }
 
 /* ── 15. BUTTONS ─────────────────────────────────────────── */
 a.icon.new-issue,
