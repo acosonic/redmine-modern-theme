@@ -86,10 +86,16 @@ repository, search and admin pages were not looked at individually.
 2. **Pages not yet reviewed** (see "Not verified"). Expect small gaps: roadmap, news,
    activity, wiki history/diff, repository browser (`scm.css` is only a shim), files,
    documents, search results, admin lists, workflow tables, time report.
-3. **Plugins** — nothing ported. `stylesheets/plugins.css` from the plan does not exist
-   yet. Port a plugin's patch only after that plugin runs on Redmine 7 and its markup has
-   been read live (Agile, Checklists, Testcase, DMSF, Vault, View Customize, Additionals,
-   inplace editor were covered on 6.x).
+3. **Plugins** — `stylesheets/plugins.css` covers **redmine_expert_agile 0.10.2** (added
+   2026-11-13: board, cards, swimlanes, backlog planner, epics, Coloris picker; `theme.js`
+   `syncCharts` feeds Chart.js the theme's colours). Checked on board and backlog with
+   `src/contrast.mjs` in Modern light/dark and nine schemes, phone overflow 0. Not looked
+   at: epics page (no epic tracker in the test data), swimlanes, WIP-limit colours, drag
+   states, sprint completion form — styled from the plugin's CSS, not seen live.
+   RedmineUP Agile (what the 6.x theme covered) is a different plugin with different
+   markup and is **not** covered. Port any other plugin only after it runs on Redmine 7
+   and its markup has been read live (Checklists, Testcase, DMSF, Vault, View Customize,
+   Additionals, inplace editor were covered on 6.x).
 4. **Re-run `src/gen-schemes.py`** against Gogh's `themes.json` to confirm it still
    reproduces the copied blocks (output format changed only in indentation).
 5. **Selected state of scheme cards / side options** and the Gogh search UI were ported

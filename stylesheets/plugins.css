@@ -1,0 +1,275 @@
+/* ============================================================
+   MODERN REDMINE THEME — plugin patches (Redmine 7)
+
+   A plugin's stylesheet is linked after the theme and is not in a
+   cascade layer, so at equal specificity the plugin wins. Every block
+   here is therefore nested in :root, which adds one class-level step to
+   each selector — still no !important.
+
+   Only colours and shapes are changed; a plugin's layout is its own.
+   No hex colours: everything comes from the theme's --rm-* tokens, so
+   light, dark and every colour scheme follow.
+   ============================================================ */
+
+/* ── redmine_expert_agile (0.10.x) ───────────────────────────
+   github.com/expertZentrale/redmine_expert_agile
+   Board, backlog planner, epics, sprints, charts. The plugin colours
+   with fixed light hex values. A coloured card / lane / epic carries
+   its colour inline as --ea-accent plus a server-made pale --ea-tint;
+   the tint is always light, so it is re-made here from the accent and
+   the theme's surface instead. */
+:root {
+  --rm-ea-accent: var(--ea-accent, var(--rm-border-2));
+  --rm-ea-tint: color-mix(in srgb, var(--ea-accent, var(--rm-muted)) 13%, var(--rm-surface));
+  --rm-ea-pill: color-mix(in srgb, var(--rm-fg) 8%, var(--rm-surface));
+  /* Small text on a tinted card or pill: plain --rm-muted falls under 4.5:1 in pale schemes. */
+  --rm-ea-muted: color-mix(in srgb, var(--rm-muted) 65%, var(--rm-fg));
+  --rm-ea-ok: color-mix(in srgb, var(--rm-green) 48%, var(--rm-fg));
+  --rm-ea-info: color-mix(in srgb, var(--rm-blue) 45%, var(--rm-fg));
+
+  /* --- Board ------------------------------------------------ */
+  .ea-pinned-head {
+    background: var(--rm-bg);
+    box-shadow: var(--rm-shadow-sm);
+  }
+
+  .ea-column-header {
+    background: var(--rm-surface-2);
+    border-color: var(--rm-border);
+    border-radius: var(--rm-r) var(--rm-r) 0 0;
+    color: var(--rm-fg);
+    padding: 8px 10px;
+  }
+  .ea-column-header.ea-status-colored { border-bottom-color: var(--ea-accent); }
+
+  .ea-column-count,
+  .ea-swimlane-count,
+  .ea-lane-count {
+    background: var(--rm-surface);
+    border-color: var(--rm-border-2);
+    color: var(--rm-muted);
+  }
+  .ea-column-wip { color: var(--rm-muted); }
+
+  .ea-column-header.ea-wip-over {
+    background: color-mix(in srgb, var(--rm-red) 14%, var(--rm-surface));
+    border-color: color-mix(in srgb, var(--rm-red) 45%, var(--rm-border));
+  }
+  .ea-column-header.ea-wip-over .ea-column-count {
+    background: color-mix(in srgb, var(--rm-red) 24%, var(--rm-surface));
+    border-color: color-mix(in srgb, var(--rm-red) 45%, var(--rm-border));
+    color: var(--rm-fg);
+  }
+  .ea-column-header.ea-wip-under {
+    background: color-mix(in srgb, var(--rm-yellow) 14%, var(--rm-surface));
+    border-color: color-mix(in srgb, var(--rm-yellow) 45%, var(--rm-border));
+  }
+
+  .ea-cell {
+    background: color-mix(in srgb, var(--rm-surface-2) 55%, var(--rm-bg));
+    border-color: var(--rm-border);
+    border-radius: 0 0 var(--rm-r) var(--rm-r);
+  }
+  .ea-cell.ea-cell-hover,
+  .ea-backlog-drop.ea-cell-hover {
+    background: var(--rm-accent-soft);
+    box-shadow: inset 0 0 0 2px var(--rm-ring);
+  }
+
+  /* Drag feedback: allowed / origin / blocked. */
+  .ea-drag-active .ea-cell.ea-drop-allowed {
+    background: color-mix(in srgb, var(--rm-green) 9%, var(--rm-surface));
+    box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--rm-green) 45%, var(--rm-surface));
+  }
+  .ea-drag-active .ea-cell.ea-drop-allowed.ea-cell-hover {
+    background: color-mix(in srgb, var(--rm-green) 18%, var(--rm-surface));
+    box-shadow: inset 0 0 0 3px var(--rm-green);
+  }
+  .ea-drag-active .ea-cell.ea-drop-origin {
+    background: color-mix(in srgb, var(--rm-surface-2) 55%, var(--rm-bg));
+    box-shadow: inset 0 0 0 2px var(--rm-border-2);
+  }
+  .ea-drag-active .ea-cell.ea-drop-blocked,
+  .ea-drag-active .ea-column-header.ea-drop-blocked {
+    background-image: repeating-linear-gradient(135deg,
+      color-mix(in srgb, var(--rm-red) 14%, transparent) 0 8px, transparent 8px 16px);
+  }
+  .ea-drag-active .ea-cell.ea-drop-blocked {
+    background-color: color-mix(in srgb, var(--rm-red) 6%, var(--rm-surface));
+  }
+  .ea-drag-active .ea-column-header.ea-drop-allowed { box-shadow: inset 0 -3px 0 var(--rm-green); }
+  .ea-drag-active .ea-column-header.ea-drop-origin { box-shadow: inset 0 -3px 0 var(--rm-muted); }
+
+  /* --- Cards ------------------------------------------------ */
+  .ea-card {
+    background: var(--rm-surface);
+    border-color: var(--rm-border);
+    border-left-color: var(--rm-border-2);
+    border-radius: var(--rm-r);
+    box-shadow: var(--rm-shadow-xs);
+    color: var(--rm-fg);
+  }
+  .ea-card:hover { border-color: var(--rm-border-2); box-shadow: var(--rm-shadow-md); }
+  .ea-card.ea-colored {
+    background: var(--rm-ea-tint);
+    border-left-color: var(--ea-accent);
+  }
+  .ea-card.ea-colored:hover { border-left-color: var(--ea-accent); }
+  .ea-card.ea-card-overdue { border-left-color: var(--rm-red); }
+
+  .ea-card-header,
+  .ea-card-footer,
+  .ea-card-description,
+  .ea-card-id a,
+  .ea-card-story a { color: var(--rm-ea-muted); }
+  .ea-card-subject a { color: var(--rm-fg); }
+  .ea-card-subject a:hover { color: var(--rm-link); }
+
+  .ea-card-tracker,
+  .ea-card-hours,
+  .ea-card-status {
+    background: var(--rm-ea-pill);
+    color: var(--rm-ea-muted);
+  }
+  .ea-card-story-points,
+  .ea-swimlane-points,
+  .ea-lane-points {
+    background: color-mix(in srgb, var(--rm-blue) 16%, var(--rm-surface));
+    border-color: color-mix(in srgb, var(--rm-blue) 35%, var(--rm-surface));
+    color: var(--rm-ea-info);
+  }
+  .ea-card-done {
+    background: color-mix(in srgb, var(--rm-green) 16%, var(--rm-surface));
+    color: var(--rm-ea-ok);
+  }
+
+  .ea-card-epic {
+    border-left-color: var(--rm-ea-accent);
+    background: color-mix(in srgb, var(--ea-accent, var(--rm-ea-muted)) 18%, var(--rm-surface));
+  }
+  .ea-card-fields,
+  .ea-card-description { border-top-color: var(--rm-border); }
+  .ea-card-fields dt { color: var(--rm-ea-muted); }
+
+  .ea-card-subtasks summary { color: var(--rm-ea-muted); }
+  .ea-subtask-closed a { color: var(--rm-ea-muted); }
+  .ea-subtask-dot { background: var(--rm-border-2); }
+  .ea-subtask-closed .ea-subtask-dot,
+  .ea-subtasks-bar::after { background: var(--rm-green); }
+  .ea-subtasks-bar,
+  .ea-epic-progress-bar { background: var(--rm-border); }
+  .ea-epic-progress-bar::after { background: var(--ea-accent, var(--rm-green)); }
+  .ea-epic-progress { color: var(--rm-ea-muted); }
+
+  /* --- Swimlanes -------------------------------------------- */
+  .ea-swimlane-title th {
+    background: var(--rm-surface-2);
+    border-color: var(--rm-border);
+    border-left-color: var(--rm-border-2);
+    color: var(--rm-fg);
+  }
+  .ea-swimlane-title.ea-lane-colored th {
+    background: var(--rm-ea-tint);
+    border-left-color: var(--ea-accent);
+  }
+  .ea-swimlane td { border-bottom-color: var(--rm-border); }
+
+  /* --- Sidebar ---------------------------------------------- */
+  .ea-sidebar-nav a.ea-sprint-closed { color: var(--rm-muted); }
+
+  /* --- Options panel ---------------------------------------- */
+  .ea-options-panel h4 { border-bottom-color: var(--rm-border); color: var(--rm-fg); }
+  .ea-options-row label { color: var(--rm-muted); }
+  .ea-status-grid-head,
+  .ea-status-name.ea-status-closed,
+  .ea-hint { color: var(--rm-muted); }
+
+  /* --- Backlog planner -------------------------------------- */
+  .ea-backlog-lane {
+    background: color-mix(in srgb, var(--rm-surface-2) 55%, var(--rm-bg));
+    border-color: var(--rm-border);
+    border-radius: var(--rm-r);
+  }
+  .ea-backlog-lane.ea-backlog-source {
+    background: transparent;
+    border-color: var(--rm-border-2);
+  }
+  .ea-backlog-lane-header {
+    background: var(--rm-surface-2);
+    border-bottom-color: var(--rm-border);
+    border-left-color: var(--rm-border-2);
+    color: var(--rm-fg);
+  }
+  .ea-backlog-lane.ea-lane-colored .ea-backlog-lane-header { border-left-color: var(--ea-accent); }
+  .ea-backlog-lane-meta { color: var(--rm-muted); }
+
+  .ea-backlog-status {
+    background: var(--rm-ea-pill);
+    color: var(--rm-ea-muted);
+  }
+  .ea-backlog-status.ea-sprint-active {
+    background: color-mix(in srgb, var(--rm-green) 16%, var(--rm-surface));
+    color: var(--rm-ea-ok);
+  }
+  .ea-backlog-status.ea-sprint-closed { background: var(--rm-ea-pill); color: var(--rm-ea-muted); }
+
+  .ea-backlog-empty-hint {
+    border-color: var(--rm-border-2);
+    color: var(--rm-muted);
+  }
+  .ea-backlog-empty {
+    background: transparent;
+    border-color: var(--rm-border-2);
+    border-radius: var(--rm-r);
+    color: var(--rm-muted);
+  }
+
+  /* Sprints / Versions switch. */
+  .ea-backlog-switch {
+    border-color: var(--rm-border-2);
+    border-radius: var(--rm-r);
+  }
+  .ea-backlog-switch a {
+    background: var(--rm-surface);
+    border-right-color: var(--rm-border-2);
+    color: var(--rm-fg);
+  }
+  .ea-backlog-switch a:hover { background: var(--rm-surface-2); }
+  .ea-backlog-switch a.selected {
+    background: var(--rm-accent);
+    color: var(--rm-on-accent);
+  }
+
+  /* --- Epic overview ---------------------------------------- */
+  .ea-epic-block {
+    background: var(--rm-surface);
+    border-color: var(--rm-border);
+    border-left-color: var(--rm-ea-accent);
+    border-radius: var(--rm-r);
+  }
+  .ea-epic-summary { background: var(--rm-ea-tint); }
+  .ea-epic-status { background: var(--rm-surface); color: var(--rm-muted); }
+  .ea-epic-counts,
+  .ea-epic-empty,
+  .expert-agile-epic-progress-detail,
+  .ea-sprint-complete-status,
+  td.ea-row-subtasks,
+  .ea-epic-row.ea-row-closed td { color: var(--rm-muted); }
+  .ea-epic-row.ea-depth-1 td.subject::before,
+  .ea-epic-row.ea-depth-2 td.subject::before,
+  .ea-epic-row.ea-depth-3 td.subject::before { color: var(--rm-muted); }
+
+  /* --- Colour picker (Coloris) on the card colour screen ----- */
+  .clr-picker {
+    background-color: var(--rm-surface);
+    border: 1px solid var(--rm-border);
+    box-shadow: var(--rm-shadow-lg);
+  }
+  .clr-picker input.clr-color {
+    background-color: var(--rm-surface-2);
+    border-color: var(--rm-border-2);
+    color: var(--rm-fg);
+  }
+  .clr-segmented { border-color: var(--rm-border-2); color: var(--rm-muted); }
+  .ea-color-field input.ea-color-input { font-family: var(--rm-mono); }
+}

@@ -15,6 +15,7 @@
 @layer force, core;
 @import url(/application.css) layer(core);
 @import url(schemes.css);
+@import url(plugins.css);
 
 /* ── 0. FONT ─ self-hosted Inter, no CDN (GDPR). ───────────── */
 /* cyrillic-ext */
@@ -674,7 +675,7 @@ nav.top-menu {
     padding: 7px 8px;
     line-height: 1.4;
     background: var(--rm-accent-soft);
-    color: var(--rm-link);
+    color: var(--rm-link-strong);
     font-weight: 600;
     box-shadow: inset 3px 0 0 var(--rm-accent);
   }

@@ -52,6 +52,29 @@
     store.set('rm-dark', dark ? '1' : '0');
     var btn = qs('#rm-mode-toggle');
     if (btn) btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+    syncCharts();
+  }
+
+  /* ── CHART.JS (plugins) ──────────────────────────────────── */
+  /* A plugin that draws with Chart.js gets grey-on-white defaults. Chart.js reads
+     its defaults when it draws, so setting them from the theme's tokens before the
+     first chart, and again when the mode or scheme changes, is enough. */
+  function syncCharts() {
+    var C = window.Chart;
+    if (!C || !C.defaults) return;
+    // Tokens are light-dark() / color-mix() expressions; a canvas needs the resolved
+    // colour, so let an element compute it.
+    var probe = document.createElement('i');
+    probe.style.cssText = 'position:absolute;visibility:hidden;color:var(--rm-muted);border:0 solid var(--rm-border);font-family:var(--rm-font)';
+    document.body.appendChild(probe);
+    var cs = getComputedStyle(probe);
+    C.defaults.color = cs.color;
+    C.defaults.borderColor = cs.borderTopColor;
+    C.defaults.font.family = cs.fontFamily;
+    probe.remove();
+    Object.keys(C.instances || {}).forEach(function (k) {
+      try { C.instances[k].update('none'); } catch (e) { /* chart being torn down */ }
+    });
   }
   function initDarkMode() {
     if (qs('#rm-mode-toggle')) return;
@@ -209,6 +232,7 @@
     }
     rememberModeScheme(isDark(), scheme);
     rememberScheme(scheme.id);
+    syncCharts();
     qsa('.rm-scheme-recent').forEach(renderRecentSchemes);
     qsa('[data-scheme-id]').forEach(function (b) {
       b.setAttribute('aria-checked', b.getAttribute('data-scheme-id') === scheme.id ? 'true' : 'false');
@@ -851,6 +875,7 @@
     initSidebarFit();
     initSelectionCaret();
     initListHeaders();
+    syncCharts();
   }
 
   if (document.readyState === 'loading') {

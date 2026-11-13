@@ -14,6 +14,7 @@ that must not be undone by accident, and what is still open.
 | `stylesheets/application.css` | Imports core into `@layer core`, then tokens → Open Color map → layout → components. Numbered sections. |
 | `stylesheets/schemes.css` | Maps `--s-*` scheme inputs onto `--rm-*`; the 27 blocks between the markers are **generated**. |
 | `stylesheets/{responsive,dropdown,context_menu,jstoolbar,scm,gantt}.css` | Shims: each replaces the core sheet of the same name and re-imports it into `layer(core)`. `gantt.css` also carries the Gantt palette. |
+| `stylesheets/plugins.css` | Plugin patches, imported by `application.css`. Plugin sheets load after the theme and are unlayered, so every block is nested in `:root` to win on specificity. Tokens only. |
 | `javascripts/theme.js` | Vanilla JS. Mode, schemes, Gogh search, sidebar side, collapsible sections, toast, badge. |
 | `stylesheets/fonts/*.woff2`, `stylesheets/gogh/palettes.json` | Inter; every Gogh palette (generated). |
 | `src/` | Dev tools only — Redmine publishes every other top-level folder of a theme. |
