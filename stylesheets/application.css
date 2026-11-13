@@ -682,6 +682,11 @@ nav.top-menu {
   #sidebar .contextual { margin: 16px 8px 0 0; font-size: .75rem; line-height: 1.6; }
   #sidebar .contextual a { padding: 0; display: inline; }
   #sidebar p, #sidebar form, #sidebar > #sidebar-wrapper > label, #sidebar #sidebar-wrapper > div:not([id]) { padding-inline: 8px; }
+  /* A checkbox list (activity filters: Issues, Changesets, News…): the generic sidebar
+     link rule made the label's link a block, so every label sat under its checkbox. */
+  #sidebar ul li:has(> input[type="checkbox"]) { display: flex; align-items: center; gap: 6px; padding: 3px 8px; }
+  #sidebar ul li:has(> input[type="checkbox"]) label a { display: inline; padding: 0; }
+  #sidebar ul li:has(> input[type="checkbox"]) label a:hover { background: none; color: var(--rm-link); }
   #sidebar ul.watchers li { display: flex; align-items: center; gap: 6px; padding: 4px 8px; }
   #sidebar ul.watchers li a:not(.icon-only) { padding: 0; flex: 1; min-inline-size: 0; }
   #sidebar ul.watchers li a:not(.icon-only):hover { background: none; color: var(--rm-link); }
@@ -1076,6 +1081,10 @@ div.wiki table { border-collapse: collapse; }
 div.wiki table th, div.wiki table td { border: 1px solid var(--rm-border); padding: 6px 12px; }
 div.wiki table th { background: var(--rm-surface-2); font-weight: 600; }
 
+/* Search results: the matched words keep core's tinted background (--oc-yellow-2 …),
+   but inside a result link they took the link colour, ~3.5:1 on the tint in dark mode. */
+.highlight { color: var(--rm-fg); }
+
 /* ── 14. LOGIN ─────────────────────────────────────────────── */
 #login-form {
   margin-block-start: 12vh;
@@ -1128,7 +1137,10 @@ div.wiki table th { background: var(--rm-surface-2); font-weight: 600; }
   color: var(--rm-link);
   font-weight: 600;
 }
-#content .tabs .tabs-buttons { display: none; }
+/* Scroll buttons for a tab row that does not fit (core shows them inline when needed).
+   Core paints their box a literal "white", outside the Open Color map. */
+div.tabs-buttons { background: transparent; border-block-end-color: var(--rm-border); }
+div.tabs-buttons button { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: var(--rm-r-sm); color: var(--rm-fg); }
 
 /* ── 16. PROJECTS ──────────────────────────────────────────── */
 /* A grid, not core's CSS columns: columns read top-to-bottom, which shuffles the
