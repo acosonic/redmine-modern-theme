@@ -1650,8 +1650,17 @@ div.tooltip:hover span.tip {
 .tribute-container ul { background: var(--rm-surface); border: 1px solid var(--rm-border); border-radius: var(--rm-r); box-shadow: var(--rm-shadow-lg); padding: 4px; }
 .tribute-container li { color: var(--rm-fg); border-radius: var(--rm-r-sm); padding: 5px 10px; }
 .tribute-container li.highlight, .tribute-container li:hover { background: var(--rm-accent-soft); color: var(--rm-link); }
-input.autocomplete { background-image: var(--rm-i-search-fixed); background-size: 14px; background-position: 9px 50%; }
-[dir="rtl"] input.autocomplete { background-position: right 9px top 50%; }
+/* The magnifier for autocomplete fields. Not while loading (core's spinner shows then),
+   and not in a dropdown's quick search (the project jump box), where core draws its own
+   SVG and resets the background with "background: none" — that also reset the repeat, so
+   the theme's image tiled across the whole field. */
+input.autocomplete:not(.ajax-loading, .drdn-content input) {
+  background-image: var(--rm-i-search-fixed);
+  background-repeat: no-repeat;
+  background-size: 14px;
+  background-position: 9px 50%;
+}
+[dir="rtl"] input.autocomplete:not(.ajax-loading, .drdn-content input) { background-position: right 9px top 50%; }
 :root {
   --rm-i-close: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'%3E%3Cpath d='M2.5 2.5l7 7M9.5 2.5l-7 7'/%3E%3C/svg%3E");
   --rm-i-search-fixed: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237B8B9B' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6.5'/%3E%3Cpath d='M20 20l-4.6-4.6'/%3E%3C/svg%3E");
