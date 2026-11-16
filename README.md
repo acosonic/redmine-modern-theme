@@ -8,34 +8,27 @@ A clean, modern UI theme for Redmine 6 with dark mode, 27 colour schemes (plus a
 
 Made by **Aleksandar Pavic**, author of the [Redmine Cookbook](https://www.packtpub.com/en-us/product/redmine-cookbook-9781785285264) (Packt Publishing).
 
-## Performance
+<p align="center">
+  <a href="#screenshots"><img src="screenshots/dark-issue-detail.png" alt="An issue page in dark mode"></a>
+</p>
 
-The theme is built for speed — it adds **zero render-blocking resources** and imposes no measurable overhead on Redmine's response times:
+| Light | Dark |
+|---|---|
+| ![Issue list — light mode](screenshots/light-issues.png) | ![Issue list — dark mode](screenshots/dark-issues.png) |
 
-- **No JavaScript frameworks** — theme.js is plain vanilla JS (52 KB raw, ~15 KB gzipped)
-- **No runtime CSS-in-JS** — everything is static CSS delivered in a single file
-- **No external requests** — Inter is self-hosted and split by `unicode-range`, so a Latin-only page downloads one ~48 KB woff2 and never touches a CDN
-- **Dark mode initialised synchronously** before first paint — no flash of unstyled content, no layout shift
-- **CSS custom properties** (design tokens) let the browser resolve the entire palette in one pass — no cascade recalculations at runtime
-- **Transitions use `transform` and `opacity`** wherever possible — GPU-composited, never triggering layout or paint
+**27 colour schemes**, each checked for readable contrast, or any of ~1,250 Gogh palettes:
 
-## Features
+| Dracula | Tokyo Night | Solarized Light |
+|---|---|---|
+| ![Dracula](screenshots/scheme-dracula.png) | ![Tokyo Night](screenshots/scheme-tokyo-night.png) | ![Solarized Light](screenshots/scheme-solarized-light.png) |
 
-- Dark / light mode toggle (persisted per browser, no flash on load) — remembers your colour scheme for each mode, so it switches between your dark and your light scheme
-- 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox, Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more, each contrast-checked to WCAG AA. Pick one on **My account**; the four you used last sit in the account menu. Or search **all ~1,250 Gogh palettes** by name and pick an accent; any palette is adjusted in the browser until it passes WCAG AA, and you are told when that changed it noticeably. Saved per browser, needs a browser with CSS `color-mix()`
-- Collapsible sidebar on the left or the right — pick the side on **My account** (desktop; on mobile it opens from the left). Both settings are persisted per browser
-- Gradient top bar and project tab bar on desktop, following the palette
-- Priority arrows (⇈ ↑ = ↓ ⇊) in issue lists and on the issue page, and a colour dot per tracker (the colour is stable per tracker id, it carries no meaning)
-- Redesigned Gantt chart (taller rows, rounded bars, timeline stretched to the card, relations redrawn) and calendar (issue chips in start / end colours)
-- Syntax highlighting coloured from the active scheme, AA-checked in every scheme
-- Project list as a card grid that reads left to right
-- Plugin pages styled for dark mode too: RedmineUP Agile and Checklists, Redmineflux Testcase, DMSF, Vault, View Customize
-- Design tokens — change the entire palette by editing 3 lines
-- Inter font (self-hosted woff2, no CDN), modern card layout, smooth transitions
-- Toast notifications, collapsible issue sections
-- Works on phones — below 899px: hamburger menu, sidebar as an overlay, stacked forms, larger tap targets, no sideways page scrolling (see [Mobile](#mobile))
-- Properly styled jQuery UI modals (watchers, etc.) with full-page overlay
-- **Zero layout changes required** — drop in and select in Admin settings
+**Gantt chart, and the same theme on a phone:**
+
+| Gantt (dark) | Phone |
+|---|---|
+| ![Gantt chart in dark mode](screenshots/dark-gantt.png) | <img src="screenshots/mobile-dark-issue-detail.png" width="150" alt="Issue page on a phone, dark mode"> <img src="screenshots/mobile-light-menu.png" width="150" alt="Menu open on a phone"> |
+
+[Install](#install) · [Features](#features) · [All screenshots](#screenshots) · [Technical details](#technical-details)
 
 ## Install
 
@@ -62,77 +55,23 @@ Select a different theme (or "Default") in Admin settings, then delete the folde
 rm -rf /path/to/redmine/themes/modern-redmine-theme
 ```
 
-## Customise colours
+## Features
 
-Open `stylesheets/application.css` and edit the tokens near the top of `:root`:
-
-```css
---c-primary:       #0891B2;  /* accent colour (light mode) */
---c-primary-hover: #0E7490;
---c-topbar-bg:     #083344;  /* top navigation bar */
-```
-
-Dark-mode overrides live in the `html.dark-mode { … }` block directly below.
-
-## Compatibility
-
-Tested on Redmine 6.x with Propshaft asset pipeline.
-
-## How it works
-
-Redmine's theme system auto-loads:
-
-| File | How it loads |
-|------|-------------|
-| `stylesheets/application.css` | Replaces default `application.css` via `stylesheet_link_tag` override |
-| `javascripts/theme.js` | Auto-included in `<head>` via `heads_for_theme` helper |
-
-The CSS starts with `@import url('../../application.css')` which pulls in Redmine's default styles before applying overrides, so no Redmine source files are modified.
-
-## Built with / References
-
-| Technology | Purpose |
-|-----------|---------|
-| [Gogh](https://github.com/Gogh-Co/Gogh) | Source palettes for the colour schemes (MIT / Apache-2.0), turned into theme tokens by `src/gen-schemes.py` |
-| [Inter](https://rsms.me/inter/) | UI typeface — self-hosted woff2 in `stylesheets/fonts/`, weights 400/500/600/700, Latin + Cyrillic subsets |
-| [jQuery UI](https://jqueryui.com/) | Dialog/modal system (bundled with Redmine) |
-| [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
-| [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Design token system |
-| [Puppeteer](https://pptr.dev/) | Screenshot automation for README images — `src/screenshots.mjs`, run against a local Redmine with seed data |
-| [Tailwind CSS](https://tailwindcss.com/) | Design token methodology and spacing/colour scale inspiration |
-| [redmine-shadcn-theme](https://github.com/techolve/redmine-shadcn-theme) | Gantt and calendar design and the Gantt row/width script, adapted from it (MIT, © 2026 Techolve), which follows [ReUI](https://reui.io/)'s Gantt and Event Calendar |
-| [Opale](https://github.com/gagnieray/opale), [gitmike](https://github.com/makotokw/redmine-theme-gitmike) | Ideas only — priority icons and tracker colours (Opale), gradient menu bars (gitmike). No code was taken: both are GPL/AGPL |
-
-Design inspired by modern SaaS dashboards (Linear, GitHub, Notion).
-
-## Contributing
-
-Contributions are welcome. Please follow these guidelines:
-
-**Bug reports**
-- Open an issue and include your Redmine version, browser, and a screenshot.
-
-**Pull requests**
-1. Fork the repo and create a branch: `git checkout -b fix/my-fix`
-2. Edit only `stylesheets/application.css` and/or `javascripts/theme.js` — do not modify Redmine core files.
-3. Test in both light and dark mode.
-4. Test at 1280px and 1440px viewport widths, and below 899px (mobile breakpoint).
-5. Keep CSS changes scoped — prefer specific selectors over broad resets.
-6. Open a PR with a short description and before/after screenshots if visual.
-
-**Token / colour changes**
-- New colour variables belong in the `:root { }` block at the top of `application.css`.
-- Dark-mode overrides go in the `html.dark-mode { }` block.
-- Do not use hardcoded hex values outside of those two blocks.
-
-**JS changes**
-- `theme.js` must keep the synchronous dark-mode early-init block at the very top (before `DOMContentLoaded`) to prevent flash of light mode.
-
-## License
-
-MIT
-
----
+- Dark / light mode toggle (persisted per browser, no flash on load) — remembers your colour scheme for each mode, so it switches between your dark and your light scheme
+- 27 colour schemes from [Gogh](https://github.com/Gogh-Co/Gogh) — Dracula, Nord, Gruvbox, Catppuccin, Rosé Pine, Tokyo Night, Solarized Light, GitHub and more, each contrast-checked to WCAG AA. Pick one on **My account**; the four you used last sit in the account menu. Or search **all ~1,250 Gogh palettes** by name and pick an accent; any palette is adjusted in the browser until it passes WCAG AA, and you are told when that changed it noticeably. Saved per browser, needs a browser with CSS `color-mix()`
+- Collapsible sidebar on the left or the right — pick the side on **My account** (desktop; on mobile it opens from the left). Both settings are persisted per browser
+- Gradient top bar and project tab bar on desktop, following the palette
+- Priority arrows (⇈ ↑ = ↓ ⇊) in issue lists and on the issue page, and a colour dot per tracker (the colour is stable per tracker id, it carries no meaning)
+- Redesigned Gantt chart (taller rows, rounded bars, timeline stretched to the card, relations redrawn) and calendar (issue chips in start / end colours)
+- Syntax highlighting coloured from the active scheme, AA-checked in every scheme
+- Project list as a card grid that reads left to right
+- Plugin pages styled for dark mode too: RedmineUP Agile and Checklists, Redmineflux Testcase, DMSF, Vault, View Customize
+- Design tokens — change the entire palette by editing 3 lines
+- Inter font (self-hosted woff2, no CDN), modern card layout, smooth transitions
+- Toast notifications, collapsible issue sections
+- Works on phones — below 899px: hamburger menu, sidebar as an overlay, stacked forms, larger tap targets, no sideways page scrolling (see [Mobile](#mobile))
+- Properly styled jQuery UI modals (watchers, etc.) with full-page overlay
+- **Zero layout changes required** — drop in and select in Admin settings
 
 ## Screenshots
 
@@ -216,3 +155,86 @@ Screenshots are 390×844 (a current iPhone). Desktop screenshots below are 1440�
 | ![Project settings — light](screenshots/light-project-settings.png) | ![Project settings — dark](screenshots/dark-project-settings.png) |
 | ![Administration — light](screenshots/light-admin.png) | ![Administration — dark](screenshots/dark-admin.png) |
 | ![Admin users — light](screenshots/light-admin-users.png) | |
+
+## Technical details
+
+### Performance
+
+The theme is built for speed — it adds **zero render-blocking resources** and imposes no measurable overhead on Redmine's response times:
+
+- **No JavaScript frameworks** — theme.js is plain vanilla JS (52 KB raw, ~15 KB gzipped)
+- **No runtime CSS-in-JS** — everything is static CSS delivered in a single file
+- **No external requests** — Inter is self-hosted and split by `unicode-range`, so a Latin-only page downloads one ~48 KB woff2 and never touches a CDN
+- **Dark mode initialised synchronously** before first paint — no flash of unstyled content, no layout shift
+- **CSS custom properties** (design tokens) let the browser resolve the entire palette in one pass — no cascade recalculations at runtime
+- **Transitions use `transform` and `opacity`** wherever possible — GPU-composited, never triggering layout or paint
+
+### Customise colours
+
+Open `stylesheets/application.css` and edit the tokens near the top of `:root`:
+
+```css
+--c-primary:       #0891B2;  /* accent colour (light mode) */
+--c-primary-hover: #0E7490;
+--c-topbar-bg:     #083344;  /* top navigation bar */
+```
+
+Dark-mode overrides live in the `html.dark-mode { … }` block directly below.
+
+### Compatibility
+
+Tested on Redmine 6.x with Propshaft asset pipeline.
+
+### How it works
+
+Redmine's theme system auto-loads:
+
+| File | How it loads |
+|------|-------------|
+| `stylesheets/application.css` | Replaces default `application.css` via `stylesheet_link_tag` override |
+| `javascripts/theme.js` | Auto-included in `<head>` via `heads_for_theme` helper |
+
+The CSS starts with `@import url('../../application.css')` which pulls in Redmine's default styles before applying overrides, so no Redmine source files are modified.
+
+### Built with / References
+
+| Technology | Purpose |
+|-----------|---------|
+| [Gogh](https://github.com/Gogh-Co/Gogh) | Source palettes for the colour schemes (MIT / Apache-2.0), turned into theme tokens by `src/gen-schemes.py` |
+| [Inter](https://rsms.me/inter/) | UI typeface — self-hosted woff2 in `stylesheets/fonts/`, weights 400/500/600/700, Latin + Cyrillic subsets |
+| [jQuery UI](https://jqueryui.com/) | Dialog/modal system (bundled with Redmine) |
+| [Redmine 6 Theme API](https://www.redmine.org/projects/redmine/wiki/Theme_Development) | `heads_for_theme`, `stylesheet_link_tag` override |
+| [CSS custom properties](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) | Design token system |
+| [Puppeteer](https://pptr.dev/) | Screenshot automation for README images — `src/screenshots.mjs`, run against a local Redmine with seed data |
+| [Tailwind CSS](https://tailwindcss.com/) | Design token methodology and spacing/colour scale inspiration |
+| [redmine-shadcn-theme](https://github.com/techolve/redmine-shadcn-theme) | Gantt and calendar design and the Gantt row/width script, adapted from it (MIT, © 2026 Techolve), which follows [ReUI](https://reui.io/)'s Gantt and Event Calendar |
+| [Opale](https://github.com/gagnieray/opale), [gitmike](https://github.com/makotokw/redmine-theme-gitmike) | Ideas only — priority icons and tracker colours (Opale), gradient menu bars (gitmike). No code was taken: both are GPL/AGPL |
+
+Design inspired by modern SaaS dashboards (Linear, GitHub, Notion).
+
+## Contributing
+
+Contributions are welcome. Please follow these guidelines:
+
+**Bug reports**
+- Open an issue and include your Redmine version, browser, and a screenshot.
+
+**Pull requests**
+1. Fork the repo and create a branch: `git checkout -b fix/my-fix`
+2. Edit only `stylesheets/application.css` and/or `javascripts/theme.js` — do not modify Redmine core files.
+3. Test in both light and dark mode.
+4. Test at 1280px and 1440px viewport widths, and below 899px (mobile breakpoint).
+5. Keep CSS changes scoped — prefer specific selectors over broad resets.
+6. Open a PR with a short description and before/after screenshots if visual.
+
+**Token / colour changes**
+- New colour variables belong in the `:root { }` block at the top of `application.css`.
+- Dark-mode overrides go in the `html.dark-mode { }` block.
+- Do not use hardcoded hex values outside of those two blocks.
+
+**JS changes**
+- `theme.js` must keep the synchronous dark-mode early-init block at the very top (before `DOMContentLoaded`) to prevent flash of light mode.
+
+## License
+
+MIT
