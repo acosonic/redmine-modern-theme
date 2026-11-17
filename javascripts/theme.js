@@ -57,8 +57,15 @@
     if (toggleBtn) toggleBtn.style.top = (total + 16) + 'px';
   }
 
-  // Run once on DOMContentLoaded, again after fonts/images settle
+  // Run once on DOMContentLoaded, again after fonts/images settle, and whenever the
+  // header changes height (a narrow window wraps the project tabs onto two rows)
+  var headerObserver = null;  // kept referenced: an unreferenced observer can be collected
   function scheduleLayoutAdjust() {
+    var header = qs('#header');
+    if (header && window.ResizeObserver && !headerObserver) {
+      headerObserver = new ResizeObserver(function () { adjustLayout(); });
+      headerObserver.observe(header);
+    }
     adjustLayout();
     requestAnimationFrame(function () {
       adjustLayout();

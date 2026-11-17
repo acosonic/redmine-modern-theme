@@ -1274,11 +1274,18 @@ html.dark-mode .rm-account-panel ul li a:hover { background: var(--c-primary-lig
    #header > #main-menu outranks html.dark-mode #main-menu. */
 @media (min-width: 900px) {
   #top-menu { background: linear-gradient(to bottom, var(--c-topbar-grad-top), var(--c-topbar-grad-bottom)) !important; }
-  #header:has(#main-menu ul li) { padding-bottom: calc(58px + var(--sp-2)) !important; }
+  /* The tab bar is in the header's normal flow (it used to be pinned to the header's
+     bottom): when a narrow window wraps the tabs onto a second row, the header grows
+     downwards instead of the bar growing up over the project title and the search.
+     adjustLayout() re-measures the header (ResizeObserver) and moves the page below it. */
+  #header:has(#main-menu ul li) { padding-bottom: calc(var(--sp-2) - 1px) !important; }
   #header > #main-menu {
-    bottom: var(--sp-2) !important;
-    left: var(--sp-6) !important;
-    right: var(--sp-6) !important;
+    position: relative !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    clear: both !important;
+    margin-top: 14px !important;   /* keeps the bar where it was when pinned: 60px below the header top */
     padding: 0 var(--sp-2) !important;
     background: linear-gradient(to bottom, var(--c-menu-grad-top), var(--c-menu-grad-bottom)) !important;
     border: 1px solid var(--c-border) !important;
