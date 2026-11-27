@@ -4369,3 +4369,14 @@ html.dark-mode #main .activity_date_heading .date_title { color: var(--c-text); 
   right: 0 !important;
   margin: 0 !important;
 }
+
+/* ── Redmine 6 live preview: cancel .tabular grid on rendered paragraphs ──
+   The edit preview (#preview_*) renders inside the .tabular form, so
+   `.tabular p { display:grid; grid-template-columns:220px 1fr auto }` (the form
+   label/field grid) turned rendered markdown paragraphs into grids and scattered
+   their inline content — a trailing <code> flew to the far right. Keep preview
+   paragraphs as normal blocks. */
+[id^="preview"] p {
+  display: block !important;
+  grid-template-columns: none !important;
+}
