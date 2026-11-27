@@ -4357,3 +4357,15 @@ html.dark-mode #main .activity_date_heading .date_title { color: var(--c-text); 
   html[data-scheme] input[type=checkbox],
   html[data-scheme] input[type=radio] { accent-color: var(--c-primary); }
 }
+
+/* ── Redmine 6 reactions on News ──────────────────────────
+   Core renders div.news > div.reaction as the first child, floated on its own,
+   so the 👍 dangles far right below the action buttons (reported placement bug).
+   Pin it to the top-right of the news body so it aligns with the header/summary. */
+.controller-news #content div.news { position: relative !important; }
+.controller-news #content div.news > div.reaction {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  margin: 0 !important;
+}
